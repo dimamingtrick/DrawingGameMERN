@@ -7,9 +7,9 @@ import {
   Label,
   Input,
   Row,
-  Spinner
+  Spinner,
 } from "reactstrap";
-import api from "../../services/api";
+import { TodoService } from "../../services";
 import { addNewTodo, updateTodo } from "../../actions/todos";
 import { connect } from "react-redux";
 
@@ -23,8 +23,8 @@ class SingleTodoPage extends Component {
       submitLoading: false,
       form: {
         title: "",
-        description: ""
-      }
+        description: "",
+      },
     };
   }
 
@@ -32,22 +32,25 @@ class SingleTodoPage extends Component {
     this.setState({
       form: {
         ...this.state.form,
-        [e.target.name]: e.target.value
-      }
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
   componentDidMount() {
     if (!this.state.isCreation) {
-      api({ method: "GET", url: "/todo/" + this.props.match.params.id }).then(
+      TodoService.getSingleTodoById(this.props.match.params.id).then(
         ({ title, description }) => {
           this.setState({
             load: false,
             form: {
               title,
-              description
-            }
+              description,
+            },
           });
+        },
+        () => {
+          this.goBack();
         }
       );
     } else {
@@ -129,7 +132,7 @@ class SingleTodoPage extends Component {
                           onClick={this.addNewTodo}
                           style={{
                             width: 200,
-                            height: 50
+                            height: 50,
                           }}
                         >
                           {submitLoading ? <Spinner /> : "Submit"}

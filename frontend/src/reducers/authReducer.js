@@ -1,33 +1,26 @@
+import { AUTH_SUCCESS, REGISTRATION_SUCCESS, LOGOUT } from "../actions/auth";
+
 const initialState = {
   isLoggedIn: false,
-  user: {}
+  user: {},
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "AUTH_SUCCESS":
+    case AUTH_SUCCESS:
       return {
         isLoggedIn: true,
-        user: action.user
+        user: action.user,
       };
 
-    case "REGISTRATION_SUCCESS":
+    case REGISTRATION_SUCCESS:
       return {
         isLoggedIn: true,
-        user: action.user
+        user: action.user,
       };
 
-    case "login":
-      return {
-        ggwp: "Yeah boi"
-      };
-
-    case "LOGOUT":
-      // return initialState;
-      return {
-        isLoggedIn: false,
-        user: {}
-      };
+    case LOGOUT:
+      return initialState;
 
     default:
       return state;

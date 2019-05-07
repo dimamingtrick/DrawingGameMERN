@@ -1,9 +1,14 @@
-import api from "../services/api";
+import { TodoService } from "../services";
+
+export const GET_ALL_TODOS = "GET_ALL_TODOS";
+export const ADD_NEW_TODO = "ADD_NEW_TODO";
+export const UPDATE_TODO = "UPDATE_TODO";
+export const DELETE_TODO = "DELETE_TODO";
 
 export const getAllTodos = () => async dispatch => {
   try {
-    const todoList = await api({ method: "GET", url: "/todo" });
-    dispatch({ type: "GET_ALL_TODOS", todoList });
+    const todoList = await TodoService.getAllTodos();
+    dispatch({ type: GET_ALL_TODOS, todoList });
   } catch (err) {
     throw err;
   }
@@ -11,8 +16,8 @@ export const getAllTodos = () => async dispatch => {
 
 export const addNewTodo = data => async dispatch => {
   try {
-    const newTodo = await api({ method: "POST", url: "/todo", body: data });
-    dispatch({ type: "ADD_NEW_TODO", newTodo });
+    const newTodo = await TodoService.addNewTodo(data);
+    dispatch({ type: ADD_NEW_TODO, newTodo });
   } catch (err) {
     throw err;
   }
@@ -20,12 +25,8 @@ export const addNewTodo = data => async dispatch => {
 
 export const updateTodo = (id, data) => async dispatch => {
   try {
-    const updatedTodo = await api({
-      method: "PUT",
-      url: "/todo/" + id,
-      body: data,
-    });
-    dispatch({ type: "UPDATE_TODO", updatedTodo });
+    const updatedTodo = await TodoService.updateTodo(id, data);
+    dispatch({ type: UPDATE_TODO, updatedTodo });
   } catch (err) {
     throw err;
   }
@@ -33,8 +34,8 @@ export const updateTodo = (id, data) => async dispatch => {
 
 export const deleteTodo = id => async dispatch => {
   try {
-    await api({ method: "DELETE", url: "/todo/" + id, body: {} });
-    dispatch({ type: "DELETE_TODO", todoId: id });
+    await TodoService.deleteTodo(id);
+    dispatch({ type: DELETE_TODO, todoId: id });
   } catch (err) {
     throw err;
   }
