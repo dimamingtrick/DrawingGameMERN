@@ -1,0 +1,207 @@
+body, html, #root, .App, .App > div {
+  width: 100%;
+  height: 100%;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.todoListModalWrapper {
+  z-index: 10000;
+  width:100%;
+  height:100%;
+  left:0;
+  top:0;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.todoListBg {
+  background: rgba(0,0,0,0.75);
+  width:100%;
+  height:100%;
+  position: fixed;
+  left:0;
+  top:0;
+  z-index: 100;
+}
+.todolistModalCol {
+  z-index: 101;
+}
+.todolistModal {
+  border-radius: 5px;
+  background: #fff;
+  padding: 15px;
+  z-index: 101;
+}
+
+.singleTodoListItem {
+  transition: all .35s;
+}
+.singleTodoListItem:hover {
+  cursor: pointer;
+  background: rgba(0,0,0,0.02)
+}
+
+.switch-wrapper {
+  position: relative;
+}
+ 
+.switch-wrapper > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.animatedSingleTodoRoute {
+  z-index: 10012;
+  width: 100%;
+  height: 100%;
+}
+.animatedSingleTodoRoute > div {
+  position: absolute;
+  /* width: 100%; */
+  /* height: 100%; */
+  z-index: 10000;
+}
+
+
+.homePageWrapper {
+  position: relative;
+  left: 0;
+  right: 0;
+  bottom: 0;
+} 
+
+.slide-enter {
+  opacity: 0.01;
+  transform: translateX(-100%);
+}
+
+.slide-enter.slide-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 250ms;
+}
+
+.slide-exit {
+  transform: translateX(0);
+  opacity: 0.01;
+}
+
+.slide-exit.slide-exit-active {
+  transform: translateX(100%);
+  transition: transform 250ms ease-in;
+  opacity:0.01;
+}
+
+div.transition-group {
+  position: relative;
+}
+
+section.route-section {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+
+.switch-wrapper {
+  position: relative;
+}
+ 
+.switch-wrapper > div {
+  position: absolute;
+}
+
+
+
+
+
+
+
+
+
+
+.my-node-enter {
+  opacity: 0;
+}
+.my-node-enter-active {
+  opacity: 1;
+  transition: opacity 2020ms;
+}
+.my-node-exit {
+  opacity: 1;
+}
+.my-node-exit-active {
+  opacity: 0;
+  transition: opacity 2020ms;
+}
+
+
+
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 400ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 400ms ease-in;
+}
+
+.fade-exit-done {
+  opacity: 0;
+}
+
+
+.auth-error {
+  text-align: right;
+  color: red!important;
+}
+
+.main-auth-error {
+  font-size: 15px;
+}
