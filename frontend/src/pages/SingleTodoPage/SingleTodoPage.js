@@ -7,7 +7,7 @@ import {
   Label,
   Input,
   Row,
-  Spinner,
+  Spinner
 } from "reactstrap";
 import api from "../../services/api";
 import { addNewTodo, updateTodo } from "../../actions/todos";
@@ -23,8 +23,8 @@ class SingleTodoPage extends Component {
       submitLoading: false,
       form: {
         title: "",
-        description: "",
-      },
+        description: ""
+      }
     };
   }
 
@@ -32,8 +32,8 @@ class SingleTodoPage extends Component {
     this.setState({
       form: {
         ...this.state.form,
-        [e.target.name]: e.target.value,
-      },
+        [e.target.name]: e.target.value
+      }
     });
   };
 
@@ -45,8 +45,8 @@ class SingleTodoPage extends Component {
             load: false,
             form: {
               title,
-              description,
-            },
+              description
+            }
           });
         }
       );
@@ -129,7 +129,7 @@ class SingleTodoPage extends Component {
                           onClick={this.addNewTodo}
                           style={{
                             width: 200,
-                            height: 50,
+                            height: 50
                           }}
                         >
                           {submitLoading ? <Spinner /> : "Submit"}

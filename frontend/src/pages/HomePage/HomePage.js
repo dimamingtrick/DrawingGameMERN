@@ -1,9 +1,8 @@
 import React from "react";
-import api from "../../services/api";
 
 export default class HomePage extends React.Component {
   state = {
-    load: true,
+    load: true
   };
 
   _ismounted = true;

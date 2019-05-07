@@ -1,17 +1,17 @@
 import api from "../services/api";
 
 export const authenticate = () => async dispatch => {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
   try {
-    const { user, token } = await api({
+    const { user } = await api({
       method: "GET",
-      url: "/me",
+      url: "/me"
     });
 
-    localStorage.setItem("token", token);
     dispatch({ type: "AUTH_SUCCESS", user });
-  } catch (err) {
-    throw err.message;
-  }
+  } catch (err) {}
 };
 
 export const login = userData => async dispatch => {
@@ -19,7 +19,7 @@ export const login = userData => async dispatch => {
     const { user, token } = await api({
       method: "POST",
       url: "/login",
-      body: userData,
+      body: userData
     });
     localStorage.setItem("token", token);
     dispatch({ type: "AUTH_SUCCESS", user });
@@ -33,7 +33,7 @@ export const registrate = form => async dispatch => {
     const { user, token } = await api({
       method: "POST",
       url: "/registration",
-      body: form,
+      body: form
     });
     localStorage.setItem("token", token);
     dispatch({ type: "REGISTRATION_SUCCESS", user });

@@ -11,7 +11,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
+  ModalFooter
 } from "reactstrap";
 import { getAllTodos, deleteTodo } from "../../actions/todos";
 import { Fade } from "../../components/Animations/RoutingAnimationTransitions";
@@ -25,7 +25,7 @@ class ToDoListPage extends React.Component {
     this.state = {
       load: true,
       isDeleting: false,
-      confirmModalIsOpen: false,
+      confirmModalIsOpen: false
     };
   }
 
@@ -42,7 +42,7 @@ class ToDoListPage extends React.Component {
   deleteTodoRequest = id => {
     this.setState({
       confirmModalIsOpen: true,
-      todoId: id,
+      todoId: id
     });
   };
 
@@ -53,7 +53,7 @@ class ToDoListPage extends React.Component {
         this.setState({
           confirmModalIsOpen: false,
           isDeleting: false,
-          todoId: null,
+          todoId: null
         });
       },
       err => {
@@ -134,7 +134,7 @@ function ConfirmTodoDeleteModal({
   confirmModalIsOpen,
   toggleConfirmModal,
   deleteConfirm,
-  isDeleting,
+  isDeleting
 }) {
   return (
     <Modal
@@ -161,11 +161,11 @@ function ConfirmTodoDeleteModal({
 export default connect(
   store => {
     return {
-      todoList: store.todos.todoList,
+      todoList: store.todo.todoList
     };
   },
   {
     getAllTodos,
-    deleteTodo,
+    deleteTodo
   }
 )(ToDoListPage);

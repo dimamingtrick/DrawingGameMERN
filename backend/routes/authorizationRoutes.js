@@ -14,12 +14,10 @@ const router = express.Router();
 router.get("/me", jwtValidate, async (req, res) => {
   const user = await User.findById(req.body.userId);
 
-  console.log(user);
-
-  const token = jwt.sign({ id: user._id }, "ming_trick", {
-    expiresIn: "1h",
-  });
-  return res.json({ user, token });
+  // const token = jwt.sign({ id: user._id }, "ming_trick", {
+  //   expiresIn: "1h",
+  // });
+  return res.json({ user });
 });
 
 /**
@@ -30,7 +28,7 @@ router.get("/me", jwtValidate, async (req, res) => {
 router.post("/login", async (req, res) => {
   const user = await User.findOne({
     login: req.body.login,
-    password: req.body.password,
+    password: req.body.password
   });
 
   if (!user) {
@@ -38,7 +36,7 @@ router.post("/login", async (req, res) => {
   }
 
   const token = jwt.sign({ id: user._id }, "ming_trick", {
-    expiresIn: "1h",
+    expiresIn: "1h"
   });
   return res.json({ user, token });
 });
@@ -63,12 +61,12 @@ router.post("/registration", async (req, res) => {
 
   const newUser = await user.save();
   const token = jwt.sign({ id: newUser._id }, "ming_trick", {
-    expiresIn: "1h",
+    expiresIn: "1h"
   });
 
   return res.json({
     user: newUser,
-    token,
+    token
   });
 });
 
