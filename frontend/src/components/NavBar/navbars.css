@@ -1,0 +1,7 @@
+nav.navbar a {
+  color: #fff;
+}
+nav.navbar a.dropdown-toggle::after {
+  vertical-align: middle;
+  margin-left: .55rem;
+}

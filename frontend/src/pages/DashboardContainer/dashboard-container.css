@@ -1,0 +1,7 @@
+.dashboard-wrapper {
+  flex: 1;
+  display: flex;
+}
+.dashboard-wrapper > div {
+  flex: 1;
+}

@@ -86,7 +86,7 @@ class SingleTodoPage extends Component {
     return (
       <div className="todoListModalWrapper">
         <div className="todoListBg" onClick={this.goBack} />
-        <Col md={6} xs={10} className="todolistModalCol">
+        <Col md={8} xs={10} className="todolistModalCol">
           <div className="todolistModal">
             <Row form>
               <Col sm="12">
