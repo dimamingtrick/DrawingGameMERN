@@ -1,6 +1,5 @@
 import React from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
-// import { AnimatedRoute } from 'react-router-transition';
 
 const SlideFromRight = ({ children, routeKey }) => {
   return (
@@ -16,7 +15,6 @@ const SlideFromRight = ({ children, routeKey }) => {
   );
 };
 
-
 /**
  * Use in Router child (instead of component/render) prop;
  */
@@ -24,8 +22,8 @@ const Fade = (Page, navProps) => {
   return (
     <CSSTransition
       in={navProps.match != null}
-      timeout={200}
-      classNames="fade"
+      timeout={150}
+      classNames="fadingRoute"
       unmountOnExit
     >
       <Page {...navProps} />

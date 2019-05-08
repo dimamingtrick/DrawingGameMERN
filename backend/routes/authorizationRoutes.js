@@ -2,6 +2,7 @@ import { User } from "../models";
 import { jwtValidate } from "../helpers";
 
 const express = require("express");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
@@ -9,14 +10,9 @@ const router = express.Router();
  * GET /me/
  * function to authenticate user by jwt token
  * if token is valid returns user object
- * if token is not valid returns error
  */
 router.get("/me", jwtValidate, async (req, res) => {
-  const user = await User.findById(req.body.userId);
-
-  // const token = jwt.sign({ id: user._id }, "ming_trick", {
-  //   expiresIn: "1h",
-  // });
+  const user = await User.findById(req.body.userId).select("-password");
   return res.json({ user });
 });
 
@@ -27,18 +23,21 @@ router.get("/me", jwtValidate, async (req, res) => {
  */
 router.post("/login", async (req, res) => {
   const user = await User.findOne({
-    login: req.body.login,
-    password: req.body.password
+    login: req.body.login
   });
 
-  if (!user) {
-    return res.status(404).json({ message: "Invalid credentials" });
-  }
+  if (!user) return res.status(404).json({ message: "User doesn't exist" });
 
-  const token = jwt.sign({ id: user._id }, "ming_trick", {
-    expiresIn: "1h"
+  bcrypt.compare(req.body.password, user.password, (err, result) => {
+    if (!result || err) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ id: user._id }, "ming_trick", {
+      expiresIn: "1h"
+    });
+    return res.json({ user: user.select("-password"), token });
   });
-  return res.json({ user, token });
 });
 
 /**
@@ -49,24 +48,50 @@ router.post("/login", async (req, res) => {
 router.post("/registration", async (req, res) => {
   const { login, email, password } = req.body;
 
-  const loginUniqueError = await User.findOne({ login });
+  if (!login || !email || !password) {
+    return res.status(400).json({
+      message: {
+        ...(!login ? { login: "Login is required" } : {}),
+        ...(!email ? { email: "Email is required" } : {}),
+        ...(!password ? { password: "Password is required" } : {})
+      }
+    });
+  }
+
+  const [loginUniqueError, emailUniqueError] = await Promise.all([
+    User.findOne({ login }),
+    User.findOne({ email })
+  ]);
+
   if (loginUniqueError)
     return res.status(400).json({ message: "Login is already in use" });
 
-  const emailUniqueError = await User.findOne({ email });
   if (emailUniqueError)
     return res.status(400).json({ message: "Email is already in use" });
 
-  const user = new User({ login, email, password, createdAt: new Date() });
+  bcrypt.hash(password, 10, async (err, hashedPassword) => {
+    if (err) return res.status(400).json({ message: "Password error" });
 
-  const newUser = await user.save();
-  const token = jwt.sign({ id: newUser._id }, "ming_trick", {
-    expiresIn: "1h"
-  });
+    const user = new User({
+      login,
+      email,
+      password: hashedPassword,
+      createdAt: new Date()
+    });
 
-  return res.json({
-    user: newUser,
-    token
+    const newUser = await user.save();
+    const token = jwt.sign({ id: newUser._id }, "ming_trick", {
+      expiresIn: "1h"
+    });
+
+    return res.json({
+      user: {
+        login: newUser.login,
+        email: newUser.email,
+        createdAt: newUser.createdAt
+      },
+      token
+    });
   });
 });
 

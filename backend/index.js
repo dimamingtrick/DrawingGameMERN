@@ -1,14 +1,12 @@
 import connectDb from "./models";
-import bodyParser from "body-parser";
 import express from "express";
 import cors from "cors";
 import { jwtValidate } from "./helpers";
 
 const app = express();
 
-/** Add body parser to convert request body params */
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+/** Add express body parser to convert request body params */
+app.use(express.json());
 
 /** Add cors to server */
 app.use(cors());
@@ -16,13 +14,14 @@ app.use(cors());
 /** Add authoriation routes */
 app.use(require("./routes/authorizationRoutes"));
 
-/** Add /todo model CRUD routes */
+/** Add /todo model CRUD routes
+ *  Require JWT token
+ */
 app.use("/todo", jwtValidate, require("./routes/todoRoutes"));
 
 /**
  * GET /
  * Basic default route to initiate server
- * returns "Good game" string
  */
 app.get("/", async (req, res) => {
   return res.send("Good game");

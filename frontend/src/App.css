@@ -206,6 +206,35 @@ section.route-section {
 }
 
 
+
+
+
+
+.fadingRoute-enter {
+  opacity: 0.01;
+}
+
+.fadingRoute-enter.fadingRoute-enter-active {
+  opacity: 1;
+  transition: opacity 150ms ease-in;
+}
+
+.fadingRoute-exit {
+  opacity: 1;
+}
+
+.fadingRoute-exit.fadingRoute-exit-active {
+  opacity: 0.01;
+  transition: opacity 150ms ease-in;
+}
+
+.fadingRoute-exit-done {
+  opacity: 0;
+}
+
+
+
+
 .auth-error {
   text-align: right;
   color: red!important;

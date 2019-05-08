@@ -11,7 +11,8 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter
+  ModalFooter,
+  Container
 } from "reactstrap";
 import { getAllTodos, deleteTodo } from "../../actions/todos";
 import { Fade } from "../../components/Animations/RoutingAnimationTransitions";
@@ -64,14 +65,13 @@ class ToDoListPage extends React.Component {
 
   render() {
     return (
-      <div>
+      <Container>
         <Route
           path={"/app/todolist/:id"}
           children={navProps => Fade(SingleTodoPage, navProps)}
         />
 
         <h1>To Do List</h1>
-
         <Col md={{ size: 10, offset: 1 }}>
           <Button
             color="primary"
@@ -105,7 +105,7 @@ class ToDoListPage extends React.Component {
           deleteConfirm={this.deleteConfirm}
           isDeleting={this.state.isDeleting}
         />
-      </div>
+      </Container>
     );
   }
 }

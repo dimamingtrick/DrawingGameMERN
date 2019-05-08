@@ -9,6 +9,7 @@ import {
   Input,
   Spinner,
   FormText,
+  Container
 } from "reactstrap";
 import { login } from "../../actions/auth";
 
@@ -77,7 +78,7 @@ class LoginPage extends Component {
       authError,
     } = this.state;
     return (
-      <div>
+      <Container>
         <br />
         <br />
         <br />
@@ -146,7 +147,7 @@ class LoginPage extends Component {
             </FormGroup>
           </Form>
         </Col>
-      </div>
+      </Container>
     );
   }
 }
