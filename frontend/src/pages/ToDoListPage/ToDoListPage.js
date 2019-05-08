@@ -72,32 +72,35 @@ class ToDoListPage extends React.Component {
         />
 
         <h1>To Do List</h1>
-        <Col md={{ size: 10, offset: 1 }}>
-          <Button
-            color="primary"
-            onClick={() => this.props.history.push("/app/todolist/add-todo")}
-          >
-            Add New Todo
-          </Button>
-        </Col>
-        <br />
-        <Col md={{ size: 10, offset: 1 }}>
-          <ListGroup>
-            <TransitionGroup>
-              {this.props.todoList.map(item => (
-                <CSSTransition key={item._id} classNames="fade" timeout={400}>
-                  <TodoItem
-                    {...item}
-                    deleteTodoRequest={this.deleteTodoRequest}
-                    onClick={id =>
-                      this.props.history.push("/app/todolist/" + id)
-                    }
-                  />
-                </CSSTransition>
-              ))}
-            </TransitionGroup>
-          </ListGroup>
-        </Col>
+        <Row className="todo-row">
+          <Col md={{ size: 10, offset: 1 }}>
+            <Button
+              color="primary"
+              onClick={() => this.props.history.push("/app/todolist/add-todo")}
+            >
+              Add New Todo
+            </Button>
+          </Col>
+        </Row>
+        <Row className="todo-row">
+          <Col md={{ size: 10, offset: 1 }}>
+            <ListGroup>
+              <TransitionGroup>
+                {this.props.todoList.map(item => (
+                  <CSSTransition key={item._id} classNames="fade" timeout={400}>
+                    <TodoItem
+                      {...item}
+                      deleteTodoRequest={this.deleteTodoRequest}
+                      onClick={id =>
+                        this.props.history.push("/app/todolist/" + id)
+                      }
+                    />
+                  </CSSTransition>
+                ))}
+              </TransitionGroup>
+            </ListGroup>
+          </Col>
+        </Row>
 
         <ConfirmTodoDeleteModal
           confirmModalIsOpen={this.state.confirmModalIsOpen}

@@ -1,3 +1,125 @@
 div#game-page-container {
-  flex:1
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  /* overflow: hidden; */
+  border: 1px solid rgba(0, 0, 0, .4);
+}
+
+div#game-page-container .card {
+  border: none;
+}
+
+div#game-page-container > div.row > div.col-6.col-sm-8 > div.card.game-card {
+  border-right: 1px solid rgba(0, 0, 0, .4);
+}
+
+div#game-page-container > div.row {
+  display: flex;
+  flex: 1;
+  margin: 0;
+}
+
+div#game-page-container > div.row > div{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0;
+}
+
+div.game-card {
+  border-radius: 0;
+}
+
+div.game-card.chat-card {
+  padding: 0;
+}
+
+div.game-card.chat-card > div.input-group {
+  /* position: absolute; */
+  /* bottom: 0; */
+  border-top: 1px solid rgba(0, 0, 0, .4);
+}
+div.game-card.chat-card > div.input-group > input,div.input-group {
+  border-radius: 0;
+  border:none;
+}
+div.game-card.chat-card > div.input-group > div > button {
+  border-radius: 0;
+  border:none;
+}
+div.game-card.chat-card button:focus {
+  outline: none!important;
+  box-shadow: none!important;
+}
+div.game-card input::placeholder {
+  opacity: .25;
+}
+
+div.game-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+
+
+
+
+
+div.chat-messages {
+  display: flex;
+  flex: 1;
+  /* flex-direction: column; */
+  overflow-y: auto;
+  flex-wrap: wrap;
+}
+
+div.single-message {
+  margin: 5px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+}
+div.single-message:last-child {
+  margin-bottom: 15px;
+}
+
+div.chat-messages > div.single-message.my-message {
+  justify-content: flex-end;
+}
+
+div.chat-messages > div.single-message > div.message-wrapper {
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff;
+  max-width: 100%;
+}
+
+div.chat-messages div.single-message.my-message > div.message-wrapper {
+  background: #e5ffdf;
+}
+
+div.chat-messages > div.single-message > div {
+  display: inline-block;
+  align-self: center;
+}
+
+div.single-message-user {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+div.single-message-text {
+  font-size: 15px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+div.single-message-date {
+  font-size: 11px;
+  text-align: right;
+  font-weight: bold;
 }
