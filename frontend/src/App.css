@@ -251,3 +251,10 @@ section.route-section {
 .auth-page-container label {
   text-align: left;
 }
+
+div.todo-error {
+  text-align: right;
+  font-size: 14px;
+  color: red;
+  padding: 5px 0px;
+}

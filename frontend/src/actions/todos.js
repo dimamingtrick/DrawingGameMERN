@@ -19,7 +19,7 @@ export const addNewTodo = data => async dispatch => {
     const newTodo = await TodoService.addNewTodo(data);
     dispatch({ type: ADD_NEW_TODO, newTodo });
   } catch (err) {
-    throw err;
+    throw err.message;
   }
 };
 
@@ -28,7 +28,7 @@ export const updateTodo = (id, data) => async dispatch => {
     const updatedTodo = await TodoService.updateTodo(id, data);
     dispatch({ type: UPDATE_TODO, updatedTodo });
   } catch (err) {
-    throw err;
+    throw err.message;
   }
 };
 

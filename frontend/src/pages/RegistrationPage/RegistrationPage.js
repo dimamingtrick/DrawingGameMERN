@@ -40,32 +40,37 @@ class RegistrationPage extends Component {
       },
       registrationError: {
         ...this.state.registrationError,
-        ...(this.state.registrationError[name] ? { [name]: "" } : {})
+        ...([name] ? { [name]: "" } : {})
       }
     });
   };
 
   registrate = () => {
-    this.setState({
-      load: true,
-      ...(this.state.registrationError !== "" ? { registrationError: "" } : {})
-    });
+    this.setState({ load: true });
+
     this.props.registrate(this.state.form).then(
       res => {
         this.props.history.push("/app");
       },
-      err => {
-        this.setState({ load: false, registrationError: err });
+      errors => {
+        this.setState({
+          load: false,
+          registrationError: {
+            ...this.state.registrationError,
+            ...errors
+          }
+        });
       }
     );
   };
 
   submitButtonIsDisabled = () => {
     const { registrationError, load } = this.state;
+
     return load ||
-      (registrationError.login && registrationError.login !== "") ||
-      (registrationError.email && registrationError.email !== "") ||
-      (registrationError.password && registrationError.password !== "")
+      registrationError.login !== "" ||
+      registrationError.email !== "" ||
+      registrationError.password !== ""
       ? true
       : false;
   };

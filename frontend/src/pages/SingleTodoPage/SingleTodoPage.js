@@ -8,6 +8,8 @@ import {
   Input,
   Row,
   Spinner,
+  Container,
+  FormText
 } from "reactstrap";
 import { TodoService } from "../../services";
 import { addNewTodo, updateTodo } from "../../actions/todos";
@@ -23,17 +25,25 @@ class SingleTodoPage extends Component {
       submitLoading: false,
       form: {
         title: "",
-        description: "",
+        description: ""
       },
+      formError: {
+        title: "",
+        description: ""
+      }
     };
   }
 
-  handleInput = e => {
+  handleInput = ({ target: { name, value } }) => {
     this.setState({
       form: {
         ...this.state.form,
-        [e.target.name]: e.target.value,
+        [name]: value
       },
+      formError: {
+        ...this.state.formError,
+        [name]: ""
+      }
     });
   };
 
@@ -45,8 +55,8 @@ class SingleTodoPage extends Component {
             load: false,
             form: {
               title,
-              description,
-            },
+              description
+            }
           });
         },
         () => {
@@ -70,8 +80,11 @@ class SingleTodoPage extends Component {
         );
       }
       this.goBack();
-    } catch (err) {
-      this.setState({ submitLoading: false });
+    } catch (formError) {
+      this.setState({
+        submitLoading: false,
+        formError
+      });
     }
   };
 
@@ -81,70 +94,81 @@ class SingleTodoPage extends Component {
 
   render() {
     const { title, description } = this.state.form;
-    const { load, submitLoading } = this.state;
+    const { load, submitLoading, formError } = this.state;
 
     return (
       <div className="todoListModalWrapper">
         <div className="todoListBg" onClick={this.goBack} />
-        <Col md={8} xs={10} className="todolistModalCol">
-          <div className="todolistModal">
-            <Row form>
-              <Col sm="12">
-                {load ? (
-                  <Spinner style={{ width: "3rem", height: "3rem" }} />
-                ) : (
-                  <Form>
-                    <h3>Add Todo</h3>
-                    <FormGroup row>
-                      <Label for="titleInput" sm={2}>
-                        Title
-                      </Label>
-                      <Col sm={10}>
-                        <Input
-                          value={title}
-                          onChange={this.handleInput}
-                          type="text"
-                          name="title"
-                          id="titleInput"
-                          placeholder="To do title"
-                        />
-                      </Col>
-                    </FormGroup>
-                    <FormGroup row>
-                      <Label for="descriptionInput" sm={2}>
-                        Description
-                      </Label>
-                      <Col sm={10}>
-                        <Input
-                          value={description}
-                          onChange={this.handleInput}
-                          type="text"
-                          name="description"
-                          id="descriptionInput"
-                          placeholder="To do description"
-                        />
-                      </Col>
-                    </FormGroup>
+        <Container>
+          <Col xs={12} className="todolistModalCol">
+            <div className="todolistModal">
+              <Row form>
+                <Col sm="12">
+                  {load ? (
+                    <Spinner style={{ width: "3rem", height: "3rem" }} />
+                  ) : (
+                    <Form>
+                      <h3>Add Todo</h3>
+                      <FormGroup row>
+                        <Label for="titleInput" sm={2}>
+                          Title
+                        </Label>
+                        <Col sm={10}>
+                          <Input
+                            value={title}
+                            onChange={this.handleInput}
+                            type="text"
+                            name="title"
+                            id="titleInput"
+                            placeholder="To do title"
+                          />
+                          <FormText>
+                            <div className="todo-error">{formError.title}</div>
+                          </FormText>
+                        </Col>
+                      </FormGroup>
 
-                    <FormGroup check row>
-                      <Col sm={{ size: 10, offset: 1 }}>
-                        <Button
-                          onClick={this.addNewTodo}
-                          style={{
-                            width: 200,
-                            height: 50,
-                          }}
-                        >
-                          {submitLoading ? <Spinner /> : "Submit"}
-                        </Button>
-                      </Col>
-                    </FormGroup>
-                  </Form>
-                )}
-              </Col>
-            </Row>
-          </div>
-        </Col>
+                      <FormGroup row>
+                        <Label for="descriptionInput" sm={2}>
+                          Description
+                        </Label>
+                        <Col sm={10}>
+                          <Input
+                            value={description}
+                            onChange={this.handleInput}
+                            type="text"
+                            name="description"
+                            id="descriptionInput"
+                            placeholder="To do description"
+                          />
+                          <FormText>
+                            <div className="todo-error">
+                              {formError.description}
+                            </div>
+                          </FormText>
+                        </Col>
+                      </FormGroup>
+
+                      <FormGroup check row>
+                        <Col sm={{ size: 10, offset: 1 }}>
+                          <Button
+                            onClick={this.addNewTodo}
+                            style={{
+                              width: 200,
+                              height: 50
+                            }}
+                          >
+                            {submitLoading ? <Spinner /> : "Submit"}
+                          </Button>
+                        </Col>
+                      </FormGroup>
+                    </Form>
+                  )}
+                </Col>
+              </Row>
+            </div>
+          </Col>
+        </Container>
       </div>
     );
   }
