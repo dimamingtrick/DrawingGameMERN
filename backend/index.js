@@ -14,10 +14,17 @@ app.use(cors());
 /** Add authoriation routes */
 app.use(require("./routes/authorizationRoutes"));
 
-/** Add /todo model CRUD routes
+/**
+ *  Add /todo model CRUD routes
  *  Require JWT token
  */
 app.use("/todo", jwtValidate, require("./routes/todoRoutes"));
+
+/**
+ * Add /game/chat routes
+ * Require JWT token
+ */
+app.use("/game/chat", jwtValidate, require("./routes/chatRoutes"));
 
 /**
  * GET /

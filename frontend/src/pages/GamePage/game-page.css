@@ -66,24 +66,35 @@ div.game-card {
 
 
 
+div.game-card.drawing-card {
+  justify-content: center;
+}
+
 
 
 
 div.chat-messages {
   display: flex;
   flex: 1;
-  /* flex-direction: column; */
+  align-items: flex-end;
   overflow-y: auto;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
 }
+
 
 div.single-message {
   margin: 5px;
-  width: 100%;
   max-width: 100%;
   overflow: hidden;
   display: flex;
+  min-height: min-content;
 }
+div.single-message:first-child {
+  margin-top: auto;
+  padding-top: 5px;
+}
+
 div.single-message:last-child {
   margin-bottom: 15px;
 }
@@ -122,4 +133,18 @@ div.single-message-date {
   font-size: 11px;
   text-align: right;
   font-weight: bold;
+}
+
+input.chat-input:focus {
+  outline: none!important;
+  box-shadow: none!important;
+}
+
+button.input-submit-btn {
+  min-width: 40px;
+  transition: all .25s linear;
+}
+button.input-submit-btn > div {
+  width: 16px;
+  height: 16px;
 }

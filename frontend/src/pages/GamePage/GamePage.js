@@ -10,77 +10,41 @@ import {
   Col,
   InputGroup,
   Input,
-  InputGroupAddon
+  InputGroupAddon,
+  Spinner
 } from "reactstrap";
+import { ChatService } from "../../services";
 import moment from "moment";
 import "./game-page.css";
 import { IoMdSend } from "react-icons/io";
 import chatbg from "../../assets/chatbg.png";
 
+let interval;
+
 class GamePage extends React.Component {
   state = {
-    messages: [
-      {
-        user: "User 1",
-        message: "First initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "admin@gmail.com",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "login2",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "admin@gmail.com",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "login2",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "login2",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "admin@gmail.com",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "login2",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "admin@gmail.com",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "admin@gmail.com",
-        message: "Second initial message",
-        createdAt: new Date()
-      },
-      {
-        user: "login2",
-        message: "Second initial message",
-        createdAt: new Date()
-      }
-    ],
-    inputMessage: ""
+    messages: [],
+    inputMessage: "",
+    sending: false
   };
 
   componentDidMount() {
-    this.scrollToChatBottom();
+    interval = setInterval(() => {
+      ChatService.getAllMessages().then(
+        messages => {
+          this.setState({
+            messages
+          });
+          this.scrollToChatBottom();
+        },
+        err => {
+          console.log("err get chat", err);
+        }
+      );
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(interval);
   }
 
   scrollToChatBottom = () => {
@@ -89,20 +53,24 @@ class GamePage extends React.Component {
   };
 
   sendMessage = () => {
-    this.setState(
-      {
-        messages: [
-          ...this.state.messages,
+    if (this.state.inputMessage === "") return;
+    this.setState({ sending: true });
+    ChatService.sendNewMessage(this.state.inputMessage).then(
+      res => {
+        this.setState(
           {
-            user: this.props.user.login,
-            message: this.state.inputMessage,
-            createdAt: new Date()
+            messages: [...this.state.messages, res],
+            inputMessage: "",
+            sending: false
+          },
+          () => {
+            this.scrollToChatBottom();
           }
-        ],
-        inputMessage: ""
+        );
       },
-      () => {
-        this.scrollToChatBottom();
+      err => {
+        this.setState({ sending: false });
+        console.log("ERR", err);
       }
     );
   };
@@ -114,7 +82,7 @@ class GamePage extends React.Component {
   };
 
   render() {
-    const { messages } = this.state;
+    const { messages, sending, inputMessage } = this.state;
     const { user } = this.props;
     return (
       <Container fluid id="game-page-container">
@@ -129,52 +97,85 @@ class GamePage extends React.Component {
 
           <Col xs={6} md={4}>
             <Card body className="game-card chat-card">
-              <div
-                className="chat-messages"
-                style={{
-                  background: 'url("' + chatbg + '")'
-                }}
-              >
-                {messages.map((msg, i) => (
-                  <div
-                    className={`single-message ${
-                      msg.user === user.login ? "my-message" : ""
-                    }`}
-                    key={i}
-                  >
-                    <div className="message-wrapper">
-                      {msg.user === user.login ? null : (
-                        <div className="single-message-user">{msg.user}</div>
-                      )}
-                      <div className="single-message-text">{msg.message}</div>
-                      <div className="single-message-date">
-                        {moment(msg.createdAt).format("HH:mm:ss DD/MM/YYYY")}
-                      </div>
-                    </div>
-                  </div>
+              <ChatMessagesContainer>
+                {messages.map(msg => (
+                  <SingleMessage
+                    key={msg._id}
+                    message={msg}
+                    userLogin={user.login}
+                  />
                 ))}
-              </div>
-              <InputGroup>
-                <Input
-                  value={this.state.inputMessage}
-                  onChange={this.handleInput}
-                  placeholder="Message..."
-                  onKeyDown={e => {
-                    if (e.keyCode === 13) this.sendMessage();
-                  }}
-                />
-                <InputGroupAddon addonType="append">
-                  <Button onClick={this.sendMessage}>
-                    <IoMdSend />
-                  </Button>
-                </InputGroupAddon>
-              </InputGroup>
+              </ChatMessagesContainer>
+              <ChatInput
+                inputMessage={inputMessage}
+                handleInput={this.handleInput}
+                sendMessage={this.sendMessage}
+                sending={sending}
+              />
             </Card>
           </Col>
         </Row>
       </Container>
     );
   }
+}
+
+function ChatMessagesContainer({ children }) {
+  return (
+    <div
+      className="chat-messages"
+      style={{
+        background: 'url("' + chatbg + '")'
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function SingleMessage({ message, userLogin }) {
+  return (
+    <div
+      className={`single-message ${
+        message.user === userLogin ? "my-message" : ""
+      }`}
+    >
+      <div className="message-wrapper">
+        {message.user !== userLogin && (
+          <div className="single-message-user">{message.user}</div>
+        )}
+        <div className="single-message-text">{message.message}</div>
+        <div className="single-message-date">
+          {moment(message.createdAt).format("HH:mm:ss DD/MM/YYYY")}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChatInput({ inputMessage, handleInput, sendMessage, sending }) {
+  return (
+    <InputGroup>
+      <Input
+        value={inputMessage}
+        onChange={handleInput}
+        className="chat-input"
+        placeholder="Message..."
+        onKeyDown={e => {
+          if (e.keyCode === 13) sendMessage();
+        }}
+      />
+      <InputGroupAddon addonType="append">
+        <Button
+          disabled={inputMessage === ""}
+          className="input-submit-btn"
+          onClick={sendMessage}
+        >
+          {sending ? <Spinner /> : <IoMdSend />}
+        </Button>
+      </InputGroupAddon>
+    </InputGroup>
+  );
 }
 
 export default connect(

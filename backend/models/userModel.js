@@ -3,18 +3,18 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   login: {
     type: String,
-    unique: true,
+    unique: true
   },
   email: {
     type: String,
-    unique: true,
+    unique: true
   },
   password: {
-    type: String,
+    type: String
   },
   createdAt: {
-    // type: Date,
-  },
+    type: Date
+  }
 });
 
 const User = mongoose.model("User", userSchema);
