@@ -26,12 +26,14 @@ class RegistrationPage extends Component {
       registrationError: {
         login: "",
         email: "",
-        password: ""
+        password: "",
+        mainError: ""
       },
       load: false
     };
   }
 
+  // Save input data to form state and clear its error if it exists
   handleInput = ({ target: { name, value } }) => {
     this.setState({
       form: {
@@ -40,13 +42,16 @@ class RegistrationPage extends Component {
       },
       registrationError: {
         ...this.state.registrationError,
-        ...([name] ? { [name]: "" } : {})
+        ...(this.state.registrationError[name] !== "" ? { [name]: "" } : {})
       }
     });
   };
 
   registrate = () => {
-    this.setState({ load: true });
+    this.setState({
+      load: true,
+      registrationError: { ...this.state.registrationError, mainError: "" }
+    });
 
     this.props.registrate(this.state.form).then(
       res => {
@@ -78,8 +83,8 @@ class RegistrationPage extends Component {
   render() {
     const {
       form: { login, email, password },
-      load,
-      registrationError
+      registrationError,
+      load
     } = this.state;
 
     return (
@@ -93,7 +98,6 @@ class RegistrationPage extends Component {
               </Label>
               <Col sm={12}>
                 <Input
-                  required
                   value={login}
                   onChange={this.handleInput}
                   type="text"
@@ -115,7 +119,6 @@ class RegistrationPage extends Component {
               </Label>
               <Col sm={12}>
                 <Input
-                  required
                   value={email}
                   onChange={this.handleInput}
                   type="email"
@@ -137,7 +140,6 @@ class RegistrationPage extends Component {
               </Label>
               <Col sm={12}>
                 <Input
-                  required
                   value={password}
                   onChange={this.handleInput}
                   type="password"
@@ -147,7 +149,7 @@ class RegistrationPage extends Component {
                 />
                 <FormText>
                   <div className="auth-error main-auth-error">
-                    {registrationError.password}
+                    {registrationError.password || registrationError.mainError}
                   </div>
                 </FormText>
               </Col>

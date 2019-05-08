@@ -73,13 +73,18 @@ router.post("/registration", async (req, res) => {
   ]);
 
   if (loginUniqueError)
-    return res.status(400).json({ message: "Login is already in use" });
+    return res
+      .status(400)
+      .json({ message: { mainError: "Login is already in use" } });
 
   if (emailUniqueError)
-    return res.status(400).json({ message: "Email is already in use" });
+    return res
+      .status(400)
+      .json({ message: { mainError: "Email is already in use" } });
 
   bcrypt.hash(password, 10, async (err, hashedPassword) => {
-    if (err) return res.status(400).json({ message: "Password error" });
+    if (err)
+      return res.status(400).json({ message: { mainError: "Password error" } });
 
     const user = new User({
       login,
