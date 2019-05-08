@@ -243,3 +243,11 @@ section.route-section {
 .main-auth-error {
   font-size: 15px;
 }
+
+.auth-page-container {
+  padding-top: 50px;
+}
+
+.auth-page-container label {
+  text-align: left;
+}

@@ -10,6 +10,7 @@ import {
   Input,
   Spinner,
   FormText,
+  Container
 } from "reactstrap";
 
 class RegistrationPage extends Component {
@@ -20,26 +21,34 @@ class RegistrationPage extends Component {
       form: {
         login: "",
         email: "",
-        password: "",
+        password: ""
       },
-      load: false,
-      registrationError: "",
+      registrationError: {
+        login: "",
+        email: "",
+        password: ""
+      },
+      load: false
     };
   }
 
-  handleInput = e => {
+  handleInput = ({ target: { name, value } }) => {
     this.setState({
       form: {
         ...this.state.form,
-        [e.target.name]: e.target.value,
+        [name]: value
       },
+      registrationError: {
+        ...this.state.registrationError,
+        ...(this.state.registrationError[name] ? { [name]: "" } : {})
+      }
     });
   };
 
   registrate = () => {
     this.setState({
       load: true,
-      ...(this.state.registrationError !== "" ? { registrationError: "" } : {}),
+      ...(this.state.registrationError !== "" ? { registrationError: "" } : {})
     });
     this.props.registrate(this.state.form).then(
       res => {
@@ -51,17 +60,25 @@ class RegistrationPage extends Component {
     );
   };
 
+  submitButtonIsDisabled = () => {
+    const { registrationError, load } = this.state;
+    return load ||
+      (registrationError.login && registrationError.login !== "") ||
+      (registrationError.email && registrationError.email !== "") ||
+      (registrationError.password && registrationError.password !== "")
+      ? true
+      : false;
+  };
+
   render() {
     const {
       form: { login, email, password },
       load,
-      registrationError,
+      registrationError
     } = this.state;
+
     return (
-      <div>
-        <br />
-        <br />
-        <br />
+      <Container className="auth-page-container">
         <Col sm={{ size: 6, offset: 3 }}>
           <h3>Registration</h3>
           <Form>
@@ -79,8 +96,14 @@ class RegistrationPage extends Component {
                   id="loginInput"
                   placeholder="Login..."
                 />
+                <FormText>
+                  <div className="auth-error main-auth-error">
+                    {registrationError.login}
+                  </div>
+                </FormText>
               </Col>
             </FormGroup>
+
             <FormGroup row>
               <Label for="emailInput" sm={2}>
                 Email
@@ -95,8 +118,14 @@ class RegistrationPage extends Component {
                   id="emailInput"
                   placeholder="Email..."
                 />
+                <FormText>
+                  <div className="auth-error main-auth-error">
+                    {registrationError.email}
+                  </div>
+                </FormText>
               </Col>
             </FormGroup>
+
             <FormGroup row>
               <Label for="passwordInput" sm={2}>
                 Password
@@ -111,14 +140,9 @@ class RegistrationPage extends Component {
                   id="passwordInput"
                   placeholder="Password..."
                 />
-              </Col>
-            </FormGroup>
-
-            <FormGroup row>
-              <Col xs={12}>
                 <FormText>
                   <div className="auth-error main-auth-error">
-                    {registrationError}
+                    {registrationError.password}
                   </div>
                 </FormText>
               </Col>
@@ -127,10 +151,11 @@ class RegistrationPage extends Component {
             <FormGroup check row>
               <Col sm={{ size: 12, offset: 1 }}>
                 <Button
+                  disabled={this.submitButtonIsDisabled()}
                   onClick={this.registrate}
                   style={{
                     width: 200,
-                    height: 50,
+                    height: 50
                   }}
                 >
                   {load ? <Spinner /> : "Submit"}
@@ -139,7 +164,7 @@ class RegistrationPage extends Component {
             </FormGroup>
           </Form>
         </Col>
-      </div>
+      </Container>
     );
   }
 }

@@ -1,5 +1,5 @@
 import { User } from "../models";
-import { jwtValidate } from "../helpers";
+import { jwtValidate, validateEmail } from "../helpers";
 
 const express = require("express");
 const bcrypt = require("bcrypt");
@@ -36,7 +36,14 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, "ming_trick", {
       expiresIn: "1h"
     });
-    return res.json({ user: user.select("-password"), token });
+
+    const userData = user.toObject(); // Convert user into object to remove password before sending response
+    delete userData.password;
+
+    return res.json({
+      user: userData,
+      token
+    });
   });
 });
 
@@ -48,11 +55,13 @@ router.post("/login", async (req, res) => {
 router.post("/registration", async (req, res) => {
   const { login, email, password } = req.body;
 
-  if (!login || !email || !password) {
+  if (!login || !email || !validateEmail(email) || !password) {
     return res.status(400).json({
       message: {
         ...(!login ? { login: "Login is required" } : {}),
-        ...(!email ? { email: "Email is required" } : {}),
+        ...(!email || (email && !validateEmail(email))
+          ? { email: "Enter valid email" }
+          : {}),
         ...(!password ? { password: "Password is required" } : {})
       }
     });
