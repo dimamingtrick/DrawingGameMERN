@@ -15,6 +15,7 @@ router.get("/", async (req, res) => {
 /**
  * POST /game/chat/
  * add new chat message
+ * send it with socket.io
  */
 router.post("/", async (req, res) => {
   const { message, userId } = req.body;
@@ -26,9 +27,13 @@ router.post("/", async (req, res) => {
   const msg = new Chat({
     message,
     user: login,
-    createdAt: new Date()
+    createdAt: new Date(),
   });
   const newMessage = await msg.save();
+
+  const io = req.app.get("socketio");
+  io.emit("newMessage", { newMessage });
+
   return res.json(newMessage);
 });
 

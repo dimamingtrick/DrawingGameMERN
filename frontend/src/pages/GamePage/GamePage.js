@@ -11,41 +11,59 @@ import {
   InputGroup,
   Input,
   InputGroupAddon,
-  Spinner
+  Spinner,
 } from "reactstrap";
 import { ChatService } from "../../services";
 import moment from "moment";
 import "./game-page.css";
 import { IoMdSend } from "react-icons/io";
 import chatbg from "../../assets/chatbg.png";
+import socketIOClient from "socket.io-client";
 
-let interval;
+const serverUrl = `${process.env.REACT_APP_SERVER}/`;
+let socket;
 
 class GamePage extends React.Component {
-  state = {
-    messages: [],
-    inputMessage: "",
-    sending: false
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      messages: [],
+      inputMessage: "",
+      sending: false,
+    };
+    socket = socketIOClient(serverUrl);
+  }
 
   componentDidMount() {
-    interval = setInterval(() => {
-      ChatService.getAllMessages().then(
-        messages => {
-          this.setState({
-            messages
-          });
-          this.scrollToChatBottom();
-        },
-        err => {
-          console.log("err get chat", err);
-        }
-      );
-    }, 1000);
+    socket.on("socketWorks", ({ horray }) => console.log(horray)); // Check if socket works
+    socket.on("newMessage", this.setNewMessage);
+    ChatService.getAllMessages().then(
+      messages => {
+        this.setState({
+          messages,
+        });
+        this.scrollToChatBottom();
+      },
+      err => {
+        console.log("err get chat", err);
+      }
+    );
   }
   componentWillUnmount() {
-    clearInterval(interval);
+    socket.off("newMessage");
   }
+
+  setNewMessage = ({ newMessage }) => {
+    this.setState(
+      {
+        messages: [...this.state.messages, newMessage],
+      },
+      () => {
+        this.scrollToChatBottom();
+      }
+    );
+  };
 
   scrollToChatBottom = () => {
     const chatMessagesWrapper = document.querySelector(".chat-messages");
@@ -57,16 +75,10 @@ class GamePage extends React.Component {
     this.setState({ sending: true });
     ChatService.sendNewMessage(this.state.inputMessage).then(
       res => {
-        this.setState(
-          {
-            messages: [...this.state.messages, res],
-            inputMessage: "",
-            sending: false
-          },
-          () => {
-            this.scrollToChatBottom();
-          }
-        );
+        this.setState({
+          inputMessage: "",
+          sending: false,
+        });
       },
       err => {
         this.setState({ sending: false });
@@ -77,7 +89,7 @@ class GamePage extends React.Component {
 
   handleInput = e => {
     this.setState({
-      inputMessage: e.target.value
+      inputMessage: e.target.value,
     });
   };
 
@@ -125,7 +137,7 @@ function ChatMessagesContainer({ children }) {
     <div
       className="chat-messages"
       style={{
-        background: 'url("' + chatbg + '")'
+        background: 'url("' + chatbg + '")',
       }}
     >
       {children}
@@ -181,7 +193,7 @@ function ChatInput({ inputMessage, handleInput, sendMessage, sending }) {
 export default connect(
   store => {
     return {
-      user: store.auth.user
+      user: store.auth.user,
     };
   },
   {}

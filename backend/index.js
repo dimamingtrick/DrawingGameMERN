@@ -5,8 +5,12 @@ import { jwtValidate } from "./helpers";
 
 const app = express();
 
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+
 /** Add express body parser to convert request body params */
 app.use(express.json());
+app.set("socketio", io);
 
 /** Add cors to server */
 app.use(cors());
@@ -39,7 +43,11 @@ connectDb().then(async () => {
   //   const mongoose = require("mongoose");
   //   createUsersWithMessages();
   // }
-  app.listen(3001, () => {
+  server.listen(3001, () => {
     console.log("Example app listening on port 3001!");
+
+    io.on("connection", function(socket) {
+      socket.emit("socketWorks", { horray: "Socket works" });
+    });
   });
 });
