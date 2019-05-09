@@ -4,7 +4,7 @@ div#game-page-container {
   display: flex;
   flex-direction: column;
   border-radius: 5px;
-  /* overflow: hidden; */
+  overflow: hidden;
   border: 1px solid rgba(0, 0, 0, .4);
   max-height: 100%;
 }
@@ -22,6 +22,7 @@ div#game-page-container > div.row {
   flex: 1;
   margin: 0;
   max-height: 100%;
+  overflow: hidden;
 }
 
 div#game-page-container > div.row > div{

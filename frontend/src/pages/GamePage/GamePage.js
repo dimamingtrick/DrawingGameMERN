@@ -4,8 +4,6 @@ import {
   Container,
   Card,
   Button,
-  CardTitle,
-  CardText,
   Row,
   Col,
   InputGroup,
@@ -13,6 +11,7 @@ import {
   InputGroupAddon,
   Spinner
 } from "reactstrap";
+import Canvas from "../../components/Canvas/Canvas";
 import { ChatService } from "../../services";
 import moment from "moment";
 import "./game-page.css";
@@ -107,9 +106,7 @@ class GamePage extends React.Component {
         <Row>
           <Col xs={6} sm={8}>
             <Card body className="game-card drawing-card">
-              <CardTitle>Game Draw Panel</CardTitle>
-              <CardText>There will be canvas drawing panel</CardText>
-              <Button>Some react canvas draw library</Button>
+              <Canvas />
             </Card>
           </Col>
 

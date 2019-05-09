@@ -15,6 +15,14 @@ class ChatService {
       body: { message }
     });
   }
+
+  getPain(message) {
+    return api({
+      method: "POST",
+      url: "/game/chat/paint",
+      body: { message }
+    });
+  }
 }
 
 export default new ChatService();

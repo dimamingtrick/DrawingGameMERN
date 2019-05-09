@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
   const msg = new Chat({
     message,
     user: login,
-    createdAt: new Date(),
+    createdAt: new Date()
   });
   const newMessage = await msg.save();
 
@@ -35,6 +35,13 @@ router.post("/", async (req, res) => {
   io.emit("newMessage", { newMessage });
 
   return res.json(newMessage);
+});
+
+router.post("/paint", async (req, res) => {
+  const { draw } = req.body;
+
+  const io = req.app.get("socketio");
+  io.emit("newDraw", { draw });
 });
 
 module.exports = router;
