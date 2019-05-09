@@ -1,7 +1,7 @@
 .dashboard-wrapper {
   flex: 1;
   display: flex;
-  overflow: hidden; /* To hide horizontal scroll at screen transitions */
+  overflow-x: hidden; /* To hide horizontal scroll at screen transitions */
 }
 .dashboard-wrapper > div {
   display: flex;

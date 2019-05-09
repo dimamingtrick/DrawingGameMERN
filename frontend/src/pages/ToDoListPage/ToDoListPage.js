@@ -83,7 +83,7 @@ class ToDoListPage extends React.Component {
           </Col>
         </Row>
         <Row className="todo-row">
-          <Col md={{ size: 10, offset: 1 }}>
+          <Col>
             <ListGroup>
               <TransitionGroup>
                 {this.props.todoList.map(item => (

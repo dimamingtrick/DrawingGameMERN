@@ -11,7 +11,7 @@ import {
   InputGroup,
   Input,
   InputGroupAddon,
-  Spinner,
+  Spinner
 } from "reactstrap";
 import { ChatService } from "../../services";
 import moment from "moment";
@@ -30,18 +30,22 @@ class GamePage extends React.Component {
     this.state = {
       messages: [],
       inputMessage: "",
-      sending: false,
+      sending: false
     };
     socket = socketIOClient(serverUrl);
   }
 
   componentDidMount() {
+    const dashboardWrapper = document.querySelector("div.dashboard-wrapper"); // Disable container vertical scrolling and set scroll position to 0
+    dashboardWrapper.scrollTop = 0;
+    dashboardWrapper.style.overflowY = "hidden";
+
     socket.on("socketWorks", ({ horray }) => console.log(horray)); // Check if socket works
     socket.on("newMessage", this.setNewMessage);
     ChatService.getAllMessages().then(
       messages => {
         this.setState({
-          messages,
+          messages
         });
         this.scrollToChatBottom();
       },
@@ -50,14 +54,16 @@ class GamePage extends React.Component {
       }
     );
   }
+
   componentWillUnmount() {
     socket.off("newMessage");
+    document.querySelector("div.dashboard-wrapper").style.overflowY = "auto"; // Enable container vertical scrolling
   }
 
   setNewMessage = ({ newMessage }) => {
     this.setState(
       {
-        messages: [...this.state.messages, newMessage],
+        messages: [...this.state.messages, newMessage]
       },
       () => {
         this.scrollToChatBottom();
@@ -77,7 +83,7 @@ class GamePage extends React.Component {
       res => {
         this.setState({
           inputMessage: "",
-          sending: false,
+          sending: false
         });
       },
       err => {
@@ -89,7 +95,7 @@ class GamePage extends React.Component {
 
   handleInput = e => {
     this.setState({
-      inputMessage: e.target.value,
+      inputMessage: e.target.value
     });
   };
 
@@ -137,7 +143,7 @@ function ChatMessagesContainer({ children }) {
     <div
       className="chat-messages"
       style={{
-        background: 'url("' + chatbg + '")',
+        background: 'url("' + chatbg + '")'
       }}
     >
       {children}
@@ -193,7 +199,7 @@ function ChatInput({ inputMessage, handleInput, sendMessage, sending }) {
 export default connect(
   store => {
     return {
-      user: store.auth.user,
+      user: store.auth.user
     };
   },
   {}
