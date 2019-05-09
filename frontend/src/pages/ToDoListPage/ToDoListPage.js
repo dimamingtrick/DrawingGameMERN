@@ -87,7 +87,11 @@ class ToDoListPage extends React.Component {
             <ListGroup>
               <TransitionGroup>
                 {this.props.todoList.map(item => (
-                  <CSSTransition key={item._id} classNames="fade" timeout={400}>
+                  <CSSTransition
+                    key={item._id}
+                    classNames="todoRowAnim"
+                    timeout={300}
+                  >
                     <TodoItem
                       {...item}
                       deleteTodoRequest={this.deleteTodoRequest}

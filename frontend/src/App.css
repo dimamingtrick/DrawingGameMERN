@@ -191,13 +191,14 @@ section.route-section {
 
 
 
+
 .fade-enter {
-  opacity: 0.01;
+  opacity: 0.1;
 }
 
 .fade-enter.fade-enter-active {
   opacity: 1;
-  transition: opacity 400ms ease-in;
+  transition: opacity 400ms linear;
 }
 
 .fade-exit {
@@ -205,8 +206,8 @@ section.route-section {
 }
 
 .fade-exit.fade-exit-active {
-  opacity: 0.01;
-  transition: opacity 400ms ease-in;
+  opacity: 0;
+  transition: opacity 400ms linear;
 }
 
 .fade-exit-done {
@@ -269,4 +270,27 @@ div.todo-error {
 
 button:focus {
   outline: none!important;
+}
+
+
+
+
+
+.todoRowAnim-enter {
+  opacity: 0.1;
+}
+.todoRowAnim-enter.todoRowAnim-enter-active {
+  opacity: 1;
+  transition: opacity 300ms linear;
+}
+.todoRowAnim-exit {
+  opacity: 1;
+  transform: scaleY(1);
+}
+.todoRowAnim-exit.todoRowAnim-exit-active {
+  opacity: 0;
+  transition: opacity 300ms linear;
+}
+.todoRowAnim-exit-done {
+  opacity: 0;
 }
