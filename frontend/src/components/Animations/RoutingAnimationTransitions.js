@@ -4,11 +4,7 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 const SlideFromRight = ({ children, routeKey }) => {
   return (
     <TransitionGroup>
-      <CSSTransition
-        key={routeKey}
-        classNames="slide"
-        timeout={300}
-      >
+      <CSSTransition key={routeKey} classNames="slide" timeout={300}>
         {children}
       </CSSTransition>
     </TransitionGroup>

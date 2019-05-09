@@ -7,4 +7,9 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  position: relative;
+}
+.dashboard-wrapper > div > div#game-page-container.container-fluid {
+  display: flex;
+  flex: 1;
 }
