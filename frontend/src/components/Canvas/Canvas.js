@@ -1,5 +1,4 @@
 import React from "react";
-import { ChatService } from "../../services";
 import socketIOClient from "socket.io-client";
 
 const serverUrl = `${process.env.REACT_APP_SERVER}/`;
@@ -8,28 +7,25 @@ let socket;
 class Canvas extends React.Component {
   constructor(props) {
     super(props);
-
     socket = socketIOClient(serverUrl);
   }
 
   isPainting = false;
-  // Different stroke styles to be used for user and guest
-  userStrokeStyle = "#EE92C2";
+  userStrokeStyle = "#fff";
   guestStrokeStyle = "#F0C987";
   line = [];
-  // v4 creates a unique id for each user. We used this since there's no auth to tell users apart
-  prevPos = { offsetX: 0, offsetY: 0 };
+  prevPos = { pageX: 0, offsetY: 0 };
 
   onMouseDown = ({ nativeEvent }) => {
-    const { offsetX, offsetY } = nativeEvent;
+    const { pageX, offsetY } = nativeEvent;
     this.isPainting = true;
-    this.prevPos = { offsetX, offsetY };
+    this.prevPos = { pageX, offsetY };
   };
 
   onMouseMove = ({ nativeEvent }) => {
     if (this.isPainting) {
-      const { offsetX, offsetY } = nativeEvent;
-      const offSetData = { offsetX, offsetY };
+      const { pageX, offsetY } = nativeEvent;
+      const offSetData = { pageX, offsetY };
       // Set the start and stop position of the paint event.
       const positionData = {
         start: { ...this.prevPos },
@@ -44,20 +40,20 @@ class Canvas extends React.Component {
   endPaintEvent = () => {
     if (this.isPainting) {
       this.isPainting = false;
-      this.sendPaintData();
+      // this.sendPaintData();
     }
   };
 
   paint = (prevPos, currPos, strokeStyle) => {
-    const { offsetX, offsetY } = currPos;
-    const { offsetX: x, offsetY: y } = prevPos;
+    const { pageX, offsetY } = currPos;
+    const { pageX: x, offsetY: y } = prevPos;
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = strokeStyle;
     // Move the the prevPosition of the mouse
     this.ctx.moveTo(x, y);
     // Draw a line to the current position of the mouse
-    this.ctx.lineTo(offsetX, offsetY);
+    this.ctx.lineTo(pageX, offsetY);
     // Visualize the line using the strokeStyle
     this.ctx.stroke();
 
@@ -65,22 +61,18 @@ class Canvas extends React.Component {
       prevPos,
       currPos
     });
-    // ChatService.postPaint({
-    //   prevPos,
-    //   currPos
-    // });
 
-    this.prevPos = { offsetX, offsetY };
+    this.prevPos = { pageX, offsetY };
   };
 
-  async sendPaintData() {
-    const body = {
-      line: this.line
-    };
-    // ChatService.postPaint(body);
+  // async sendPaintData() {
+  //   const body = {
+  //     line: this.line
+  //   };
+  //   // ChatService.postPaint(body);
 
-    this.line = [];
-  }
+  //   this.line = [];
+  // }
 
   componentDidMount() {
     // Here we set up the properties of the canvas element.
@@ -93,28 +85,39 @@ class Canvas extends React.Component {
     this.ctx.strokeStyle = this.userStrokeStyle;
 
     socket.on("newDraw", ({ draw }) => {
-      console.log("w");
+      if (!draw) {
+        this.clearCanvas();
+        return;
+      }
       this.ctx.beginPath();
-      // line.forEach(l => {
-      this.ctx.lineTo(draw.prevPos.offsetX, draw.prevPos.offsetY);
-      this.ctx.lineTo(draw.currPos.offsetX, draw.currPos.offsetY);
-      this.ctx.stroke();
-      // });
+      this.ctx.lineTo(draw.prevPos.pageX, draw.prevPos.offsetY);
+      this.ctx.lineTo(draw.currPos.pageX, draw.currPos.offsetY);
       this.ctx.stroke();
     });
   }
 
+  clearCanvasRequest = () => {
+    socket.emit("clearDrawRequest");
+    this.clearCanvas();
+  };
+
+  clearCanvas = () => {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  };
+
   render() {
     return (
-      <canvas
-        // We use the ref attribute to get direct access to the canvas element.
-        ref={ref => (this.canvas = ref)}
-        style={{ background: "black" }}
-        onMouseDown={this.onMouseDown}
-        onMouseLeave={this.endPaintEvent}
-        onMouseUp={this.endPaintEvent}
-        onMouseMove={this.onMouseMove}
-      />
+      <>
+        <canvas
+          ref={ref => (this.canvas = ref)}
+          style={{ background: "black" }}
+          onMouseDown={this.onMouseDown}
+          onMouseLeave={this.endPaintEvent}
+          onMouseUp={this.endPaintEvent}
+          onMouseMove={this.onMouseMove}
+        />
+        <button onClick={this.clearCanvasRequest}>Clear</button>
+      </>
     );
   }
 }

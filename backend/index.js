@@ -52,6 +52,10 @@ connectDb().then(async () => {
       socket.on("sendNewDraw", draw => {
         socket.broadcast.emit("newDraw", { draw });
       });
+
+      socket.on("clearDrawRequest", () => {
+        socket.broadcast.emit("newDraw", { draw: null });
+      });
     });
   });
 });
