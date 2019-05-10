@@ -30,7 +30,7 @@ app.use("/todo", jwtValidate, require("./routes/todoRoutes"));
  * Add /game/chat routes
  * Require JWT token
  */
-app.use("/game/chat", jwtValidate, require("./routes/chatRoutes").router);
+app.use("/game", jwtValidate, require("./routes/gameRoutes"));
 
 /**
  * GET /
@@ -46,7 +46,7 @@ connectDb().then(() => {
       socket.emit("socketWorks", { horray: "Socket works" });
 
       /** Use chat sockets */
-      require("./routes/chatRoutes").sockets(socket);
+      require("./sockets/gameSockets")(socket, io);
     });
   });
 });

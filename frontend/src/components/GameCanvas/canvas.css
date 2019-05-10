@@ -1,3 +1,9 @@
+canvas.gameCanvas:hover {
+  cursor: none;
+}
+canvas.gameCanvas.drawerCanvas:hover {
+  cursor: auto;
+}
 button.canvas-clear-button {
   position: absolute;
   bottom: 25px;

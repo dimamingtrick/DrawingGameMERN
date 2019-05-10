@@ -23,7 +23,7 @@ router.get("/me", jwtValidate, async (req, res) => {
  */
 router.post("/login", async (req, res) => {
   const user = await User.findOne({
-    login: req.body.login
+    login: req.body.login,
   });
 
   if (!user) return res.status(404).json({ message: "User doesn't exist" });
@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, "ming_trick", {
-      expiresIn: "1h"
+      expiresIn: "1h",
     });
 
     const userData = user.toObject(); // Convert user into object to remove password before sending response
@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
 
     return res.json({
       user: userData,
-      token
+      token,
     });
   });
 });
@@ -62,14 +62,14 @@ router.post("/registration", async (req, res) => {
         ...(!email || (email && !validateEmail(email))
           ? { email: "Enter valid email" }
           : {}),
-        ...(!password ? { password: "Password is required" } : {})
-      }
+        ...(!password ? { password: "Password is required" } : {}),
+      },
     });
   }
 
   const [loginUniqueError, emailUniqueError] = await Promise.all([
     User.findOne({ login }),
-    User.findOne({ email })
+    User.findOne({ email }),
   ]);
 
   if (loginUniqueError)
@@ -91,21 +91,21 @@ router.post("/registration", async (req, res) => {
       email,
       password: hashedPassword,
       createdAt: new Date(),
-      role: "user"
+      role: "user",
     });
 
     const newUser = await user.save();
     const token = jwt.sign({ id: newUser._id }, "ming_trick", {
-      expiresIn: "1h"
+      expiresIn: "1h",
     });
 
     return res.json({
       user: {
         login: newUser.login,
         email: newUser.email,
-        createdAt: newUser.createdAt
+        createdAt: newUser.createdAt,
       },
-      token
+      token,
     });
   });
 });

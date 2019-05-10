@@ -4,11 +4,11 @@ import {
   InputGroup,
   Input,
   InputGroupAddon,
-  Spinner
+  Spinner,
 } from "reactstrap";
 import { IoMdSend } from "react-icons/io";
 
-function ChatInput({ inputMessage, handleInput, sendMessage, sending }) {
+const ChatInput = ({ inputMessage, handleInput, sendMessage, sending }) => {
   return (
     <InputGroup>
       <Input
@@ -31,6 +31,6 @@ function ChatInput({ inputMessage, handleInput, sendMessage, sending }) {
       </InputGroupAddon>
     </InputGroup>
   );
-}
+};
 
 export default ChatInput;

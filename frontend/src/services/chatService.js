@@ -4,7 +4,7 @@ class ChatService {
   getAllMessages() {
     return api({
       method: "GET",
-      url: "/game/chat"
+      url: "/game/chat",
     });
   }
 
@@ -12,15 +12,7 @@ class ChatService {
     return api({
       method: "POST",
       url: "/game/chat",
-      body: { message }
-    });
-  }
-
-  postPaint(draw) {
-    return api({
-      method: "POST",
-      url: "/game/chat/paint",
-      body: { draw }
+      body: { message },
     });
   }
 }

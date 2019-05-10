@@ -22,15 +22,16 @@ div#game-page-container > div.row {
   flex: 1;
   margin: 0;
   max-height: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
-div#game-page-container > div.row > div{
+div#game-page-container > div.row > div {
   display: flex;
   flex-direction: column;
   flex: 1;
   padding: 0;
-  max-height: 100%;
+  max-height: -webkit-fill-available;
 }
 
 div.game-card {
@@ -75,6 +76,7 @@ div.game-card.drawing-card {
   justify-content: center;
   padding: 0;
   max-height: 100%;
+  justify-content: flex-start;
 }
 
 
@@ -219,7 +221,7 @@ div.single-message.chat-message > div.message-wrapper > div.single-message-text 
 
 
 div.chatUserWinGameMessage {
-  justify-content: center;
+  justify-content: center!important;
 }
 div.chatUserWinGameMessage > div.message-wrapper {
   background: rgba(40, 167, 69, .5)!important;

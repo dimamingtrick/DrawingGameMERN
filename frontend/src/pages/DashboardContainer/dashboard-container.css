@@ -8,6 +8,7 @@
   flex-direction: column;
   flex: 1;
   position: relative;
+  max-width: 100%;
 }
 .dashboard-wrapper > div > div#game-page-container.container-fluid {
   display: flex;

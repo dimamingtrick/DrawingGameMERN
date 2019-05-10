@@ -3,7 +3,12 @@ import { Button } from "reactstrap";
 import "./canvas.css";
 import { socket } from "../../pages/DashboardContainer/DashboardContainer";
 
-class Canvas extends React.Component {
+/**
+ * Canvas Drawing component.
+ * Using sockets to emit and get drawings.
+ * Only admin can draw something.
+ */
+class GameCanvas extends React.Component {
   isPainting = false;
   userStrokeStyle = "#fff";
   guestStrokeStyle = "#F0C987";
@@ -27,7 +32,7 @@ class Canvas extends React.Component {
       // Set the start and stop position of the paint event.
       const positionData = {
         start: { ...this.prevPos },
-        stop: { ...offSetData }
+        stop: { ...offSetData },
       };
       // Add the position to the line array
       this.line = this.line.concat(positionData);
@@ -53,17 +58,21 @@ class Canvas extends React.Component {
     // Visualize the line using the strokeStyle
     this.ctx.stroke();
 
-    socket.emit("sendNewDraw", {
+    socket.emit("sendNewGameDraw", {
       prevPos,
-      currPos
+      currPos,
     });
 
     this.prevPos = { offsetX, offsetY };
   };
 
   componentDidMount() {
-    this.canvas.width = 1000;
-    this.canvas.height = 1000;
+    this.canvas.width = document.querySelector(
+      ".game-card.drawing-card.card.card-body"
+    ).offsetWidth;
+    this.canvas.height = document.querySelector(
+      ".dashboard-wrapper.container-fluid > div"
+    ).offsetHeight;
 
     this.ctx = this.canvas.getContext("2d");
     this.ctx.lineJoin = "round";
@@ -71,7 +80,7 @@ class Canvas extends React.Component {
     this.ctx.lineWidth = 5;
     this.ctx.strokeStyle = this.userStrokeStyle;
 
-    socket.on("newDraw", ({ draw }) => {
+    socket.on("newGameDraw", ({ draw }) => {
       if (!draw) {
         this.clearCanvas();
         return;
@@ -84,12 +93,12 @@ class Canvas extends React.Component {
   }
 
   componentWillUnmount() {
-    socket.off("newDraw");
+    socket.off("newGameDraw");
   }
 
   /** Send request to clear canvas to all users */
   clearCanvasRequest = () => {
-    socket.emit("clearDrawRequest");
+    socket.emit("clearGameDrawRequest");
     this.clearCanvas();
   };
 
@@ -99,11 +108,12 @@ class Canvas extends React.Component {
 
   render() {
     const {
-      user: { role }
+      user: { role },
     } = this.props;
     return (
       <>
         <canvas
+          className={`gameCanvas ${role === "admin" ? "drawerCanvas" : ""}`}
           ref={ref => (this.canvas = ref)}
           style={{ background: "#343a40" }}
           onMouseDown={this.onMouseDown}
@@ -125,4 +135,4 @@ class Canvas extends React.Component {
     );
   }
 }
-export default Canvas;
+export default GameCanvas;

@@ -1,31 +1,30 @@
 import React from "react";
 import moment from "moment";
 
-function SingleMessage({ message, userLogin }) {
+const SingleMessage = ({
+  message: { type, user, message, createdAt },
+  userLogin,
+}) => {
   return (
     <div
       className={`single-message ${
-        message.user === userLogin
-          ? "my-message"
-          : message.user === null
-          ? "chat-message"
-          : ""
-      } ${message.type === "join" ? "join-chat-message" : ""} ${
-        message.type === "chatUserWinGame" ? "chatUserWinGameMessage" : ""
+        user === userLogin ? "my-message" : user === null ? "chat-message" : ""
+      } ${type === "join" ? "join-chat-message" : ""} ${
+        type === "chatUserWinGame" ? "chatUserWinGameMessage" : ""
       }`}
     >
       <div className="message-wrapper">
-        {message.user !== userLogin ||
-          (message.type === "chatUserWinGame" && (
-            <div className="single-message-user">{message.user}</div>
+        {user !== userLogin ||
+          (type !== "chatUserWinGame" && (
+            <div className="single-message-user">{user}</div>
           ))}
-        <div className="single-message-text">{message.message}</div>
+        <div className="single-message-text">{message}</div>
         <div className="single-message-date">
-          {moment(message.createdAt).format("HH:mm:ss DD/MM/YYYY")}
+          {moment(createdAt).format("HH:mm:ss DD/MM/YYYY")}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default SingleMessage;
