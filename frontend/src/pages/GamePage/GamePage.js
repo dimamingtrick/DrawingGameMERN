@@ -1,23 +1,15 @@
 import React from "react";
 import { connect } from "react-redux";
-import {
-  Container,
-  Card,
-  Button,
-  Row,
-  Col,
-  InputGroup,
-  Input,
-  InputGroupAddon,
-  Spinner
-} from "reactstrap";
+import { Container, Card, Row, Col } from "reactstrap";
 import Canvas from "../../components/Canvas/Canvas";
 import { ChatService } from "../../services";
-import moment from "moment";
-import "./game-page.css";
-import { IoMdSend } from "react-icons/io";
-import chatbg from "../../assets/chatbg.png";
 import { socket } from "../DashboardContainer/DashboardContainer";
+import {
+  ChatMessagesContainer,
+  SingleMessage,
+  ChatInput
+} from "../../components/GameChat";
+import "./game-page.css";
 
 class GamePage extends React.Component {
   state = {
@@ -31,13 +23,17 @@ class GamePage extends React.Component {
     dashboardWrapper.scrollTop = 0;
     dashboardWrapper.style.overflowY = "hidden";
 
-    socket.emit("chatConnectRequest", { user: this.props.user.login });
-    socket.on("newMessage", this.setNewMessage);
     ChatService.getAllMessages().then(
       messages => {
-        this.setState({
-          messages
-        });
+        this.setState(
+          {
+            messages
+          },
+          () => {
+            socket.emit("chatConnectRequest", { user: this.props.user.login });
+            socket.on("newMessage", this.setNewMessage);
+          }
+        );
         this.scrollToChatBottom();
       },
       err => {
@@ -122,68 +118,6 @@ class GamePage extends React.Component {
       </Container>
     );
   }
-}
-
-function ChatMessagesContainer({ children }) {
-  return (
-    <div
-      className="chat-messages"
-      style={{
-        background: 'url("' + chatbg + '")'
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function SingleMessage({ message, userLogin }) {
-  return (
-    <div
-      className={`single-message ${
-        message.user === userLogin
-          ? "my-message"
-          : message.user === null
-          ? "chat-message"
-          : ""
-      } ${message.type === "join" ? "join-chat-message" : ""}`}
-    >
-      <div className="message-wrapper">
-        {message.user !== userLogin && (
-          <div className="single-message-user">{message.user}</div>
-        )}
-        <div className="single-message-text">{message.message}</div>
-        <div className="single-message-date">
-          {moment(message.createdAt).format("HH:mm:ss DD/MM/YYYY")}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ChatInput({ inputMessage, handleInput, sendMessage, sending }) {
-  return (
-    <InputGroup>
-      <Input
-        value={inputMessage}
-        onChange={handleInput}
-        className="chat-input"
-        placeholder="Message..."
-        onKeyDown={e => {
-          if (e.keyCode === 13) sendMessage();
-        }}
-      />
-      <InputGroupAddon addonType="append">
-        <Button
-          disabled={inputMessage === ""}
-          className="input-submit-btn"
-          onClick={sendMessage}
-        >
-          {sending ? <Spinner /> : <IoMdSend />}
-        </Button>
-      </InputGroupAddon>
-    </InputGroup>
-  );
 }
 
 export default connect(store => {

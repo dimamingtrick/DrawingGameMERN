@@ -3,7 +3,7 @@ div#game-page-container {
   padding: 0;
   display: flex;
   flex-direction: column;
-  border-radius: 5px;
+  border-radius: 2px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, .4);
   max-height: 100%;
@@ -214,4 +214,22 @@ div.single-message.chat-message > div.message-wrapper > div.single-message-text,
 }
 div.single-message.chat-message > div.message-wrapper > div.single-message-text {
   font-size: 12px;
+}
+
+
+
+div.chatUserWinGameMessage {
+  justify-content: center;
+}
+div.chatUserWinGameMessage > div.message-wrapper {
+  background: rgba(40, 167, 69, .5)!important;
+  border-radius: 10px!important;
+  margin: 15px 0;
+  width: 90%;
+  padding: 2px!important;
+}
+div.chatUserWinGameMessage > div.message-wrapper > div {
+  color: #fff!important;
+  text-align: center;
+  font-weight: bold;
 }

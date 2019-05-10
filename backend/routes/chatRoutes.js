@@ -23,6 +23,8 @@ router.post("/", async (req, res) => {
   if (!message)
     return res.status(400).json({ message: "Message text is required" });
 
+  const userWinTheGame = message === "tricking"; // check if user enter the right word
+
   const { login } = await User.findById(userId);
   const msg = new Chat({
     message,
@@ -34,6 +36,17 @@ router.post("/", async (req, res) => {
 
   const io = req.app.get("socketio");
   io.emit("newMessage", { newMessage });
+
+  if (userWinTheGame) {
+    const winMessage = new Chat({
+      message: `User ${login} guess the word "tricking"`,
+      user: login,
+      createdAt: new Date(),
+      type: "chatUserWinGame"
+    });
+    io.emit("newMessage", { newMessage: winMessage });
+    io.emit("newDraw", { draw: null });
+  }
 
   return res.json(newMessage);
 });
@@ -67,7 +80,8 @@ module.exports = {
         createdAt: new Date(),
         type: "join"
       });
-      socket.broadcast.emit("newMessage", { newMessage });
+
+      socket.emit("newMessage", { newMessage });
     });
 
     // When someone leaves /app/game page (componentUnmount hook)
