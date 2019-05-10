@@ -184,7 +184,7 @@ button.input-submit-btn > div {
 div.chat-messages > div.single-message.chat-message {
   justify-content: center;
   position: relative;
-  margin: 30px 0;
+  margin: 10px 0;
   opacity: 0;
   animation: fadeInAnimation .25s forwards;
 }

@@ -41,7 +41,7 @@ app.get("/", async (req, res) => {
 });
 
 connectDb().then(() => {
-  server.listen(3001, () => {
+  server.listen(3001, function() {
     io.on("connection", socket => {
       socket.emit("socketWorks", { horray: "Socket works" });
 

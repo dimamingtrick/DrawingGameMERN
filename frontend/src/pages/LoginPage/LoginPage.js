@@ -60,6 +60,9 @@ class LoginPage extends Component {
         login: this.state.login,
         password: this.state.password
       })
+      .then(res => {
+        this.props.history.push("/app/game");
+      })
       .catch(err => {
         this.setState({
           load: false,

@@ -8,18 +8,18 @@ class Canvas extends React.Component {
   userStrokeStyle = "#fff";
   guestStrokeStyle = "#F0C987";
   line = [];
-  prevPos = { pageX: 0, offsetY: 0 };
+  prevPos = { offsetX: 0, offsetY: 0 };
 
   onMouseDown = ({ nativeEvent }) => {
-    const { pageX, offsetY } = nativeEvent;
+    const { offsetX, offsetY } = nativeEvent;
     this.isPainting = true;
-    this.prevPos = { pageX, offsetY };
+    this.prevPos = { offsetX, offsetY };
   };
 
   onMouseMove = ({ nativeEvent }) => {
     if (this.isPainting) {
-      const { pageX, offsetY } = nativeEvent;
-      const offSetData = { pageX, offsetY };
+      const { offsetX, offsetY } = nativeEvent;
+      const offSetData = { offsetX, offsetY };
       // Set the start and stop position of the paint event.
       const positionData = {
         start: { ...this.prevPos },
@@ -36,15 +36,15 @@ class Canvas extends React.Component {
   };
 
   paint = (prevPos, currPos, strokeStyle) => {
-    const { pageX, offsetY } = currPos;
-    const { pageX: x, offsetY: y } = prevPos;
+    const { offsetX, offsetY } = currPos;
+    const { offsetX: x, offsetY: y } = prevPos;
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = strokeStyle;
     // Move the the prevPosition of the mouse
     this.ctx.moveTo(x, y);
     // Draw a line to the current position of the mouse
-    this.ctx.lineTo(pageX, offsetY);
+    this.ctx.lineTo(offsetX, offsetY);
     // Visualize the line using the strokeStyle
     this.ctx.stroke();
 
@@ -53,13 +53,10 @@ class Canvas extends React.Component {
       currPos
     });
 
-    this.prevPos = { pageX, offsetY };
+    this.prevPos = { offsetX, offsetY };
   };
 
   componentDidMount() {
-    // const drawingWrapper = document.querySelector(".game-card.drawing-card");
-    // this.canvas.width = drawingWrapper.offsetWidth;
-    // this.canvas.height = drawingWrapper.offsetHeight;
     this.canvas.width = 1000;
     this.canvas.height = 1000;
 
@@ -75,8 +72,8 @@ class Canvas extends React.Component {
         return;
       }
       this.ctx.beginPath();
-      this.ctx.lineTo(draw.prevPos.pageX, draw.prevPos.offsetY);
-      this.ctx.lineTo(draw.currPos.pageX, draw.currPos.offsetY);
+      this.ctx.lineTo(draw.prevPos.offsetX, draw.prevPos.offsetY);
+      this.ctx.lineTo(draw.currPos.offsetX, draw.currPos.offsetY);
       this.ctx.stroke();
     });
   }

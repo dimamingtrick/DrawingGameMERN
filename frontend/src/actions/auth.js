@@ -11,7 +11,9 @@ export const authenticate = () => async dispatch => {
   try {
     const { user } = await AuthService.authenticate();
     dispatch({ type: AUTH_SUCCESS, user });
-  } catch (err) {}
+  } catch (err) {
+    localStorage.removeItem("token");
+  }
 };
 
 export const login = userData => async dispatch => {
