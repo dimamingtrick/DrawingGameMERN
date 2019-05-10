@@ -1,0 +1,15 @@
+button.canvas-clear-button {
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  color: #fff;
+  border-color: #fff;
+}
+button.canvas-clear-button:hover {
+  color: #007bff;
+  background-color: #fff;
+  border-color: #fff;
+}
+button.canvas-clear-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255,255,255, .5);
+}

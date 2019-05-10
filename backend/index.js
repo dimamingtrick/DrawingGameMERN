@@ -10,6 +10,8 @@ const io = require("socket.io")(server);
 
 /** Add express body parser to convert request body params */
 app.use(express.json());
+
+/** Add socket.io object to every request by req.app.get("socketio") */
 app.set("socketio", io);
 
 /** Add cors to server */
@@ -28,7 +30,7 @@ app.use("/todo", jwtValidate, require("./routes/todoRoutes"));
  * Add /game/chat routes
  * Require JWT token
  */
-app.use("/game/chat", jwtValidate, require("./routes/chatRoutes"));
+app.use("/game/chat", jwtValidate, require("./routes/chatRoutes").router);
 
 /**
  * GET /
@@ -38,24 +40,13 @@ app.get("/", async (req, res) => {
   return res.send("Good game");
 });
 
-connectDb().then(async () => {
-  // if (eraseDatabaseOnSync) {
-  //   const mongoose = require("mongoose");
-  //   createUsersWithMessages();
-  // }
+connectDb().then(() => {
   server.listen(3001, () => {
-    console.log("Example app listening on port 3001!");
-
-    io.on("connection", function(socket) {
+    io.on("connection", socket => {
       socket.emit("socketWorks", { horray: "Socket works" });
 
-      socket.on("sendNewDraw", draw => {
-        socket.broadcast.emit("newDraw", { draw });
-      });
-
-      socket.on("clearDrawRequest", () => {
-        socket.broadcast.emit("newDraw", { draw: null });
-      });
+      /** Use chat sockets */
+      require("./routes/chatRoutes").sockets(socket);
     });
   });
 });

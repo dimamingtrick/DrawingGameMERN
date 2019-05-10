@@ -73,6 +73,7 @@ div.game-card {
 
 div.game-card.drawing-card {
   justify-content: center;
+  padding: 0;
 }
 
 

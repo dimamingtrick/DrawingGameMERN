@@ -39,9 +39,22 @@ router.post("/", async (req, res) => {
 
 router.post("/paint", async (req, res) => {
   const { draw } = req.body;
-  console.log(req.body);
   const io = req.app.get("socketio");
   io.emit("newDraw", { draw });
 });
 
-module.exports = router;
+/**
+ * Exporting routes and sockets function
+ */
+module.exports = {
+  router,
+  sockets: socket => {
+    socket.on("sendNewDraw", draw => {
+      socket.broadcast.emit("newDraw", { draw });
+    });
+
+    socket.on("clearDrawRequest", () => {
+      socket.broadcast.emit("newDraw", { draw: null });
+    });
+  }
+};

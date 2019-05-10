@@ -1,5 +1,7 @@
 import React from "react";
+import { Button } from "reactstrap";
 import socketIOClient from "socket.io-client";
+import "./canvas.css";
 
 const serverUrl = `${process.env.REACT_APP_SERVER}/`;
 let socket;
@@ -75,9 +77,10 @@ class Canvas extends React.Component {
   // }
 
   componentDidMount() {
-    // Here we set up the properties of the canvas element.
-    this.canvas.width = 1000;
-    this.canvas.height = 800;
+    const drawingWrapper = document.querySelector(".game-card.drawing-card");
+    this.canvas.width = drawingWrapper.offsetWidth;
+    this.canvas.height = drawingWrapper.offsetHeight;
+
     this.ctx = this.canvas.getContext("2d");
     this.ctx.lineJoin = "round";
     this.ctx.lineCap = "round";
@@ -116,7 +119,14 @@ class Canvas extends React.Component {
           onMouseUp={this.endPaintEvent}
           onMouseMove={this.onMouseMove}
         />
-        <button onClick={this.clearCanvasRequest}>Clear</button>
+        <Button
+          className="canvas-clear-button"
+          onClick={this.clearCanvasRequest}
+          outline
+          color="primary"
+        >
+          Clear
+        </Button>{" "}
       </>
     );
   }
