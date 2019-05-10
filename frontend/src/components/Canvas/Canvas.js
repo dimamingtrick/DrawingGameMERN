@@ -11,12 +11,16 @@ class Canvas extends React.Component {
   prevPos = { offsetX: 0, offsetY: 0 };
 
   onMouseDown = ({ nativeEvent }) => {
+    if (this.props.user.role !== "admin") return;
+
     const { offsetX, offsetY } = nativeEvent;
     this.isPainting = true;
     this.prevPos = { offsetX, offsetY };
   };
 
   onMouseMove = ({ nativeEvent }) => {
+    if (this.props.user.role !== "admin") return;
+
     if (this.isPainting) {
       const { offsetX, offsetY } = nativeEvent;
       const offSetData = { offsetX, offsetY };
@@ -32,6 +36,7 @@ class Canvas extends React.Component {
   };
 
   endPaintEvent = () => {
+    if (this.props.user.role !== "admin") return;
     if (this.isPainting) this.isPainting = false;
   };
 
@@ -93,24 +98,29 @@ class Canvas extends React.Component {
   };
 
   render() {
+    const {
+      user: { role }
+    } = this.props;
     return (
       <>
         <canvas
           ref={ref => (this.canvas = ref)}
-          style={{ background: "black" }}
+          style={{ background: "#343a40" }}
           onMouseDown={this.onMouseDown}
           onMouseLeave={this.endPaintEvent}
           onMouseUp={this.endPaintEvent}
           onMouseMove={this.onMouseMove}
         />
-        <Button
-          className="canvas-clear-button"
-          onClick={this.clearCanvasRequest}
-          outline
-          color="primary"
-        >
-          Clear
-        </Button>{" "}
+        {role === "admin" && (
+          <Button
+            className="canvas-clear-button"
+            onClick={this.clearCanvasRequest}
+            outline
+            color="primary"
+          >
+            Clear
+          </Button>
+        )}
       </>
     );
   }

@@ -95,7 +95,7 @@ class GamePage extends React.Component {
         <Row>
           <Col xs={6} sm={8}>
             <Card body className="game-card drawing-card">
-              <Canvas />
+              <Canvas user={user} />
             </Card>
           </Col>
 

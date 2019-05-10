@@ -55,7 +55,7 @@ class RegistrationPage extends Component {
 
     this.props.registrate(this.state.form).then(
       res => {
-        this.props.history.push("/app");
+        this.props.history.push("/app/game");
       },
       errors => {
         this.setState({

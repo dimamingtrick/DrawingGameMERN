@@ -90,7 +90,8 @@ router.post("/registration", async (req, res) => {
       login,
       email,
       password: hashedPassword,
-      createdAt: new Date()
+      createdAt: new Date(),
+      role: "user"
     });
 
     const newUser = await user.save();
