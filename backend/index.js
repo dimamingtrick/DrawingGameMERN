@@ -48,6 +48,10 @@ connectDb().then(async () => {
 
     io.on("connection", function(socket) {
       socket.emit("socketWorks", { horray: "Socket works" });
+
+      socket.on("sendNewDraw", draw => {
+        socket.broadcast.emit("newDraw", { draw });
+      });
     });
   });
 });

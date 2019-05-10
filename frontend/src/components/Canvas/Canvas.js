@@ -40,12 +40,14 @@ class Canvas extends React.Component {
       this.paint(this.prevPos, offSetData, this.userStrokeStyle);
     }
   };
+
   endPaintEvent = () => {
     if (this.isPainting) {
       this.isPainting = false;
       this.sendPaintData();
     }
   };
+
   paint = (prevPos, currPos, strokeStyle) => {
     const { offsetX, offsetY } = currPos;
     const { offsetX: x, offsetY: y } = prevPos;
@@ -58,25 +60,25 @@ class Canvas extends React.Component {
     this.ctx.lineTo(offsetX, offsetY);
     // Visualize the line using the strokeStyle
     this.ctx.stroke();
+
+    socket.emit("sendNewDraw", {
+      prevPos,
+      currPos
+    });
+    // ChatService.postPaint({
+    //   prevPos,
+    //   currPos
+    // });
+
     this.prevPos = { offsetX, offsetY };
-    console.log(this.prevPos);
-    ChatService.getPain(this.prevPos);
   };
 
   async sendPaintData() {
     const body = {
       line: this.line
     };
-    console.log(this.line);
-    // We use the native fetch API to make requests to the server
-    // const req = await fetch("http://localhost:4000/paint", {
-    //   method: "post",
-    //   body: JSON.stringify(body),
-    //   headers: {
-    //     "content-type": "application/json"
-    //   }
-    // });
-    // const res = await req.json();
+    // ChatService.postPaint(body);
+
     this.line = [];
   }
 
@@ -88,9 +90,17 @@ class Canvas extends React.Component {
     this.ctx.lineJoin = "round";
     this.ctx.lineCap = "round";
     this.ctx.lineWidth = 5;
+    this.ctx.strokeStyle = this.userStrokeStyle;
 
-    socket.on("newDraw", draw => {
-      console.log(draw);
+    socket.on("newDraw", ({ draw }) => {
+      console.log("w");
+      this.ctx.beginPath();
+      // line.forEach(l => {
+      this.ctx.lineTo(draw.prevPos.offsetX, draw.prevPos.offsetY);
+      this.ctx.lineTo(draw.currPos.offsetX, draw.currPos.offsetY);
+      this.ctx.stroke();
+      // });
+      this.ctx.stroke();
     });
   }
 

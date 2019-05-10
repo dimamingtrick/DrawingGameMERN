@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
 
 router.post("/paint", async (req, res) => {
   const { draw } = req.body;
-
+  console.log(req.body);
   const io = req.app.get("socketio");
   io.emit("newDraw", { draw });
 });

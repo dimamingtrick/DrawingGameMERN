@@ -16,11 +16,11 @@ class ChatService {
     });
   }
 
-  getPain(message) {
+  postPaint(draw) {
     return api({
       method: "POST",
       url: "/game/chat/paint",
-      body: { message }
+      body: { draw }
     });
   }
 }
