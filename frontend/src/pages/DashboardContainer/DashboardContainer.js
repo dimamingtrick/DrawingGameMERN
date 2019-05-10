@@ -7,6 +7,10 @@ import AboutPage from "../AboutPage/AboutPage";
 import ToDoListPage from "../ToDoListPage/ToDoListPage";
 import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 import "./dashboard-container.css";
+import socketIOClient from "socket.io-client";
+
+let socket = null;
+const serverUrl = `${process.env.REACT_APP_SERVER}/`;
 
 const routes = ["/app", "/app/game", "/app/about", "/app/todolist"];
 let routeKey; // Define key to have transition only between 3 routes, declared below inside switch
@@ -14,6 +18,13 @@ let routeKey; // Define key to have transition only between 3 routes, declared b
 const DashboardContainer = ({ isLoggedIn, location }) => {
   if (!isLoggedIn) return <Redirect to="/auth" />;
 
+  /** Connecting to socket */
+  if (!socket) {
+    socket = socketIOClient(serverUrl);
+    socket.on("socketWorks", ({ horray }) => console.log(horray)); // Check if socket works
+  }
+
+  /** Searching for key in routes array */
   routeKey = routes.find(
     i =>
       i === location.pathname || (location.pathname.includes(i) && i !== "/app")
@@ -39,4 +50,5 @@ const DashboardContainer = ({ isLoggedIn, location }) => {
   );
 };
 
+export { socket };
 export default DashboardContainer;

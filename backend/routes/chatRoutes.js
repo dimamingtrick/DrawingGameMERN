@@ -27,7 +27,8 @@ router.post("/", async (req, res) => {
   const msg = new Chat({
     message,
     user: login,
-    createdAt: new Date()
+    createdAt: new Date(),
+    type: "message"
   });
   const newMessage = await msg.save();
 
@@ -37,11 +38,11 @@ router.post("/", async (req, res) => {
   return res.json(newMessage);
 });
 
-router.post("/paint", async (req, res) => {
-  const { draw } = req.body;
-  const io = req.app.get("socketio");
-  io.emit("newDraw", { draw });
-});
+// router.post("/paint", async (req, res) => {
+//   const { draw } = req.body;
+//   const io = req.app.get("socketio");
+//   io.emit("newDraw", { draw });
+// });
 
 /**
  * Exporting routes and sockets function
@@ -54,6 +55,32 @@ module.exports = {
     });
 
     socket.on("clearDrawRequest", () => {
+      socket.broadcast.emit("newDraw", { draw: null });
+    });
+
+    // When someone connects /app/game page (componentDidMount hook)
+    socket.on("chatConnectRequest", ({ user }) => {
+      // create and send new message object but not save it to database
+      const newMessage = new Chat({
+        message: `User ${user} joins a chat`,
+        user: null,
+        createdAt: new Date(),
+        type: "join"
+      });
+      socket.broadcast.emit("newMessage", { newMessage });
+    });
+
+    // When someone leaves /app/game page (componentUnmount hook)
+    socket.on("chatDisconnectRequest", ({ user }) => {
+      // create and send new message object but not save it to database
+      const newMessage = new Chat({
+        message: `User ${user} leaves a chat`,
+        user: null,
+        createdAt: new Date(),
+        type: "leave"
+      });
+
+      socket.broadcast.emit("newMessage", { newMessage });
       socket.broadcast.emit("newDraw", { draw: null });
     });
   }

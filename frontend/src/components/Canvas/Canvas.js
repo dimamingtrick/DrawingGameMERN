@@ -1,17 +1,9 @@
 import React from "react";
 import { Button } from "reactstrap";
-import socketIOClient from "socket.io-client";
 import "./canvas.css";
-
-const serverUrl = `${process.env.REACT_APP_SERVER}/`;
-let socket;
+import { socket } from "../../pages/DashboardContainer/DashboardContainer";
 
 class Canvas extends React.Component {
-  constructor(props) {
-    super(props);
-    socket = socketIOClient(serverUrl);
-  }
-
   isPainting = false;
   userStrokeStyle = "#fff";
   guestStrokeStyle = "#F0C987";
@@ -40,10 +32,7 @@ class Canvas extends React.Component {
   };
 
   endPaintEvent = () => {
-    if (this.isPainting) {
-      this.isPainting = false;
-      // this.sendPaintData();
-    }
+    if (this.isPainting) this.isPainting = false;
   };
 
   paint = (prevPos, currPos, strokeStyle) => {
@@ -67,19 +56,12 @@ class Canvas extends React.Component {
     this.prevPos = { pageX, offsetY };
   };
 
-  // async sendPaintData() {
-  //   const body = {
-  //     line: this.line
-  //   };
-  //   // ChatService.postPaint(body);
-
-  //   this.line = [];
-  // }
-
   componentDidMount() {
-    const drawingWrapper = document.querySelector(".game-card.drawing-card");
-    this.canvas.width = drawingWrapper.offsetWidth;
-    this.canvas.height = drawingWrapper.offsetHeight;
+    // const drawingWrapper = document.querySelector(".game-card.drawing-card");
+    // this.canvas.width = drawingWrapper.offsetWidth;
+    // this.canvas.height = drawingWrapper.offsetHeight;
+    this.canvas.width = 1000;
+    this.canvas.height = 1000;
 
     this.ctx = this.canvas.getContext("2d");
     this.ctx.lineJoin = "round";
@@ -99,6 +81,11 @@ class Canvas extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    socket.off("newDraw");
+  }
+
+  /** Send request to clear canvas to all users */
   clearCanvasRequest = () => {
     socket.emit("clearDrawRequest");
     this.clearCanvas();

@@ -9,6 +9,9 @@ const chatSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date
+  },
+  type: {
+    type: "string" || null
   }
 });
 

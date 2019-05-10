@@ -17,29 +17,21 @@ import moment from "moment";
 import "./game-page.css";
 import { IoMdSend } from "react-icons/io";
 import chatbg from "../../assets/chatbg.png";
-import socketIOClient from "socket.io-client";
-
-const serverUrl = `${process.env.REACT_APP_SERVER}/`;
-let socket;
+import { socket } from "../DashboardContainer/DashboardContainer";
 
 class GamePage extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      messages: [],
-      inputMessage: "",
-      sending: false
-    };
-    socket = socketIOClient(serverUrl);
-  }
+  state = {
+    messages: [],
+    inputMessage: "",
+    sending: false
+  };
 
   componentDidMount() {
     const dashboardWrapper = document.querySelector("div.dashboard-wrapper"); // Disable container vertical scrolling and set scroll position to 0
     dashboardWrapper.scrollTop = 0;
     dashboardWrapper.style.overflowY = "hidden";
 
-    socket.on("socketWorks", ({ horray }) => console.log(horray)); // Check if socket works
+    socket.emit("chatConnectRequest", { user: this.props.user.login });
     socket.on("newMessage", this.setNewMessage);
     ChatService.getAllMessages().then(
       messages => {
@@ -55,19 +47,16 @@ class GamePage extends React.Component {
   }
 
   componentWillUnmount() {
+    socket.off("newDraw");
     socket.off("newMessage");
+    socket.emit("chatDisconnectRequest", { user: this.props.user.login });
     document.querySelector("div.dashboard-wrapper").style.overflowY = "auto"; // Enable container vertical scrolling
   }
 
   setNewMessage = ({ newMessage }) => {
-    this.setState(
-      {
-        messages: [...this.state.messages, newMessage]
-      },
-      () => {
-        this.scrollToChatBottom();
-      }
-    );
+    this.setState({ messages: [...this.state.messages, newMessage] }, () => {
+      this.scrollToChatBottom();
+    });
   };
 
   scrollToChatBottom = () => {
@@ -113,9 +102,9 @@ class GamePage extends React.Component {
           <Col xs={6} md={4}>
             <Card body className="game-card chat-card">
               <ChatMessagesContainer>
-                {messages.map(msg => (
+                {messages.map((msg, index) => (
                   <SingleMessage
-                    key={msg._id}
+                    key={msg._id ? msg._id : "otherType-" + index}
                     message={msg}
                     userLogin={user.login}
                   />
@@ -152,8 +141,12 @@ function SingleMessage({ message, userLogin }) {
   return (
     <div
       className={`single-message ${
-        message.user === userLogin ? "my-message" : ""
-      }`}
+        message.user === userLogin
+          ? "my-message"
+          : message.user === null
+          ? "chat-message"
+          : ""
+      } ${message.type === "join" ? "join-chat-message" : ""}`}
     >
       <div className="message-wrapper">
         {message.user !== userLogin && (
@@ -193,11 +186,8 @@ function ChatInput({ inputMessage, handleInput, sendMessage, sending }) {
   );
 }
 
-export default connect(
-  store => {
-    return {
-      user: store.auth.user
-    };
-  },
-  {}
-)(GamePage);
+export default connect(store => {
+  return {
+    user: store.auth.user
+  };
+})(GamePage);
