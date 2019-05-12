@@ -14,17 +14,6 @@ router.get("/", async (req, res) => {
 });
 
 /**
- * GET /game/words/:id
- * returns single user todo by id
- */
-router.get("/:id", async (req, res) => {
-  const gameWord = await GameWords.findOne({
-    _id: objectId(req.params.id),
-  });
-  return res.json(gameWord);
-});
-
-/**
  * POST /game/words
  * add new game word
  */

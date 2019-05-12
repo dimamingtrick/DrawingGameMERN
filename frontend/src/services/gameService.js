@@ -5,10 +5,6 @@ class GameService {
     return api({ method: "GET", url: "/game/words" });
   }
 
-  getSingleGameWordById(id) {
-    return api({ method: "GET", url: "/game/words" + id });
-  }
-
   addNewGameWord(data) {
     return api({ method: "POST", url: "/game/words", body: data });
   }
