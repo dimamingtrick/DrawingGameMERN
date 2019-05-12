@@ -1,36 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Container } from "reactstrap";
 import api from "../../services/api";
 
-export default class AboutPage extends React.Component {
+const AboutPage = () => {
+  const [load, setLoad] = useState(true);
 
-  state = {
-    load: true
-  }
+  const fetchData = () => {
+    api({ method: "GET", url: "/" }).then(res => {
+      setTimeout(() => {
+        setLoad(false);
+      }, 300);
+    });
+  };
 
-  _ismounted = true;
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  componentDidMount() {
-    api({ method: "GET", url: "/about-info" }).then(res => {
-      if (this._ismounted)
-        this.setState({ load: false, message: res.message })
-    })
-  }
+  if (load) return <h1>LOADING...</h1>;
 
-  componentWillUnmount() {
-    this._ismounted = false;
-  }
+  return (
+    <Container>
+      <h1>About page</h1>
+      <h3>{`Load state with hooks is - ${load}`}</h3>
+    </Container>
+  );
+};
 
-  render() {
-    if (this.state.load)
-      return (
-        <h1>LOADING...</h1>
-      );
-
-    return (
-      <React.Fragment>
-        <h1>About page</h1>
-        <h3>{this.state.message}</h3>
-      </React.Fragment>
-    );
-  }
-}
+export default AboutPage;

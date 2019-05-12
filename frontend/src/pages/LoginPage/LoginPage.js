@@ -9,7 +9,7 @@ import {
   Input,
   Spinner,
   FormText,
-  Container
+  Container,
 } from "reactstrap";
 import { login } from "../../actions/auth";
 
@@ -23,13 +23,13 @@ class LoginPage extends Component {
       password: "",
       passwordError: "",
       authError: "",
-      load: false
+      load: false,
     };
   }
 
   handleInput = e => {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -40,7 +40,7 @@ class LoginPage extends Component {
       ...(login === "" ? { loginError: "Login is required" } : {}),
       ...(password === ""
         ? { passwordError: "Password length must be at least 5" }
-        : {})
+        : {}),
     };
 
     if (Object.keys(errors).length > 0) {
@@ -52,13 +52,13 @@ class LoginPage extends Component {
       load: true,
       ...(this.state.loginError !== "" ? { loginError: "" } : {}),
       ...(this.state.passwordError !== "" ? { passwordError: "" } : {}),
-      ...(this.state.authError !== "" ? { authError: "" } : {})
+      ...(this.state.authError !== "" ? { authError: "" } : {}),
     });
 
     this.props
       .login({
         login: this.state.login,
-        password: this.state.password
+        password: this.state.password,
       })
       .then(res => {
         this.props.history.push("/app/game");
@@ -66,7 +66,7 @@ class LoginPage extends Component {
       .catch(err => {
         this.setState({
           load: false,
-          authError: err
+          authError: err,
         });
       });
   };
@@ -78,7 +78,7 @@ class LoginPage extends Component {
       load,
       loginError,
       passwordError,
-      authError
+      authError,
     } = this.state;
     return (
       <Container className="auth-page-container">
@@ -138,7 +138,7 @@ class LoginPage extends Component {
                   onClick={this.login}
                   style={{
                     width: 200,
-                    height: 50
+                    height: 50,
                   }}
                 >
                   {load ? <Spinner /> : "Submit"}

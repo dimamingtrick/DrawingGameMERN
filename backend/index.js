@@ -37,7 +37,7 @@ app.use("/game", jwtValidate, require("./routes/gameRoutes"));
  * Basic default route to initiate server
  */
 app.get("/", async (req, res) => {
-  return res.send("Good game");
+  return res.json("Good game");
 });
 
 connectDb().then(() => {
