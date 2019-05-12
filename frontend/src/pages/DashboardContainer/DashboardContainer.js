@@ -1,10 +1,12 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import HomePage from "../HomePage/HomePage";
 import GamePage from "../GamePage/GamePage";
 import AboutPage from "../AboutPage/AboutPage";
 import ToDoListPage from "../ToDoListPage/ToDoListPage";
+import GameWords from "../GameWords/GameWords";
 import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 import "./dashboard-container.css";
 import socketIOClient from "socket.io-client";
@@ -15,7 +17,7 @@ const serverUrl = `${process.env.REACT_APP_SERVER}/`;
 const routes = ["/app", "/app/game", "/app/about", "/app/todolist"];
 let routeKey; // Define key to have transition only between 3 routes, declared below inside switch
 
-const DashboardContainer = ({ isLoggedIn, location }) => {
+const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
   if (!isLoggedIn) return <Redirect to="/auth" />;
 
   /** Connecting to socket */
@@ -41,6 +43,12 @@ const DashboardContainer = ({ isLoggedIn, location }) => {
               <Route path="/app/game" component={GamePage} />
               <Route path="/app/about" component={AboutPage} />
               <Route path="/app/todolist" component={ToDoListPage} />
+              <Route
+                path="/app/game-words"
+                render={navProps =>
+                  userRole === "admin" ? <GameWords /> : <Redirect to="/" />
+                }
+              />
               <Route render={() => <Redirect to="/" />} />
             </Switch>
           </CSSTransition>
@@ -51,4 +59,9 @@ const DashboardContainer = ({ isLoggedIn, location }) => {
 };
 
 export { socket };
-export default DashboardContainer;
+export default connect(store => {
+  return {
+    isLoggedIn: store.auth.isLoggedIn,
+    userRole: store.auth.user.role,
+  };
+})(DashboardContainer);

@@ -24,12 +24,7 @@ const Root = ({ isLoggedIn, authenticate }) => {
     <div className="App">
       <Switch>
         <Redirect exact from="/" to={isLoggedIn ? "/app" : "/auth"} />
-        <Route
-          path="/app"
-          children={props => (
-            <DashboardContainer {...props} isLoggedIn={isLoggedIn} />
-          )}
-        />
+        <Route path="/app" component={DashboardContainer} />
         <Route
           path="/auth"
           children={props => (

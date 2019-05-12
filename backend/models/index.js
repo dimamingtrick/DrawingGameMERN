@@ -4,6 +4,7 @@ import User from "./userModel";
 import Todo from "./todoModel";
 import Chat from "./chatModel";
 import GameSettings from "./gameSettingsModel";
+import GameWords from "./GameWords";
 
 const connectDb = () => {
   return mongoose.connect(
@@ -11,6 +12,6 @@ const connectDb = () => {
   );
 };
 
-export { User, Todo, Chat, GameSettings };
+export { User, Todo, Chat, GameSettings, GameWords };
 
 export default connectDb;

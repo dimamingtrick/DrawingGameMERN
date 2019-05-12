@@ -104,7 +104,7 @@ module.exports = (socket, io) => {
         },
         { new: true }, // Pass this to return updated object (by default returns old one)
         (err, { word }) => {
-          console.log("11111111111111", word);
+          console.log("@@@@@@@@@@", word);
           socket.emit("newGameDraw", { draw: null });
           socket.emit("gameLoadingStop");
         }

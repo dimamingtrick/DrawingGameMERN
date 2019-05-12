@@ -41,6 +41,13 @@ const DashboardNavbar = ({ user, logout }) => {
               Game
             </Link>
           </NavItem>
+          {user.role === "admin" && (
+            <NavItem>
+              <Link className="nav-link" to="/app/game-words">
+                Game Words
+              </Link>
+            </NavItem>
+          )}
           <NavItem>
             <Link className="nav-link" to="/app/about">
               About

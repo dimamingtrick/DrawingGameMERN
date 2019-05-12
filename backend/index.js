@@ -33,6 +33,12 @@ app.use("/todo", jwtValidate, require("./routes/todoRoutes"));
 app.use("/game", jwtValidate, require("./routes/gameRoutes"));
 
 /**
+ * Add /game/words routes
+ * Require JWT token and admin permission roles
+ */
+app.use("/game/words", jwtValidate, require("./routes/gameWordsRoutes"));
+
+/**
  * GET /
  * Basic default route to initiate server
  */

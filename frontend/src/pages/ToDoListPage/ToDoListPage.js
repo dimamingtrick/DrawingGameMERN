@@ -7,10 +7,10 @@ import SingleTodoPage from "../SingleTodoPage/SingleTodoPage";
 import { Fade } from "../../components/Animations/RoutingAnimationTransitions";
 import { TodoItem, ConfirmTodoDeleteModal } from "../../components/TodoList";
 import { getAllTodos, deleteTodo } from "../../actions/todos";
-import { todoListPageHook } from "../../hooks";
+import { mainStateHook } from "../../hooks";
 
 const ToDoListPage = ({ getAllTodos, todoList, deleteTodo, history }) => {
-  const [state, setState] = todoListPageHook({
+  const [state, setState] = mainStateHook({
     load: true,
     isDeleting: false,
     confirmModalIsOpen: false,
