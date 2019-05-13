@@ -8,7 +8,7 @@ module.exports = (socket, io) => {
    */
   socket.on("getNewGameWordToGuess", async () => {
     const { word } = await GameWords.findOne({ selectedToGuess: true });
-    socket.emit("newGameWordToGuess", { word });
+    io.emit("newGameWordToGuess", { word });
   });
 
   /**
@@ -119,8 +119,8 @@ module.exports = (socket, io) => {
             { new: true },
             (newWordError, { word: newWordToGuessObject }) => {
               console.log("@@@@@@@@@@ new word is - ", newWordToGuessObject);
-              socket.emit("newGameWordToGuess", { word: newWordToGuessObject });
-              socket.emit("newGameDraw", { draw: null });
+              io.emit("newGameWordToGuess", { word: newWordToGuessObject });
+              io.emit("newGameDraw", { draw: null });
               socket.emit("gameLoadingStop");
             }
           );

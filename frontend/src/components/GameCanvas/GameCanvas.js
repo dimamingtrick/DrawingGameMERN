@@ -9,15 +9,14 @@ import { socket } from "../../pages/DashboardContainer/DashboardContainer";
  * Only admin can draw something.
  */
 class GameCanvas extends React.Component {
-  isPainting = false;
-  userStrokeStyle = "#fff";
-  guestStrokeStyle = "#F0C987";
-  line = [];
-  prevPos = { offsetX: 0, offsetY: 0 };
-
   state = {
+    userStrokeStyle: "#fff",
     wordToGuess: ""
   };
+
+  isPainting = false;
+  line = [];
+  prevPos = { offsetX: 0, offsetY: 0 };
 
   onMouseDown = ({ nativeEvent }) => {
     if (this.props.user.role !== "admin") return;
@@ -39,8 +38,8 @@ class GameCanvas extends React.Component {
         stop: { ...offSetData }
       };
       // Add the position to the line array
-      this.line = this.line.concat(positionData);
-      this.paint(this.prevPos, offSetData, this.userStrokeStyle);
+      this.line = [...this.line, positionData];
+      this.paint(this.prevPos, offSetData, this.state.userStrokeStyle);
     }
   };
 
@@ -62,18 +61,13 @@ class GameCanvas extends React.Component {
     // Visualize the line using the strokeStyle
     this.ctx.stroke();
 
-    socket.emit("sendNewGameDraw", {
-      prevPos,
-      currPos
-    });
+    socket.emit("sendNewGameDraw", this.line);
 
     this.prevPos = { offsetX, offsetY };
   };
 
   componentDidMount() {
-    if (this.props.user.role === "admin") {
-      socket.emit("getNewGameWordToGuess");
-    }
+    if (this.props.user.role === "admin") socket.emit("getNewGameWordToGuess");
 
     this.canvas.width = document.querySelector(
       ".game-card.drawing-card.card.card-body"
@@ -86,16 +80,16 @@ class GameCanvas extends React.Component {
     this.ctx.lineJoin = "round";
     this.ctx.lineCap = "round";
     this.ctx.lineWidth = 5;
-    this.ctx.strokeStyle = this.userStrokeStyle;
+    this.ctx.strokeStyle = this.state.userStrokeStyle;
 
     socket.on("newGameDraw", ({ draw }) => {
-      if (!draw) {
-        this.clearCanvas();
-        return;
-      }
+      if (!draw) return this.clearCanvas();
+
       this.ctx.beginPath();
-      this.ctx.lineTo(draw.prevPos.offsetX, draw.prevPos.offsetY);
-      this.ctx.lineTo(draw.currPos.offsetX, draw.currPos.offsetY);
+      draw.forEach(d => {
+        this.ctx.lineTo(d.start.offsetX, d.start.offsetY);
+        this.ctx.lineTo(d.stop.offsetX, d.stop.offsetY);
+      });
       this.ctx.stroke();
     });
 
@@ -108,6 +102,7 @@ class GameCanvas extends React.Component {
 
   componentWillUnmount() {
     socket.off("newGameDraw");
+    socket.off("newGameWordToGuess");
   }
 
   /** Send request to clear canvas to all users */
@@ -118,6 +113,7 @@ class GameCanvas extends React.Component {
 
   clearCanvas = () => {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.line = [];
   };
 
   render() {
@@ -135,9 +131,11 @@ class GameCanvas extends React.Component {
           onMouseUp={this.endPaintEvent}
           onMouseMove={this.onMouseMove}
         />
-        <Alert className="word-to-guess-alert" color="info">
-          Word to guess is <span>"{this.state.wordToGuess}"</span>
-        </Alert>
+        {role === "admin" && (
+          <Alert className="word-to-guess-alert" color="info">
+            Word to guess is <span>"{this.state.wordToGuess}"</span>
+          </Alert>
+        )}
         {role === "admin" && (
           <Button
             className="canvas-clear-button"
