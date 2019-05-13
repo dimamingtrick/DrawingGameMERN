@@ -4,23 +4,31 @@ class AuthService {
   authenticate() {
     return api({
       method: "GET",
-      url: "/me",
+      url: "/me"
     });
   }
 
-  login(userData) {
+  login(body) {
     return api({
       method: "POST",
       url: "/login",
-      body: userData,
+      body
     });
   }
 
-  registrate(form) {
+  registrate(body) {
     return api({
       method: "POST",
       url: "/registration",
-      body: form,
+      body
+    });
+  }
+
+  updateProfile(body) {
+    return api({
+      method: "PUT",
+      url: "/profile",
+      body
     });
   }
 }

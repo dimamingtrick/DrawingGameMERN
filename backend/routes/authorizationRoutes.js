@@ -108,4 +108,6 @@ router.post("/registration", async (req, res) => {
   });
 });
 
+router.put("/profile", async (req, res) => {});
+
 module.exports = router;

@@ -1,11 +1,15 @@
 import React from "react";
 import { connect } from "react-redux";
+import { mainStateHook } from "../../hooks";
+import { updateProfile } from "../../actions/auth";
 import { Container, Row, Col } from "reactstrap";
 import defaultAvatar from "../../assets/defaultAvatar.png";
 import moment from "moment";
 import "./userProfile.css";
 
 const UserProfile = ({ user }) => {
+  const [state, setState] = mainStateHook({});
+
   return (
     <Container fluid className="profileContainer">
       <Row>
@@ -33,5 +37,5 @@ export default connect(
       user: store.auth.user
     };
   },
-  {}
+  { updateProfile }
 )(UserProfile);

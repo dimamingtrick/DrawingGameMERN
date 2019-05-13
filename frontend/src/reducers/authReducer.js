@@ -1,8 +1,13 @@
-import { AUTH_SUCCESS, REGISTRATION_SUCCESS, LOGOUT } from "../actions/auth";
+import {
+  AUTH_SUCCESS,
+  REGISTRATION_SUCCESS,
+  PROFILE_UPDATE_SUCCESS,
+  LOGOUT
+} from "../actions/auth";
 
 const initialState = {
   isLoggedIn: false,
-  user: {},
+  user: {}
 };
 
 const authReducer = (state = initialState, action) => {
@@ -10,13 +15,19 @@ const authReducer = (state = initialState, action) => {
     case AUTH_SUCCESS:
       return {
         isLoggedIn: true,
-        user: action.user,
+        user: action.user
       };
 
     case REGISTRATION_SUCCESS:
       return {
         isLoggedIn: true,
-        user: action.user,
+        user: action.user
+      };
+
+    case PROFILE_UPDATE_SUCCESS:
+      return {
+        ...state,
+        user: action.user
       };
 
     case LOGOUT:
