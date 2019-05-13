@@ -14,7 +14,13 @@ import socketIOClient from "socket.io-client";
 let socket = null;
 const serverUrl = `${process.env.REACT_APP_SERVER}/`;
 
-const routes = ["/app", "/app/game", "/app/about", "/app/todolist"];
+const routes = [
+  "/app",
+  "/app/game",
+  "/app/about",
+  "/app/todolist",
+  "/app/game-words"
+];
 let routeKey; // Define key to have transition only between 3 routes, declared below inside switch
 
 const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
@@ -29,7 +35,8 @@ const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
   /** Searching for key in routes array */
   routeKey = routes.find(
     i =>
-      i === location.pathname || (location.pathname.includes(i) && i !== "/app")
+      i === location.pathname ||
+      (location.pathname.includes(i) && i !== "/app" && i !== "/app/game")
   );
 
   return (
@@ -46,7 +53,11 @@ const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
               <Route
                 path="/app/game-words"
                 render={navProps =>
-                  userRole === "admin" ? <GameWords /> : <Redirect to="/" />
+                  userRole === "admin" ? (
+                    <GameWords {...navProps} />
+                  ) : (
+                    <Redirect to="/" />
+                  )
                 }
               />
               <Route render={() => <Redirect to="/" />} />
@@ -62,6 +73,6 @@ export { socket };
 export default connect(store => {
   return {
     isLoggedIn: store.auth.isLoggedIn,
-    userRole: store.auth.user.role,
+    userRole: store.auth.user.role
   };
 })(DashboardContainer);

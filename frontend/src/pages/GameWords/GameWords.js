@@ -31,7 +31,6 @@ const GameWords = ({
   gameWords
 }) => {
   const [state, setState] = mainStateHook(initialState);
-
   const fetchAllGameWords = () => {
     getAllGameWords().then(() => {
       setState({ load: false });
@@ -39,7 +38,7 @@ const GameWords = ({
   };
 
   useEffect(() => {
-    fetchAllGameWords();
+    if (gameWords.length === 0) fetchAllGameWords();
   }, []);
 
   const toggleModal = () => {
