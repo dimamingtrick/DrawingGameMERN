@@ -42,7 +42,7 @@ export const updateProfile = data => async dispatch => {
     const { user } = await AuthService.updateProfile(data);
     dispatch({ type: PROFILE_UPDATE_SUCCESS, user });
   } catch (err) {
-    console.log("Update profile err", err);
+    throw err.message;
   }
 };
 

@@ -3,6 +3,20 @@ import { getNewRandomWord } from "../helpers";
 
 module.exports = (socket, io) => {
   /**
+   * Detect when admin enter game
+   */
+  socket.on("adminEnterGame", () => {
+    io.emit("adminIsInTheGame");
+  });
+
+  /**
+   * Detect when admin leave game
+   */
+  socket.on("adminLeaveTheGame", () => {
+    io.emit("adminIsNotInTheGame");
+  });
+
+  /**
    * Returns word, users need to guess
    * If there is no selectedToGuess word it will select "computer" word as default
    * If no default "computer" word in db - add it with selectedToGuess = true
@@ -18,7 +32,7 @@ module.exports = (socket, io) => {
     if (!wordInDB) {
       const addWord = new GameWords({
         word: "computer",
-        selectedToGuess: true
+        selectedToGuess: true,
       });
       const newWord = await addWord.save();
       io.emit("newGameWordToGuess", { word: newWord.word });
@@ -27,8 +41,8 @@ module.exports = (socket, io) => {
         wordInDB._id,
         {
           $set: {
-            selectedToGuess: true
-          }
+            selectedToGuess: true,
+          },
         },
         { new: true },
         (newWordError, { word }) => {
@@ -66,7 +80,7 @@ module.exports = (socket, io) => {
       message: `User ${user} joins a game`,
       user: null,
       createdAt: new Date(),
-      type: "join"
+      type: "join",
     };
 
     io.emit("newGameChatMessage", { newMessage });
@@ -81,7 +95,7 @@ module.exports = (socket, io) => {
       message: `User ${user} leaves a game`,
       user: null,
       createdAt: new Date(),
-      type: "leave"
+      type: "leave",
     };
 
     socket.broadcast.emit("newGameChatMessage", { newMessage });
@@ -99,11 +113,11 @@ module.exports = (socket, io) => {
     const [
       allWords, // all words in database
       { word: wordToGuess }, // word, users need to guess
-      { login, role } // user, that send message
+      { login, role }, // user, that send message
     ] = await Promise.all([
       GameWords.find({ selectedToGuess: false }),
       GameWords.findOne({ selectedToGuess: true }),
-      User.findById(userId)
+      User.findById(userId),
     ]);
 
     if (role === "admin")
@@ -113,7 +127,7 @@ module.exports = (socket, io) => {
       message,
       user: login,
       createdAt: new Date(),
-      type: "message"
+      type: "message",
     };
 
     io.emit("newGameChatMessage", { newMessage });
@@ -124,29 +138,28 @@ module.exports = (socket, io) => {
         message: `User ${login} guess the word "${wordToGuess}"`,
         user: login,
         createdAt: new Date(),
-        type: "chatUserWinGame"
+        type: "chatUserWinGame",
       };
       io.emit("newGameChatMessage", { newMessage: winMessage });
 
       socket.emit("gameLoadingStart");
-
       const newWordToGuess = getNewRandomWord(allWords);
       GameWords.findOneAndUpdate(
         {
-          selectedToGuess: true
+          selectedToGuess: true,
         },
         {
           $set: {
-            selectedToGuess: false
-          }
+            selectedToGuess: false,
+          },
         },
         () => {
           GameWords.findByIdAndUpdate(
             newWordToGuess.id,
             {
               $set: {
-                selectedToGuess: true
-              }
+                selectedToGuess: true,
+              },
             },
             { new: true },
             (newWordError, { word: newWordToGuessObject }) => {
