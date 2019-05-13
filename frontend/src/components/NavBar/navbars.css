@@ -5,3 +5,6 @@ nav.navbar a.dropdown-toggle::after {
   vertical-align: middle;
   margin-left: .55rem;
 }
+nav.navbar a.dropdown-link {
+  color: #212529;
+}

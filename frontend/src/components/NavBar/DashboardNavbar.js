@@ -11,7 +11,7 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownItem,
-  DropdownMenu,
+  DropdownMenu
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import "./navbars.css";
@@ -63,7 +63,11 @@ const DashboardNavbar = ({ user, logout }) => {
               {user.login}
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem>{user.email}</DropdownItem>
+              <DropdownItem>
+                <Link className="dropdown-link" to="/app/profile">
+                  {user.email}
+                </Link>
+              </DropdownItem>
               <DropdownItem divider />
               <DropdownItem onClick={logout}>Logout</DropdownItem>
             </DropdownMenu>
@@ -77,7 +81,7 @@ const DashboardNavbar = ({ user, logout }) => {
 export default connect(
   store => {
     return {
-      user: store.auth.user,
+      user: store.auth.user
     };
   },
   { logout }

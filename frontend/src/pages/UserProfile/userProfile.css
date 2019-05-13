@@ -1,0 +1,19 @@
+div.profileContainer div.userAvatar {
+  width: 200px;
+  height: 200px;
+  background-position: center!important;
+  background-size: 100%!important;
+  border-radius: 50%;
+  border: 1px solid #343a40;
+}
+
+div.profileContainer div.profileContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 25px;
+}
+
+div.profileContainer div.profileContent > h1 {
+  margin-top: 25px;
+}

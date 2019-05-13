@@ -28,7 +28,12 @@ class GamePage extends React.Component {
     if (!this.props.gameSettings) await this.props.getGameSettings();
 
     this.stopGameLoading();
-    this.initializeSockets();
+    socket.emit("gameChatConnectRequest", { user: this.props.user.login });
+    socket.on("newGameChatMessage", this.setNewMessage);
+    socket.on("disconnect", this.startGameLoading);
+    socket.on("connect", this.stopGameLoading);
+    socket.on("gameLoadingStart", this.startGameLoading);
+    socket.on("gameLoadingStop", this.stopGameLoading);
   }
 
   componentWillUnmount() {
@@ -40,15 +45,6 @@ class GamePage extends React.Component {
     socket.emit("gameChatDisconnectRequest", { user: this.props.user.login });
     document.querySelector("div.dashboard-wrapper").style.overflowY = "auto"; // Enable container vertical scrolling
   }
-
-  initializeSockets = () => {
-    socket.emit("gameChatConnectRequest", { user: this.props.user.login });
-    socket.on("newGameChatMessage", this.setNewMessage);
-    socket.on("disconnect", this.startGameLoading);
-    socket.on("connect", this.stopGameLoading);
-    socket.on("gameLoadingStart", this.startGameLoading);
-    socket.on("gameLoadingStop", this.stopGameLoading);
-  };
 
   startGameLoading = () => {
     this.setState({ gameIsLoading: true });

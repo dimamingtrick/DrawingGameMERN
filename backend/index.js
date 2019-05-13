@@ -46,6 +46,11 @@ app.get("/", async (req, res) => {
   return res.json("Good game");
 });
 
+/**
+ * Connecting to database
+ * Then start node.js server
+ * Then require all sockets from different modules
+ */
 connectDb().then(() => {
   server.listen(3001, function() {
     io.on("connection", socket => {

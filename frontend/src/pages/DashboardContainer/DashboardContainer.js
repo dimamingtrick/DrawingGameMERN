@@ -2,11 +2,14 @@ import React from "react";
 import { connect } from "react-redux";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
+
 import HomePage from "../HomePage/HomePage";
 import GamePage from "../GamePage/GamePage";
 import AboutPage from "../AboutPage/AboutPage";
 import ToDoListPage from "../ToDoListPage/ToDoListPage";
 import GameWords from "../GameWords/GameWords";
+import UserProfile from "../UserProfile/UserProfile";
+
 import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 import "./dashboard-container.css";
 import socketIOClient from "socket.io-client";
@@ -19,7 +22,8 @@ const routes = [
   "/app/game",
   "/app/about",
   "/app/todolist",
-  "/app/game-words"
+  "/app/game-words",
+  "/app/profile"
 ];
 let routeKey; // Define key to have transition only between 3 routes, declared below inside switch
 
@@ -60,6 +64,7 @@ const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
                   )
                 }
               />
+              <Route path="/app/profile" component={UserProfile} />
               <Route render={() => <Redirect to="/" />} />
             </Switch>
           </CSSTransition>

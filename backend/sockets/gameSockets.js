@@ -4,11 +4,38 @@ import { getNewRandomWord } from "../helpers";
 module.exports = (socket, io) => {
   /**
    * Returns word, users need to guess
+   * If there is no selectedToGuess word it will select "computer" word as default
+   * If no default "computer" word in db - add it with selectedToGuess = true
+   * If word is in db - update it's selectedToGuess propeprty to true
    * for drawer
    */
   socket.on("getNewGameWordToGuess", async () => {
-    const { word } = await GameWords.findOne({ selectedToGuess: true });
-    io.emit("newGameWordToGuess", { word });
+    const word = await GameWords.findOne({ selectedToGuess: true });
+    if (word) return io.emit("newGameWordToGuess", { word: word.word });
+
+    const wordInDB = await GameWords.findOne({ word: "computer" });
+
+    if (!wordInDB) {
+      const addWord = new GameWords({
+        word: "computer",
+        selectedToGuess: true
+      });
+      const newWord = await addWord.save();
+      io.emit("newGameWordToGuess", { word: newWord.word });
+    } else {
+      GameWords.findByIdAndUpdate(
+        wordInDB._id,
+        {
+          $set: {
+            selectedToGuess: true
+          }
+        },
+        { new: true },
+        (newWordError, { word }) => {
+          io.emit("newGameWordToGuess", { word });
+        }
+      );
+    }
   });
 
   /**
