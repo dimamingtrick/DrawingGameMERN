@@ -69,12 +69,18 @@ module.exports = (socket, io) => {
    * for everyone
    */
   socket.on("sendNewGameChatMessage", async ({ message, userId }) => {
-    const [allWords, { word: wordToGuess }] = await Promise.all([
+    const [
+      allWords, // all words in database
+      { word: wordToGuess }, // word, users need to guess
+      { login, role } // user, that send message
+    ] = await Promise.all([
       GameWords.find({ selectedToGuess: false }),
-      GameWords.findOne({ selectedToGuess: true })
+      GameWords.findOne({ selectedToGuess: true }),
+      User.findById(userId)
     ]);
 
-    const { login } = await User.findById(userId);
+    if (role === "admin")
+      return console.log("Admin cannot send messages to game chat");
 
     const newMessage = {
       message,
@@ -107,8 +113,7 @@ module.exports = (socket, io) => {
             selectedToGuess: false
           }
         },
-        { new: true },
-        (err, word) => {
+        () => {
           GameWords.findByIdAndUpdate(
             newWordToGuess.id,
             {

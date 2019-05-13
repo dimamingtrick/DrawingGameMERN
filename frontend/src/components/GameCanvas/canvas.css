@@ -1,3 +1,6 @@
+canvas.gameCanvas {
+  border-right: 1px solid rgba(0, 0, 0, .4);
+}
 canvas.gameCanvas:hover {
   cursor: none;
 }
@@ -8,13 +11,13 @@ button.canvas-clear-button {
   position: absolute;
   bottom: 25px;
   right: 25px;
-  color: #fff;
-  border-color: #fff;
+  color: #007bff;
+  border-color: #007bff;
 }
 button.canvas-clear-button:hover {
-  color: #007bff;
-  background-color: #fff;
-  border-color: #fff;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
 }
 button.canvas-clear-button:focus {
   box-shadow: 0 0 0 0.2rem rgba(255,255,255, .5);
@@ -27,4 +30,10 @@ div.game-card.drawing-card > div.word-to-guess-alert {
 }
 div.game-card.drawing-card > div.word-to-guess-alert > span {
   font-weight: bold;
+}
+
+div.game-card.drawing-card > div.sketch-picker {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
 }

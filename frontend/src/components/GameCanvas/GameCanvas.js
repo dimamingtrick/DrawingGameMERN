@@ -1,7 +1,8 @@
 import React from "react";
-import { Button, Alert } from "reactstrap";
-import "./canvas.css";
 import { socket } from "../../pages/DashboardContainer/DashboardContainer";
+import { Button, Alert } from "reactstrap";
+import { SketchPicker } from "react-color";
+import "./canvas.css";
 
 /**
  * Canvas Drawing component.
@@ -10,13 +11,53 @@ import { socket } from "../../pages/DashboardContainer/DashboardContainer";
  */
 class GameCanvas extends React.Component {
   state = {
-    userStrokeStyle: "#fff",
+    color: "#000",
     wordToGuess: ""
   };
 
   isPainting = false;
   line = [];
   prevPos = { offsetX: 0, offsetY: 0 };
+
+  componentDidMount() {
+    if (this.props.user.role === "admin") socket.emit("getNewGameWordToGuess");
+
+    this.canvas.width = document.querySelector(
+      ".game-card.drawing-card.card.card-body"
+    ).offsetWidth;
+    this.canvas.height = document.querySelector(
+      ".dashboard-wrapper.container-fluid > div"
+    ).offsetHeight;
+
+    this.ctx = this.canvas.getContext("2d");
+    this.ctx.lineJoin = "round";
+    this.ctx.lineCap = "round";
+    this.ctx.lineWidth = 5;
+    this.ctx.strokeStyle = this.state.color;
+
+    socket.on("newGameDraw", ({ draw }) => {
+      if (!draw) return this.clearCanvas();
+
+      draw.forEach(d => {
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = d.color;
+        this.ctx.moveTo(d.start.offsetX, d.start.offsetY);
+        this.ctx.lineTo(d.stop.offsetX, d.stop.offsetY);
+        this.ctx.stroke();
+      });
+    });
+
+    if (this.props.user.role === "admin") {
+      socket.on("newGameWordToGuess", ({ word }) => {
+        this.setState({ wordToGuess: word });
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    socket.off("newGameDraw");
+    socket.off("newGameWordToGuess");
+  }
 
   onMouseDown = ({ nativeEvent }) => {
     if (this.props.user.role !== "admin") return;
@@ -34,18 +75,14 @@ class GameCanvas extends React.Component {
       const offSetData = { offsetX, offsetY };
       // Set the start and stop position of the paint event.
       const positionData = {
+        color: this.state.color,
         start: { ...this.prevPos },
         stop: { ...offSetData }
       };
       // Add the position to the line array
       this.line = [...this.line, positionData];
-      this.paint(this.prevPos, offSetData, this.state.userStrokeStyle);
+      this.paint(this.prevPos, offSetData, this.state.color);
     }
-  };
-
-  endPaintEvent = () => {
-    if (this.props.user.role !== "admin") return;
-    if (this.isPainting) this.isPainting = false;
   };
 
   paint = (prevPos, currPos, strokeStyle) => {
@@ -54,56 +91,22 @@ class GameCanvas extends React.Component {
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = strokeStyle;
-    // Move the the prevPosition of the mouse
     this.ctx.moveTo(x, y);
-    // Draw a line to the current position of the mouse
     this.ctx.lineTo(offsetX, offsetY);
-    // Visualize the line using the strokeStyle
     this.ctx.stroke();
 
     socket.emit("sendNewGameDraw", this.line);
-
     this.prevPos = { offsetX, offsetY };
   };
 
-  componentDidMount() {
-    if (this.props.user.role === "admin") socket.emit("getNewGameWordToGuess");
+  endPaintEvent = () => {
+    if (this.props.user.role !== "admin") return;
+    if (this.isPainting) this.isPainting = false;
+  };
 
-    this.canvas.width = document.querySelector(
-      ".game-card.drawing-card.card.card-body"
-    ).offsetWidth;
-    this.canvas.height = document.querySelector(
-      ".dashboard-wrapper.container-fluid > div"
-    ).offsetHeight;
-
-    this.ctx = this.canvas.getContext("2d");
-    this.ctx.lineJoin = "round";
-    this.ctx.lineCap = "round";
-    this.ctx.lineWidth = 5;
-    this.ctx.strokeStyle = this.state.userStrokeStyle;
-
-    socket.on("newGameDraw", ({ draw }) => {
-      if (!draw) return this.clearCanvas();
-
-      this.ctx.beginPath();
-      draw.forEach(d => {
-        this.ctx.lineTo(d.start.offsetX, d.start.offsetY);
-        this.ctx.lineTo(d.stop.offsetX, d.stop.offsetY);
-      });
-      this.ctx.stroke();
-    });
-
-    if (this.props.user.role === "admin") {
-      socket.on("newGameWordToGuess", ({ word }) => {
-        this.setState({ wordToGuess: word });
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    socket.off("newGameDraw");
-    socket.off("newGameWordToGuess");
-  }
+  changeColor = ({ hex: color }) => {
+    this.setState({ color });
+  };
 
   /** Send request to clear canvas to all users */
   clearCanvasRequest = () => {
@@ -125,26 +128,30 @@ class GameCanvas extends React.Component {
         <canvas
           className={`gameCanvas ${role === "admin" ? "drawerCanvas" : ""}`}
           ref={ref => (this.canvas = ref)}
-          style={{ background: "rgba(0,0,0,.75)" }}
+          style={{ background: "#fff" }}
           onMouseDown={this.onMouseDown}
-          onMouseLeave={this.endPaintEvent}
+          // onMouseLeave={this.endPaintEvent}
           onMouseUp={this.endPaintEvent}
           onMouseMove={this.onMouseMove}
         />
         {role === "admin" && (
-          <Alert className="word-to-guess-alert" color="info">
-            Word to guess is <span>"{this.state.wordToGuess}"</span>
-          </Alert>
-        )}
-        {role === "admin" && (
-          <Button
-            className="canvas-clear-button"
-            onClick={this.clearCanvasRequest}
-            outline
-            color="primary"
-          >
-            Clear
-          </Button>
+          <>
+            <SketchPicker
+              onChangeComplete={this.changeColor}
+              color={this.state.color}
+            />
+            <Alert className="word-to-guess-alert" color="primary">
+              Word to guess is <span>"{this.state.wordToGuess}"</span>
+            </Alert>
+            <Button
+              className="canvas-clear-button"
+              onClick={this.clearCanvasRequest}
+              outline
+              color="primary"
+            >
+              Clear
+            </Button>
+          </>
         )}
       </>
     );

@@ -123,12 +123,16 @@ class GamePage extends React.Component {
                   />
                 ))}
               </ChatMessagesContainer>
-              <ChatInput
-                inputMessage={inputMessage}
-                handleInput={this.handleInput}
-                sendMessage={this.sendMessage}
-                sending={sending}
-              />
+
+              {/** Admin cannot send messages to chat */}
+              {user.role !== "admin" && (
+                <ChatInput
+                  inputMessage={inputMessage}
+                  handleInput={this.handleInput}
+                  sendMessage={this.sendMessage}
+                  sending={sending}
+                />
+              )}
             </Card>
           </Col>
         </Row>
