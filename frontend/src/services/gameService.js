@@ -1,6 +1,10 @@
 import api from "./api";
 
 class GameService {
+  getGameSettings() {
+    return api({ method: "GET", url: "/game/settings" });
+  }
+
   getAllGameWords() {
     return api({ method: "GET", url: "/game/words" });
   }

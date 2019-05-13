@@ -27,7 +27,7 @@ app.use(require("./routes/authorizationRoutes"));
 app.use("/todo", jwtValidate, require("./routes/todoRoutes"));
 
 /**
- * Add /game/chat routes
+ * Add /game routes (settings, etc)
  * Require JWT token
  */
 app.use("/game", jwtValidate, require("./routes/gameRoutes"));

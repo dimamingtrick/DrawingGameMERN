@@ -13,9 +13,9 @@ div#game-page-container .card {
   border: none;
 }
 
-div#game-page-container > div.row > div.col-6.col-sm-8 > div.card.game-card {
+/* div#game-page-container > div.row > div.col-6.col-sm-8 > div.card.game-card {
   border-right: 1px solid rgba(0, 0, 0, .4);
-}
+} */
 
 div#game-page-container > div.row {
   display: flex;

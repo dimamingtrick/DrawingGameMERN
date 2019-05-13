@@ -2,14 +2,14 @@ import React from "react";
 import { connect } from "react-redux";
 import { Container, Card, Row, Col } from "reactstrap";
 import GameCanvas from "../../components/GameCanvas/GameCanvas";
-// import { ChatService } from "../../services"; // gonna use for getting game settings (current word to guess or drawer user)
 import { socket } from "../DashboardContainer/DashboardContainer";
 import {
   ChatMessagesContainer,
   SingleMessage,
-  ChatInput,
+  ChatInput
 } from "../../components/GameChat";
 import { GameReloadingSpinner } from "../../components/Game";
+import { getGameSettings } from "../../actions/game";
 import "./game-page.css";
 
 class GamePage extends React.Component {
@@ -17,7 +17,7 @@ class GamePage extends React.Component {
     messages: [],
     inputMessage: "",
     sending: false,
-    gameIsLoading: false,
+    gameIsLoading: true
   };
 
   componentDidMount() {
@@ -25,12 +25,18 @@ class GamePage extends React.Component {
     dashboardWrapper.scrollTop = 0;
     dashboardWrapper.style.overflowY = "hidden";
 
-    socket.emit("gameChatConnectRequest", { user: this.props.user.login });
-    socket.on("newGameChatMessage", this.setNewMessage);
-    socket.on("disconnect", this.startGameLoading);
-    socket.on("connect", this.stopGameLoading);
-    socket.on("gameLoadingStart", this.startGameLoading);
-    socket.on("gameLoadingStop", this.stopGameLoading);
+    this.props.getGameSettings().then(
+      res => {
+        this.stopGameLoading();
+        socket.emit("gameChatConnectRequest", { user: this.props.user.login });
+        socket.on("newGameChatMessage", this.setNewMessage);
+        socket.on("disconnect", this.startGameLoading);
+        socket.on("connect", this.stopGameLoading);
+        socket.on("gameLoadingStart", this.startGameLoading);
+        socket.on("gameLoadingStop", this.stopGameLoading);
+      },
+      err => {}
+    );
   }
 
   componentWillUnmount() {
@@ -58,9 +64,9 @@ class GamePage extends React.Component {
         ...(newMessage.user === this.props.user.login && this.state.sending // set this state if user was sending message for better screen transition
           ? {
               inputMessage: "",
-              sending: false,
+              sending: false
             }
-          : {}),
+          : {})
       },
       () => {
         this.scrollToChatBottom();
@@ -79,19 +85,19 @@ class GamePage extends React.Component {
     this.setState({ sending: true });
     socket.emit("sendNewGameChatMessage", {
       message: this.state.inputMessage,
-      userId: this.props.user._id,
+      userId: this.props.user._id
     });
   };
 
   handleInput = e => {
     this.setState({
-      inputMessage: e.target.value,
+      inputMessage: e.target.value
     });
   };
 
   render() {
     const { messages, sending, inputMessage, gameIsLoading } = this.state;
-    const { user } = this.props;
+    const { user, gameSettings } = this.props;
     return (
       <Container fluid id="game-page-container">
         {gameIsLoading && <GameReloadingSpinner />}
@@ -105,7 +111,7 @@ class GamePage extends React.Component {
 
           <Col xs={6} md={4}>
             <Card body className="game-card chat-card">
-              <ChatMessagesContainer>
+              <ChatMessagesContainer background={gameSettings.background}>
                 {messages.map((msg, index) => (
                   <SingleMessage
                     key={msg._id ? msg._id : "otherType-" + index}
@@ -128,8 +134,12 @@ class GamePage extends React.Component {
   }
 }
 
-export default connect(store => {
-  return {
-    user: store.auth.user,
-  };
-})(GamePage);
+export default connect(
+  store => {
+    return {
+      user: store.auth.user,
+      gameSettings: store.game.gameSettings
+    };
+  },
+  { getGameSettings }
+)(GamePage);

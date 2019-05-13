@@ -32,7 +32,7 @@ class GameCanvas extends React.Component {
       // Set the start and stop position of the paint event.
       const positionData = {
         start: { ...this.prevPos },
-        stop: { ...offSetData },
+        stop: { ...offSetData }
       };
       // Add the position to the line array
       this.line = this.line.concat(positionData);
@@ -60,7 +60,7 @@ class GameCanvas extends React.Component {
 
     socket.emit("sendNewGameDraw", {
       prevPos,
-      currPos,
+      currPos
     });
 
     this.prevPos = { offsetX, offsetY };
@@ -108,14 +108,14 @@ class GameCanvas extends React.Component {
 
   render() {
     const {
-      user: { role },
+      user: { role }
     } = this.props;
     return (
       <>
         <canvas
           className={`gameCanvas ${role === "admin" ? "drawerCanvas" : ""}`}
           ref={ref => (this.canvas = ref)}
-          style={{ background: "#343a40" }}
+          style={{ background: "rgba(52, 58, 64, .65)" }}
           onMouseDown={this.onMouseDown}
           onMouseLeave={this.endPaintEvent}
           onMouseUp={this.endPaintEvent}

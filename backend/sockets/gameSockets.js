@@ -59,7 +59,6 @@ module.exports = (socket, io) => {
    *     -if user guess word - 'win game' message
    * for everyone
    */
-
   socket.on("sendNewGameChatMessage", async ({ message, userId }) => {
     const [allWords, { word: wordToGuess }] = await Promise.all([
       GameWords.find({ selectedToGuess: false }),

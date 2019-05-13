@@ -1,7 +1,25 @@
-import { User, Chat } from "../models";
+import { User, Chat, GameSettings } from "../models";
 
 const express = require("express");
 const router = express.Router();
+
+/**
+ * GET /game/settings
+ * returns game settings
+ */
+router.get("/settings", async (req, res) => {
+  const settings = await GameSettings.findOne({ userId: req.body.userId });
+
+  /** Create default game settings if no settings were found */
+  if (!settings) {
+    const addSettings = new GameSettings({
+      userId: req.body.userId
+    });
+    const newAddedSetting = await addSettings.save();
+    return res.json({ settings: newAddedSetting });
+  }
+  return res.json({ settings });
+});
 
 /**
  * GET /game/chat/
@@ -30,7 +48,7 @@ router.post("/chat", async (req, res) => {
     message,
     user: login,
     createdAt: new Date(),
-    type: "message",
+    type: "message"
   };
 
   const io = req.app.get("socketio");
@@ -41,7 +59,7 @@ router.post("/chat", async (req, res) => {
       message: `User ${login} guess the word "tricking"`,
       user: login,
       createdAt: new Date(),
-      type: "chatUserWinGame",
+      type: "chatUserWinGame"
     };
     io.emit("newGameChatMessage", { newMessage: winMessage });
     io.emit("newGameDraw", { draw: null });

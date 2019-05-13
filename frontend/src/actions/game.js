@@ -1,8 +1,18 @@
 import { GameService } from "../services";
 
+export const GET_ALL_GAME_SETTINGS = "GET_ALL_GAME_SETTINGS";
 export const GET_ALL_WORDS = "GET_ALL_WORDS";
 export const ADD_NEW_WORD = "ADD_NEW_WORD";
 export const DELETE_WORD = "DELETE_WORD";
+
+export const getGameSettings = () => async dispatch => {
+  try {
+    const { settings: gameSettings } = await GameService.getGameSettings();
+    dispatch({ type: GET_ALL_GAME_SETTINGS, gameSettings });
+  } catch (err) {
+    throw err;
+  }
+};
 
 export const getAllGameWords = () => async dispatch => {
   try {
