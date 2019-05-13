@@ -20,23 +20,15 @@ class GamePage extends React.Component {
     gameIsLoading: true
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const dashboardWrapper = document.querySelector("div.dashboard-wrapper"); // Disable container vertical scrolling and set scroll position to 0
     dashboardWrapper.scrollTop = 0;
     dashboardWrapper.style.overflowY = "hidden";
 
-    this.props.getGameSettings().then(
-      res => {
-        this.stopGameLoading();
-        socket.emit("gameChatConnectRequest", { user: this.props.user.login });
-        socket.on("newGameChatMessage", this.setNewMessage);
-        socket.on("disconnect", this.startGameLoading);
-        socket.on("connect", this.stopGameLoading);
-        socket.on("gameLoadingStart", this.startGameLoading);
-        socket.on("gameLoadingStop", this.stopGameLoading);
-      },
-      err => {}
-    );
+    if (!this.props.gameSettings) await this.props.getGameSettings();
+
+    this.stopGameLoading();
+    this.initializeSockets();
   }
 
   componentWillUnmount() {
@@ -48,6 +40,15 @@ class GamePage extends React.Component {
     socket.emit("gameChatDisconnectRequest", { user: this.props.user.login });
     document.querySelector("div.dashboard-wrapper").style.overflowY = "auto"; // Enable container vertical scrolling
   }
+
+  initializeSockets = () => {
+    socket.emit("gameChatConnectRequest", { user: this.props.user.login });
+    socket.on("newGameChatMessage", this.setNewMessage);
+    socket.on("disconnect", this.startGameLoading);
+    socket.on("connect", this.stopGameLoading);
+    socket.on("gameLoadingStart", this.startGameLoading);
+    socket.on("gameLoadingStop", this.stopGameLoading);
+  };
 
   startGameLoading = () => {
     this.setState({ gameIsLoading: true });
@@ -111,7 +112,9 @@ class GamePage extends React.Component {
 
           <Col xs={6} md={4}>
             <Card body className="game-card chat-card">
-              <ChatMessagesContainer background={gameSettings.background}>
+              <ChatMessagesContainer
+                background={gameSettings ? gameSettings.background : null}
+              >
                 {messages.map((msg, index) => (
                   <SingleMessage
                     key={msg._id ? msg._id : "otherType-" + index}

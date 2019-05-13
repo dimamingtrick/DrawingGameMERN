@@ -7,7 +7,7 @@ import {
 import { LOGOUT } from "../actions/auth";
 
 const initialState = {
-  gameSettings: {},
+  gameSettings: null,
   gameWords: []
 };
 
