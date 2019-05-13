@@ -1,4 +1,5 @@
-import { User, GameSettings } from "../models";
+import { User, GameWords } from "../models";
+import { getNewRandomWord } from "../helpers";
 
 module.exports = (socket, io) => {
   /**
@@ -29,7 +30,7 @@ module.exports = (socket, io) => {
       message: `User ${user} joins a game`,
       user: null,
       createdAt: new Date(),
-      type: "join",
+      type: "join"
     };
 
     io.emit("newGameChatMessage", { newMessage });
@@ -44,7 +45,7 @@ module.exports = (socket, io) => {
       message: `User ${user} leaves a game`,
       user: null,
       createdAt: new Date(),
-      type: "leave",
+      type: "leave"
     };
 
     socket.broadcast.emit("newGameChatMessage", { newMessage });
@@ -58,19 +59,12 @@ module.exports = (socket, io) => {
    *     -if user guess word - 'win game' message
    * for everyone
    */
-  let words = ["ball", "dog", "cat", "game"];
-  function getNewRandomWord(oldWord) {
-    const newWord = words[Math.floor(Math.random() * words.length)];
-    if (newWord === oldWord) {
-      return getNewRandomWord(oldWOrd);
-    }
-    return newWord;
-  }
 
   socket.on("sendNewGameChatMessage", async ({ message, userId }) => {
-    const { word: wordToGuess } = await GameSettings.findById(
-      "5cd86f340b6ec018f06bee38"
-    );
+    const [allWords, { word: wordToGuess }] = await Promise.all([
+      GameWords.find({ selectedToGuess: false }),
+      GameWords.findOne({ selectedToGuess: true })
+    ]);
 
     const { login } = await User.findById(userId);
 
@@ -78,7 +72,7 @@ module.exports = (socket, io) => {
       message,
       user: login,
       createdAt: new Date(),
-      type: "message",
+      type: "message"
     };
 
     io.emit("newGameChatMessage", { newMessage });
@@ -89,24 +83,38 @@ module.exports = (socket, io) => {
         message: `User ${login} guess the word "${wordToGuess}"`,
         user: login,
         createdAt: new Date(),
-        type: "chatUserWinGame",
+        type: "chatUserWinGame"
       };
       io.emit("newGameChatMessage", { newMessage: winMessage });
 
       socket.emit("gameLoadingStart");
-      const newWordToGuess = getNewRandomWord(wordToGuess);
-      GameSettings.findByIdAndUpdate(
-        "5cd86f340b6ec018f06bee38",
+
+      const newWordToGuess = getNewRandomWord(allWords);
+      GameWords.findOneAndUpdate(
+        {
+          selectedToGuess: true
+        },
         {
           $set: {
-            word: newWordToGuess,
-          },
+            selectedToGuess: false
+          }
         },
-        { new: true }, // Pass this to return updated object (by default returns old one)
-        (err, { word }) => {
-          console.log("@@@@@@@@@@", word);
-          socket.emit("newGameDraw", { draw: null });
-          socket.emit("gameLoadingStop");
+        { new: true },
+        (err, word) => {
+          GameWords.findByIdAndUpdate(
+            newWordToGuess.id,
+            {
+              $set: {
+                selectedToGuess: true
+              }
+            },
+            { new: true },
+            (newWordError, { word: newWordToGuessObject }) => {
+              console.log("@@@@@@@@@@ new word is - ", newWordToGuessObject);
+              socket.emit("newGameDraw", { draw: null });
+              socket.emit("gameLoadingStop");
+            }
+          );
         }
       );
     }

@@ -1,29 +1,36 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Button, Container, Table } from "reactstrap";
+import { Row, Col, Button, Container, Table, Spinner } from "reactstrap";
 import { GameWordModal } from "../../components/GameWords";
 import {
   getAllGameWords,
   addNewGameWord,
-  updateGameWord,
-  deleteGameWord,
+  deleteGameWord
 } from "../../actions/game";
 import { mainStateHook } from "../../hooks";
 import moment from "moment";
+import "./gameWords.css";
+
+const initialState = {
+  load: true,
+  modalIsOpen: false,
+  modalIsLoading: false,
+  modalError: "",
+  isDeleting: false,
+  todoId: null,
+  deleteState: {
+    loading: false,
+    itemId: null
+  }
+};
 
 const GameWords = ({
   getAllGameWords,
   addNewGameWord,
-  updateGameWord,
   deleteGameWord,
-  gameWords,
+  gameWords
 }) => {
-  const [state, setState] = mainStateHook({
-    load: true,
-    modalIsOpen: false,
-    isDeleting: false,
-    todoId: null,
-  });
+  const [state, setState] = mainStateHook(initialState);
 
   const fetchAllGameWords = () => {
     getAllGameWords().then(() => {
@@ -36,20 +43,40 @@ const GameWords = ({
   }, []);
 
   const toggleModal = () => {
-    setState({ modalIsOpen: !state.modalIsOpen });
+    setState({
+      modalIsOpen: !state.modalIsOpen,
+      ...(state.modalError ? { modalError: false } : {})
+    });
   };
 
   const addNewWord = word => {
-    // setState({load})
+    setState({
+      ...(state.modalError !== "" ? { modalError: "" } : {}),
+      modalIsLoading: true
+    });
+
     addNewGameWord({ word }).then(
-      res => {
-        console.log(res);
-        setState({ modalIsOpen: false });
+      () => {
+        setState({ modalIsOpen: false, modalIsLoading: false });
       },
       err => {
-        console.log(err);
+        setState({ modalError: err.word, modalIsLoading: false });
       }
     );
+  };
+
+  const deleteWord = id => {
+    setState({
+      deleteState: {
+        loading: true,
+        itemId: id
+      }
+    });
+    deleteGameWord(id).then(() => {
+      setState({
+        deleteState: initialState.deleteState
+      });
+    });
   };
 
   return (
@@ -62,7 +89,7 @@ const GameWords = ({
           </Button>
         </Col>
       </Row>
-      <Row className="todo-row">
+      <Row className="game-words-row">
         <Col>
           <Table>
             <thead>
@@ -70,6 +97,7 @@ const GameWords = ({
                 <th>#</th>
                 <th>Word</th>
                 <th>Created at</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +106,14 @@ const GameWords = ({
                   <td>{index + 1}</td>
                   <td>{word.word}</td>
                   <td>{moment(word.createdAt).format("DD/MM/YYYY HH:mm")}</td>
+                  <td className="actionsTd">
+                    {state.deleteState.loading &&
+                    state.deleteState.itemId === word._id ? (
+                      <Spinner />
+                    ) : (
+                      <Button close onClick={() => deleteWord(word._id)} />
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -88,6 +124,8 @@ const GameWords = ({
         isOpen={state.modalIsOpen}
         toggle={toggleModal}
         addNewWord={addNewWord}
+        error={state.modalError}
+        loading={state.modalIsLoading}
       />
     </Container>
   );
@@ -96,13 +134,12 @@ const GameWords = ({
 export default connect(
   store => {
     return {
-      gameWords: store.game.gameWords,
+      gameWords: store.game.gameWords
     };
   },
   {
     getAllGameWords,
     addNewGameWord,
-    updateGameWord,
-    deleteGameWord,
+    deleteGameWord
   }
 )(GameWords);

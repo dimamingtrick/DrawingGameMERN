@@ -4,7 +4,7 @@ import User from "./userModel";
 import Todo from "./todoModel";
 import Chat from "./chatModel";
 import GameSettings from "./gameSettingsModel";
-import GameWords from "./GameWords";
+import GameWords from "./gameWords";
 
 const connectDb = () => {
   return mongoose.connect(

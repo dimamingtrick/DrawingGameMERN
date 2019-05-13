@@ -1,0 +1,10 @@
+button.addNewWordButton {
+  min-width: 130px;
+}
+button.addNewWordButton > div {
+  width: 1rem;
+  height: 1rem;
+}
+.gameWordModal {
+  
+}

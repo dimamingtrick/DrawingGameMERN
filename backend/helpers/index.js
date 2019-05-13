@@ -25,4 +25,12 @@ const validateEmail = email => {
   return re.test(String(email).toLowerCase());
 };
 
-export { jwtValidate, validateEmail };
+/**
+ * Returns new random word object from all words array
+ */
+const getNewRandomWord = allWords => {
+  const newWord = allWords[Math.floor(Math.random() * allWords.length)];
+  return newWord;
+};
+
+export { jwtValidate, validateEmail, getNewRandomWord };

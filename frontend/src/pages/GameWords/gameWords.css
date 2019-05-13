@@ -1,0 +1,12 @@
+div.game-words-row .table thead th {
+  border-bottom: none;
+}
+div.game-words-row .table td.actionsTd {
+  display: flex;
+  justify-content: center;
+}
+div.game-words-row td.actionsTd div.spinner-border{
+  width: 1rem;
+  height: 1rem;
+  opacity: .6;
+}
