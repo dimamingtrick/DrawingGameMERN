@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "reactstrap";
+import { Button, Alert } from "reactstrap";
 import "./canvas.css";
 import { socket } from "../../pages/DashboardContainer/DashboardContainer";
 
@@ -14,6 +14,10 @@ class GameCanvas extends React.Component {
   guestStrokeStyle = "#F0C987";
   line = [];
   prevPos = { offsetX: 0, offsetY: 0 };
+
+  state = {
+    wordToGuess: ""
+  };
 
   onMouseDown = ({ nativeEvent }) => {
     if (this.props.user.role !== "admin") return;
@@ -67,6 +71,10 @@ class GameCanvas extends React.Component {
   };
 
   componentDidMount() {
+    if (this.props.user.role === "admin") {
+      socket.emit("getNewGameWordToGuess");
+    }
+
     this.canvas.width = document.querySelector(
       ".game-card.drawing-card.card.card-body"
     ).offsetWidth;
@@ -90,6 +98,12 @@ class GameCanvas extends React.Component {
       this.ctx.lineTo(draw.currPos.offsetX, draw.currPos.offsetY);
       this.ctx.stroke();
     });
+
+    if (this.props.user.role === "admin") {
+      socket.on("newGameWordToGuess", ({ word }) => {
+        this.setState({ wordToGuess: word });
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -121,6 +135,9 @@ class GameCanvas extends React.Component {
           onMouseUp={this.endPaintEvent}
           onMouseMove={this.onMouseMove}
         />
+        <Alert className="word-to-guess-alert" color="info">
+          Word to guess is <span>"{this.state.wordToGuess}"</span>
+        </Alert>
         {role === "admin" && (
           <Button
             className="canvas-clear-button"

@@ -3,6 +3,15 @@ import { getNewRandomWord } from "../helpers";
 
 module.exports = (socket, io) => {
   /**
+   * Returns word, users need to guess
+   * for drawer
+   */
+  socket.on("getNewGameWordToGuess", async () => {
+    const { word } = await GameWords.findOne({ selectedToGuess: true });
+    socket.emit("newGameWordToGuess", { word });
+  });
+
+  /**
    * When user draw something in game
    * returns drawing (drawing coordinates)
    * for everyone but sender
@@ -110,6 +119,7 @@ module.exports = (socket, io) => {
             { new: true },
             (newWordError, { word: newWordToGuessObject }) => {
               console.log("@@@@@@@@@@ new word is - ", newWordToGuessObject);
+              socket.emit("newGameWordToGuess", { word: newWordToGuessObject });
               socket.emit("newGameDraw", { draw: null });
               socket.emit("gameLoadingStop");
             }
