@@ -6,8 +6,7 @@ const ChatMessagesContainer = ({ children, background }) => {
     <div
       className="chat-messages"
       style={{
-        background: 'url("' + background + '")',
-        backgroundSize: "100%"
+        background: 'url("' + background + '")'
       }}
     >
       {children}

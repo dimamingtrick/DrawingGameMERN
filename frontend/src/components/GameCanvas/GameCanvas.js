@@ -115,7 +115,7 @@ class GameCanvas extends React.Component {
         <canvas
           className={`gameCanvas ${role === "admin" ? "drawerCanvas" : ""}`}
           ref={ref => (this.canvas = ref)}
-          style={{ background: "rgba(52, 58, 64, .65)" }}
+          style={{ background: "rgba(0,0,0,.75)" }}
           onMouseDown={this.onMouseDown}
           onMouseLeave={this.endPaintEvent}
           onMouseUp={this.endPaintEvent}
