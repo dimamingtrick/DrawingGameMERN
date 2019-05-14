@@ -31,13 +31,15 @@ router.get("/", async (req, res) => {
       await chat.save();
     });
 
-    const chats = await Chat.find({ users: objectId(userId) }).populate([
+    const newCreatedChats = await Chat.find({
+      users: objectId(userId)
+    }).populate([
       {
         path: "users",
         select: "-password"
       }
     ]);
-    return res.json(chats);
+    return res.json(newCreatedChats);
   }
 
   return res.json(chats);

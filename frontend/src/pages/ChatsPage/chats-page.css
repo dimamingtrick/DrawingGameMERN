@@ -1,0 +1,49 @@
+div.chats-container.container-fluid {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex: 1;
+  height: 100%;
+  max-height: 100%;
+  border-radius: 3px;
+  border: 1px solid #343a40;
+}
+
+div.all-chats-list {
+  /* border: 1px solid #343a40; */
+  /* padding: 25px; */
+}
+
+div.all-chats-list > div.single-chat {
+  padding: 10px 50px;
+  border-bottom: 1px solid rgba(52, 58, 64, .1);
+  transition: all .25s;
+  cursor: pointer;
+}
+
+div.all-chats-list > div.single-chat:first-child {
+  margin-top: 25px;
+  border-top: 1px solid rgba(52, 58, 64, .1);
+}
+
+div.all-chats-list > div.single-chat.active {
+  background: rgba(52, 58, 64, .1);
+}
+
+div.all-chats-list > div.single-chat:hover {
+  background: rgba(52, 58, 64, .25);
+}
+
+
+div.single-chat-display {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-left: 1px solid #343a40;
+}
+div.single-chat-display > div.input-group > input {
+  border-radius: 0!important;
+}
+div.single-chat-display > div.input-group > div.input-group-append > button {
+  border-radius: 0!important;
+}

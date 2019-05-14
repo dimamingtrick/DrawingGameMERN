@@ -20,7 +20,7 @@ const serverUrl = `${process.env.REACT_APP_SERVER}/`;
 const routes = [
   "/app",
   "/app/game",
-  "/app/about",
+  "/app/chats",
   "/app/todolist",
   "/app/game-words",
   "/app/profile"

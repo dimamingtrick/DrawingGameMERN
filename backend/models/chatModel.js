@@ -10,8 +10,11 @@ const chatSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     }
-  ]
-  // users: [String]
+  ],
+  updatedAt: {
+    type: Date,
+    default: new Date()
+  }
 });
 
 const Chat = mongoose.model("chat", chatSchema);
