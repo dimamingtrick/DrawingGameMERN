@@ -8,3 +8,6 @@ nav.navbar a.dropdown-toggle::after {
 nav.navbar a.dropdown-link {
   color: #212529;
 }
+nav.navbar button.dropdown-item:active {
+  background-color: transparent;
+}

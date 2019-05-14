@@ -1,3 +1,4 @@
 import mainStateHook from "./mainStateHook";
+import profileHooks from "./profileHooks";
 
-export { mainStateHook };
+export { mainStateHook, profileHooks };

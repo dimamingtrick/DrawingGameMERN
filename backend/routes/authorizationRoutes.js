@@ -23,7 +23,7 @@ router.get("/me", jwtValidate, async (req, res) => {
  */
 router.post("/login", async (req, res) => {
   const user = await User.findOne({
-    login: req.body.login,
+    login: req.body.login
   });
 
   if (!user) return res.status(404).json({ message: "User doesn't exist" });
@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, "ming_trick", {
-      expiresIn: "1h",
+      expiresIn: "1h"
     });
 
     const userData = user.toObject(); // Convert user into object to remove password before sending response
@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
 
     return res.json({
       user: userData,
-      token,
+      token
     });
   });
 });
@@ -62,14 +62,14 @@ router.post("/registration", async (req, res) => {
         ...(!email || (email && !validateEmail(email))
           ? { email: "Enter valid email" }
           : {}),
-        ...(!password ? { password: "Password is required" } : {}),
-      },
+        ...(!password ? { password: "Password is required" } : {})
+      }
     });
   }
 
   const [loginUniqueError, emailUniqueError] = await Promise.all([
     User.findOne({ login }),
-    User.findOne({ email }),
+    User.findOne({ email })
   ]);
 
   if (loginUniqueError)
@@ -91,19 +91,19 @@ router.post("/registration", async (req, res) => {
       email,
       password: hashedPassword,
       createdAt: new Date(),
-      role: "user",
+      role: "user"
     });
 
     const newUser = await addUser.save();
     const token = jwt.sign({ id: newUser._id }, "ming_trick", {
-      expiresIn: "1h",
+      expiresIn: "1h"
     });
 
     const user = await User.findById(newUser._id).select("-password");
 
     return res.json({
       user,
-      token,
+      token
     });
   });
 });
@@ -111,14 +111,17 @@ router.post("/registration", async (req, res) => {
 router.put("/profile", jwtValidate, async (req, res) => {
   const { userId, data } = req.body;
 
-  if (!data.login || !data.email || !validateEmail(data.email)) {
+  if (
+    data.login === "" ||
+    (data.email === "" || (data.email && !validateEmail(data.email)))
+  ) {
     return res.status(400).json({
       message: {
-        ...(!data.login ? { login: "Login is required" } : {}),
-        ...(!data.email || (data.email && !validateEmail(data.email))
+        ...(data.login === "" ? { login: "Login is required" } : {}),
+        ...(data.email === "" || (data.email && !validateEmail(data.email))
           ? { email: "Enter valid email" }
-          : {}),
-      },
+          : {})
+      }
     });
   }
 
@@ -126,15 +129,15 @@ router.put("/profile", jwtValidate, async (req, res) => {
     User.findOne({
       login: data.login,
       _id: {
-        $ne: userId,
-      },
+        $ne: userId
+      }
     }),
     User.findOne({
       email: data.email,
       _id: {
-        $ne: userId,
-      },
-    }),
+        $ne: userId
+      }
+    })
   ]);
 
   if (loginUniqueError)
@@ -151,8 +154,8 @@ router.put("/profile", jwtValidate, async (req, res) => {
     userId,
     {
       $set: {
-        ...data,
-      },
+        ...data
+      }
     },
     { new: true },
     (err, updatedUser) => {

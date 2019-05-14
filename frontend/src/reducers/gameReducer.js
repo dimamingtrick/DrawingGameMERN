@@ -1,5 +1,6 @@
 import {
   GET_ALL_GAME_SETTINGS,
+  UPDATE_GAME_SETTINGS_SUCCESS,
   GET_ALL_WORDS,
   ADD_NEW_WORD,
   DELETE_WORD
@@ -17,6 +18,12 @@ const gameReducer = (state = initialState, action) => {
       return {
         ...state,
         gameSettings: action.gameSettings
+      };
+
+    case UPDATE_GAME_SETTINGS_SUCCESS:
+      return {
+        ...state,
+        gameSettings: action.updatedSettings
       };
 
     case GET_ALL_WORDS:

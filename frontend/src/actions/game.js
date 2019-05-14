@@ -1,6 +1,7 @@
 import { GameService } from "../services";
 
 export const GET_ALL_GAME_SETTINGS = "GET_ALL_GAME_SETTINGS";
+export const UPDATE_GAME_SETTINGS_SUCCESS = "UPDATE_GAME_SETTINGS_SUCCESS";
 export const GET_ALL_WORDS = "GET_ALL_WORDS";
 export const ADD_NEW_WORD = "ADD_NEW_WORD";
 export const DELETE_WORD = "DELETE_WORD";
@@ -9,6 +10,17 @@ export const getGameSettings = () => async dispatch => {
   try {
     const { settings: gameSettings } = await GameService.getGameSettings();
     dispatch({ type: GET_ALL_GAME_SETTINGS, gameSettings });
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const updateGameSettings = settings => async dispatch => {
+  try {
+    const { settings: updatedSettings } = await GameService.updateGameSettings(
+      settings
+    );
+    dispatch({ type: UPDATE_GAME_SETTINGS_SUCCESS, updatedSettings });
   } catch (err) {
     throw err;
   }

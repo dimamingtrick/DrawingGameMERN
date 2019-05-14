@@ -5,6 +5,10 @@ class GameService {
     return api({ method: "GET", url: "/game/settings" });
   }
 
+  updateGameSettings(data) {
+    return api({ method: "PUT", url: "/game/settings", body: data });
+  }
+
   getAllGameWords() {
     return api({ method: "GET", url: "/game/words" });
   }

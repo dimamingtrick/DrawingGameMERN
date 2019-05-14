@@ -22,6 +22,38 @@ router.get("/settings", async (req, res) => {
 });
 
 /**
+ * PUT /game/settings
+ * Updates users game settings
+ * returns updated settings
+ */
+router.put("/settings", async (req, res) => {
+  const { userId, data } = req.body;
+
+  if (data.background === "") {
+    return res.status(400).json({
+      ...(data.background === ""
+        ? { background: "Enter valid image link" }
+        : {})
+    });
+  }
+
+  await GameSettings.findOneAndUpdate(
+    {
+      userId
+    },
+    { $set: { ...data } },
+    { new: true },
+    (error, updatedSettings) => {
+      if (error) return res.status(400).json({ message: error });
+      if (!updatedSettings)
+        return res.status(404).json({ message: "Settings not found" });
+
+      return res.json({ settings: updatedSettings });
+    }
+  );
+});
+
+/**
  * GET /game/chat/
  * returns all chat messages
  */

@@ -37,10 +37,13 @@ div.profile-field > div > input {
 div.profile-fields-container {
   position: relative;
   width: 100%;
+  padding: 15px 0;
 }
 div.profile-fields-container > button {
-  margin-top: 15px;
   min-width: 60px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
 }
 div.profile-fields-container > button > div {
   width: 1rem;
@@ -50,4 +53,12 @@ div.profile-fields-container > svg {
   position: absolute;
   top: 25px;
   right: 25px;
+}
+
+div.profileGameSettingsRow {
+  justify-content: center;
+}
+div.profileGameSettingsRow > div.spinner-border{
+  width: 2.5rem;
+  height: 2.5rem;
 }
