@@ -1,6 +1,9 @@
 nav.navbar a {
   color: #fff;
 }
+nav.navbar .nav-item {
+  margin: 0 5px;
+}
 nav.navbar a.dropdown-toggle::after {
   vertical-align: middle;
   margin-left: .55rem;
@@ -10,4 +13,18 @@ nav.navbar a.dropdown-link {
 }
 nav.navbar button.dropdown-item:active {
   background-color: transparent;
+}
+
+div.linkUnderline {
+  height: 1px;
+  background-color: rgba(255, 255, 255, .75);
+  width: 0;
+  border-radius: 10px;
+  transition: all .35s;
+}
+nav.navbar .nav-item:hover div.linkUnderline {
+  width: 100%!important;
+}
+nav.navbar .nav-item.active div.linkUnderline {
+  width: 100%!important;
 }

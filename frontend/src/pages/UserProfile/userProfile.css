@@ -49,11 +49,18 @@ div.profile-fields-container > button > div {
   width: 1rem;
   height: 1rem;
 }
-div.profile-fields-container > svg {
+div.profile-fields-container > div.edit-icon {
+  padding: 10px;
+  line-height: 1;
   position: absolute;
   top: 25px;
   right: 25px;
+  transition: all .25s;
 }
+div.profile-fields-container > div.edit-icon:hover {
+  cursor: pointer;
+  transform: scale(1.25);
+} 
 
 div.profileGameSettingsRow {
   justify-content: center;
@@ -61,4 +68,21 @@ div.profileGameSettingsRow {
 div.profileGameSettingsRow > div.spinner-border{
   width: 2.5rem;
   height: 2.5rem;
+}
+
+div.profile-fields-container > button {
+  border-radius: .75rem;
+  color: #313340;
+  border-color: #313340;
+}
+div.profile-fields-container > button:hover {
+  background-color: #313340;
+  border-color: #313340;
+}
+div.profile-fields-container > button:active {
+  background-color: #313340!important;
+  border-color: #313340!important;
+}
+div.profile-fields-container > button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, .5)!important;
 }

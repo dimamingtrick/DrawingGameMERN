@@ -143,12 +143,12 @@ router.put("/profile", jwtValidate, async (req, res) => {
   if (loginUniqueError)
     return res
       .status(400)
-      .json({ message: { mainError: "Login is already in use" } });
+      .json({ message: { login: "Login is already in use" } });
 
   if (emailUniqueError)
     return res
       .status(400)
-      .json({ message: { mainError: "Email is already in use" } });
+      .json({ message: { email: "Email is already in use" } });
 
   await User.findByIdAndUpdate(
     userId,

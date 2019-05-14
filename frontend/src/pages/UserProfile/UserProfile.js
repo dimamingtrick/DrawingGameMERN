@@ -1,4 +1,7 @@
 import React from "react";
+import { connect } from "react-redux";
+import { updateProfile } from "../../actions/auth";
+import { updateGameSettings, getGameSettings } from "../../actions/game";
 import {
   ProfileDataSection,
   ProfileGameSettingsSection
@@ -6,14 +9,32 @@ import {
 import { Container } from "reactstrap";
 import "./userProfile.css";
 
-const UserProfile = () => {
+const UserProfile = ({
+  user,
+  updateProfile,
+  gameSettings,
+  updateGameSettings,
+  getGameSettings
+}) => {
   return (
     <Container fluid className="profileContainer">
-      <ProfileDataSection />
+      <ProfileDataSection user={user} updateProfile={updateProfile} />
       <hr />
-      <ProfileGameSettingsSection />
+      <ProfileGameSettingsSection
+        gameSettings={gameSettings}
+        updateGameSettings={updateGameSettings}
+        getGameSettings={getGameSettings}
+      />
     </Container>
   );
 };
 
-export default UserProfile;
+export default connect(
+  store => {
+    return {
+      user: store.auth.user,
+      gameSettings: store.game.gameSettings
+    };
+  },
+  { updateProfile, updateGameSettings, getGameSettings }
+)(UserProfile);

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { updateGameSettings, getGameSettings } from "../../actions/game";
 import { useProfileState } from "../../hooks";
 import { Row, Col, Input, Button, Spinner } from "reactstrap";
 import { FaEdit } from "react-icons/fa";
@@ -30,7 +28,9 @@ const ProfileGameSettingsSection = ({
         <Col xs={12} className="profileContent profileGameSettings">
           <div className="profile-fields-container">
             {!state.editing ? (
-              <FaEdit onClick={toggleEditState} />
+              <div className="edit-icon">
+                <FaEdit onClick={toggleEditState} />
+              </div>
             ) : (
               <Button
                 outline
@@ -67,11 +67,4 @@ const ProfileGameSettingsSection = ({
   );
 };
 
-export default connect(
-  store => {
-    return {
-      gameSettings: store.game.gameSettings
-    };
-  },
-  { updateGameSettings, getGameSettings }
-)(ProfileGameSettingsSection);
+export default ProfileGameSettingsSection;

@@ -1,5 +1,9 @@
 import { useState } from "react";
 
+/**
+ * Custom hook for UserProfile page to edit profile fields
+ * Get api function as a parameter to update data;
+ */
 const useProfileState = updateFunction => {
   const [state, setUpdatedState] = useState({
     editing: false,
@@ -8,12 +12,9 @@ const useProfileState = updateFunction => {
     errors: {}
   });
 
-  const setState = newState => {
-    setUpdatedState({ ...state, ...newState });
-  };
-
   const handleField = e => {
-    setState({
+    setUpdatedState({
+      ...state,
       data: {
         ...state.data,
         [e.target.name]: e.target.value
@@ -26,17 +27,17 @@ const useProfileState = updateFunction => {
   };
 
   const toggleEditState = () => {
-    setState({ editing: !state.editing });
+    setUpdatedState({ ...state, editing: !state.editing });
   };
 
   const updateData = () => {
-    setState({ loading: true });
+    setUpdatedState({ ...state, loading: true });
     updateFunction({ data: state.data, errors: {} }).then(
       () => {
-        setState({ editing: false, loading: false });
+        setUpdatedState({ ...state, editing: false, loading: false });
       },
       errors => {
-        setState({ loading: false, errors });
+        setUpdatedState({ ...state, loading: false, errors });
       }
     );
   };

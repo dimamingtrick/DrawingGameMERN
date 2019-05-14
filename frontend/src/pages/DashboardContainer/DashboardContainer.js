@@ -45,7 +45,7 @@ const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
 
   return (
     <div>
-      <DashboardNavbar />
+      <DashboardNavbar location={location} />
       <div className="dashboard-wrapper container-fluid">
         <TransitionGroup>
           <CSSTransition key={routeKey} classNames="slide" timeout={300}>

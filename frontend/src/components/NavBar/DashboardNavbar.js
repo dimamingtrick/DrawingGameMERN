@@ -16,7 +16,35 @@ import {
 import { Link } from "react-router-dom";
 import "./navbars.css";
 
-const DashboardNavbar = ({ user, logout }) => {
+const navLinks = [
+  {
+    text: "Home",
+    link: "/app",
+    permissions: ["all"]
+  },
+  {
+    text: "Game",
+    link: "/app/game",
+    permissions: ["all"]
+  },
+  {
+    text: "Words to guess",
+    link: "/app/game-words",
+    permissions: ["admin"]
+  },
+  {
+    text: "About",
+    link: "/app/about",
+    permissions: ["all"]
+  },
+  {
+    text: "To do list",
+    link: "/app/todolist",
+    permissions: ["all"]
+  }
+];
+
+const DashboardNavbar = ({ user, logout, location }) => {
   const [toggleState, setToggleState] = useState(false);
 
   const toggleNavbar = () => {
@@ -31,33 +59,20 @@ const DashboardNavbar = ({ user, logout }) => {
       <NavbarToggler onClick={toggleNavbar} className="mr-2" />
       <Collapse isOpen={toggleState} navbar>
         <Nav className="ml-auto" navbar>
-          <NavItem>
-            <Link className="nav-link" to="/app">
-              Home
-            </Link>
-          </NavItem>
-          <NavItem>
-            <Link className="nav-link" to="/app/game">
-              Game
-            </Link>
-          </NavItem>
-          {user.role === "admin" && (
-            <NavItem>
-              <Link className="nav-link" to="/app/game-words">
-                Game Words
-              </Link>
-            </NavItem>
+          {navLinks.map(nav =>
+            nav.permissions.find(i => i === user.role || i === "all") ? (
+              <NavItem
+                className={nav.link === location.pathname ? "active" : ""}
+                key={`${nav.text}-${nav.link}`}
+              >
+                <Link className="nav-link" to={nav.link}>
+                  {nav.text}
+                </Link>
+                <div className="linkUnderline" />
+              </NavItem>
+            ) : null
           )}
-          <NavItem>
-            <Link className="nav-link" to="/app/about">
-              About
-            </Link>
-          </NavItem>
-          <NavItem>
-            <Link className="nav-link" to="/app/todolist">
-              To Do List
-            </Link>
-          </NavItem>
+
           <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret>
               {user.login}
@@ -65,7 +80,7 @@ const DashboardNavbar = ({ user, logout }) => {
             <DropdownMenu right>
               <DropdownItem>
                 <Link className="dropdown-link" to="/app/profile">
-                  {user.email}
+                  My Profile
                 </Link>
               </DropdownItem>
               <DropdownItem divider />

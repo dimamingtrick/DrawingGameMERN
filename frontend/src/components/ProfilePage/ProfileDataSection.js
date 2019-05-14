@@ -1,7 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
 import { Input, Button, Spinner, Row, Col } from "reactstrap";
-import { updateProfile } from "../../actions/auth";
 import { useProfileState } from "../../hooks";
 import { FaEdit } from "react-icons/fa";
 import defaultAvatar from "../../assets/defaultAvatar.png";
@@ -23,7 +21,9 @@ const ProfileDataSection = ({ user, updateProfile }) => {
         />
         <div className="profile-fields-container">
           {!state.editing ? (
-            <FaEdit onClick={toggleEditState} />
+            <div className="edit-icon">
+              <FaEdit onClick={toggleEditState} />
+            </div>
           ) : (
             <Button
               outline
@@ -77,11 +77,4 @@ const ProfileDataSection = ({ user, updateProfile }) => {
   );
 };
 
-export default connect(
-  store => {
-    return {
-      user: store.auth.user
-    };
-  },
-  { updateProfile }
-)(ProfileDataSection);
+export default ProfileDataSection;
