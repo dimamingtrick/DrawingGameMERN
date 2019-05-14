@@ -7,9 +7,9 @@ import {
   ProfileGameSettingsSection
 } from "../../components/ProfilePage";
 import { Container } from "reactstrap";
-import "./userProfile.css";
+import "./user-profile-page.css";
 
-const UserProfile = ({
+const UserProfilePage = ({
   user,
   updateProfile,
   gameSettings,
@@ -37,4 +37,4 @@ export default connect(
     };
   },
   { updateProfile, updateGameSettings, getGameSettings }
-)(UserProfile);
+)(UserProfilePage);

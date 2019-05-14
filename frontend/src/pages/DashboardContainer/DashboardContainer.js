@@ -5,10 +5,10 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 import HomePage from "../HomePage/HomePage";
 import GamePage from "../GamePage/GamePage";
-import AboutPage from "../AboutPage/AboutPage";
+import ChatsPage from "../ChatsPage/ChatsPage";
 import ToDoListPage from "../ToDoListPage/ToDoListPage";
-import GameWords from "../GameWords/GameWords";
-import UserProfile from "../UserProfile/UserProfile";
+import GameWordsPage from "../GameWordsPage/GameWordsPage";
+import UserProfilePage from "../UserProfilePage/UserProfilePage";
 
 import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 import "./dashboard-container.css";
@@ -52,19 +52,19 @@ const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
             <Switch location={location}>
               <Route exact path="/app" component={HomePage} />
               <Route path="/app/game" component={GamePage} />
-              <Route path="/app/about" component={AboutPage} />
+              <Route path="/app/chats" component={ChatsPage} />
               <Route path="/app/todolist" component={ToDoListPage} />
               <Route
                 path="/app/game-words"
                 render={navProps =>
                   userRole === "admin" ? (
-                    <GameWords {...navProps} />
+                    <GameWordsPage {...navProps} />
                   ) : (
                     <Redirect to="/" />
                   )
                 }
               />
-              <Route path="/app/profile" component={UserProfile} />
+              <Route path="/app/profile" component={UserProfilePage} />
               <Route render={() => <Redirect to="/" />} />
             </Switch>
           </CSSTransition>

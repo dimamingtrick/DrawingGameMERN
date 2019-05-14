@@ -39,6 +39,12 @@ app.use("/game", jwtValidate, require("./routes/gameRoutes"));
 app.use("/game/words", jwtValidate, require("./routes/gameWordsRoutes"));
 
 /**
+ * Add /chats routes
+ * Require JWT token
+ */
+app.use("/chats", jwtValidate, require("./routes/chatRoutes"));
+
+/**
  * GET /
  * Basic default route to initiate server
  */
@@ -56,7 +62,7 @@ connectDb().then(() => {
     io.on("connection", socket => {
       socket.emit("socketWorks", { horray: "Socket works" });
 
-      /** Use chat sockets */
+      /** Use game sockets */
       require("./sockets/gameSockets")(socket, io);
     });
   });

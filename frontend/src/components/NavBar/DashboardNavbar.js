@@ -33,8 +33,8 @@ const navLinks = [
     permissions: ["admin"]
   },
   {
-    text: "About",
-    link: "/app/about",
+    text: "Chats",
+    link: "/app/chats",
     permissions: ["all"]
   },
   {

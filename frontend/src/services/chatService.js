@@ -1,10 +1,10 @@
 import api from "./api";
 
 class ChatService {
-  getAllMessages() {
+  getAllChats() {
     return api({
       method: "GET",
-      url: "/game/chat",
+      url: "/chats"
     });
   }
 
@@ -12,7 +12,7 @@ class ChatService {
     return api({
       method: "POST",
       url: "/game/chat",
-      body: { message },
+      body: { message }
     });
   }
 }

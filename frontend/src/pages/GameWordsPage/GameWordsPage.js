@@ -24,7 +24,7 @@ const initialState = {
   }
 };
 
-const GameWords = ({
+const GameWordsPage = ({
   getAllGameWords,
   addNewGameWord,
   deleteGameWord,
@@ -141,4 +141,4 @@ export default connect(
     addNewGameWord,
     deleteGameWord
   }
-)(GameWords);
+)(GameWordsPage);

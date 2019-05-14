@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import { Container } from "reactstrap";
-import api from "../../services/api";
+import { getAllChats } from "../../actions/chat";
 
-const AboutPage = () => {
+const ChatsPage = ({ chats, getAllChats }) => {
   const [load, setLoad] = useState(true);
 
   const fetchData = () => {
-    api({ method: "GET", url: "/" }).then(res => {
-      setTimeout(() => {
-        setLoad(false);
-      }, 300);
-    });
+    getAllChats();
   };
 
   useEffect(() => {
@@ -27,4 +24,11 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+export default connect(
+  store => {
+    return {
+      chats: store.chat.chats
+    };
+  },
+  { getAllChats }
+)(ChatsPage);
