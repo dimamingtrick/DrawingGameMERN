@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { updateGameSettings, getGameSettings } from "../../actions/game";
-import { profileHooks } from "../../hooks";
+import { useProfileState } from "../../hooks";
 import { Row, Col, Input, Button, Spinner } from "reactstrap";
 import { FaEdit } from "react-icons/fa";
 
@@ -11,7 +11,7 @@ const ProfileGameSettingsSection = ({
   updateGameSettings
 }) => {
   const [settingsLoad, setSettingsLoad] = useState(!gameSettings);
-  const [state, handleField, toggleEditState, updateData] = profileHooks(
+  const [state, handleField, toggleEditState, updateData] = useProfileState(
     updateGameSettings
   );
 

@@ -2,13 +2,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { Input, Button, Spinner, Row, Col } from "reactstrap";
 import { updateProfile } from "../../actions/auth";
-import { profileHooks } from "../../hooks";
+import { useProfileState } from "../../hooks";
 import { FaEdit } from "react-icons/fa";
 import defaultAvatar from "../../assets/defaultAvatar.png";
 import moment from "moment";
 
 const ProfileDataSection = ({ user, updateProfile }) => {
-  const [state, handleField, toggleEditState, updateData] = profileHooks(
+  const [state, handleField, toggleEditState, updateData] = useProfileState(
     updateProfile
   );
 

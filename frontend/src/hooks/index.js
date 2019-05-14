@@ -1,4 +1,4 @@
 import mainStateHook from "./mainStateHook";
-import profileHooks from "./profileHooks";
+import useProfileState from "./useProfileState";
 
-export { mainStateHook, profileHooks };
+export { mainStateHook, useProfileState };

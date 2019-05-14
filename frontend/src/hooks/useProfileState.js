@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const profileHooks = updateFunction => {
+const useProfileState = updateFunction => {
   const [state, setUpdatedState] = useState({
     editing: false,
     loading: false,
@@ -44,4 +44,4 @@ const profileHooks = updateFunction => {
   return [state, handleField, toggleEditState, updateData];
 };
 
-export default profileHooks;
+export default useProfileState;
