@@ -1,35 +1,32 @@
 import React, { useEffect } from "react";
+import { Route, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { Container } from "reactstrap";
+import SingleChatRoute from "./SingleChatRoute/SingleChatRoute";
 import { mainStateHook } from "../../hooks";
 import { getAllChats } from "../../actions/chat";
 import "./chats-page.css";
-import {
-  ChatMessagesContainer,
-  SingleMessage,
-  ChatInput
-} from "../../components/GameChat";
 
-const ChatsPage = ({ user, chats, getAllChats }) => {
+const ChatsPage = ({ user, chats, getAllChats, history, location }) => {
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
-    currentChat: chats.length > 0 ? chats[0]._id : null,
     messages: []
   });
 
   const fetchData = () => {
     getAllChats().then(res => {
-      setState({ load: false, currentChat: res[0]._id });
+      /** get id of current chat to set active class in chat sidebar */
+      setState({
+        load: false
+      });
     });
   };
 
+  /** fetching chats or redirect to first chat page if there is already chats */
   useEffect(() => {
     if (chats.length === 0) fetchData();
+    else history.push(`/app/chats/${chats[0]._id}`);
   }, []);
-
-  const selectNewChat = id => {
-    setState({ currentChat: id });
-  };
 
   if (state.load) return <h1>LOADING...</h1>;
 
@@ -37,12 +34,12 @@ const ChatsPage = ({ user, chats, getAllChats }) => {
     <Container fluid className="chats-container">
       <div className="all-chats-list">
         {chats.map(chat => (
-          <div
+          <Link
+            to={`/app/chats/${chat._id}`}
             className={`single-chat ${
-              state.currentChat === chat._id ? "active" : ""
+              location.pathname.includes(chat._id) ? "active" : ""
             }`}
             key={chat._id}
-            onClick={() => selectNewChat(chat._id)}
           >
             <div className="single-chat-user-data">
               {chat.users.find(u => u._id !== user._id).login}
@@ -50,25 +47,13 @@ const ChatsPage = ({ user, chats, getAllChats }) => {
             <div className="single-chat-user-data">
               {chat.users.find(u => u._id !== user._id).email}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       <div className="single-chat-display">
-        {/* {currentChat} */}
-        <ChatMessagesContainer background={null}>
-          {state.messages.map((msg, index) => (
-            <SingleMessage
-              key={msg._id ? msg._id : "otherType-" + index}
-              message={msg}
-              userLogin={user.login}
-            />
-          ))}
-        </ChatMessagesContainer>
-        <ChatInput
-          inputMessage={"text"}
-          handleInput={() => {}}
-          sendMessage={() => {}}
-          sending={false}
+        <Route
+          path="/app/chats/:id"
+          render={navProps => <SingleChatRoute user={user} {...navProps} />}
         />
       </div>
     </Container>

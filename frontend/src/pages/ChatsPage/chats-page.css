@@ -9,28 +9,25 @@ div.chats-container.container-fluid {
   border: 1px solid #343a40;
 }
 
-div.all-chats-list {
-  /* border: 1px solid #343a40; */
-  /* padding: 25px; */
-}
-
-div.all-chats-list > div.single-chat {
+div.all-chats-list > a.single-chat {
+  display: flex;
+  flex-direction: column;
+  color: #343a40;
   padding: 10px 50px;
   border-bottom: 1px solid rgba(52, 58, 64, .1);
   transition: all .25s;
   cursor: pointer;
 }
 
-div.all-chats-list > div.single-chat:first-child {
-  margin-top: 25px;
+div.all-chats-list > a.single-chat:first-child {
   border-top: 1px solid rgba(52, 58, 64, .1);
 }
 
-div.all-chats-list > div.single-chat.active {
+div.all-chats-list > a.single-chat.active {
   background: rgba(52, 58, 64, .1);
 }
 
-div.all-chats-list > div.single-chat:hover {
+div.all-chats-list > a.single-chat:hover {
   background: rgba(52, 58, 64, .25);
 }
 

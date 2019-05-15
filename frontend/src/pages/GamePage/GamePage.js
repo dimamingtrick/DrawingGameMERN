@@ -5,9 +5,9 @@ import GameCanvas from "../../components/GameCanvas/GameCanvas";
 import { socket } from "../DashboardContainer/DashboardContainer";
 import {
   ChatMessagesContainer,
-  SingleMessage,
-  ChatInput,
-} from "../../components/GameChat";
+  GameChatMessage,
+  ChatInput
+} from "../../components/ChatComponents";
 import { GameReloadingSpinner } from "../../components/Game";
 import { getGameSettings } from "../../actions/game";
 import "./game-page.css";
@@ -17,7 +17,7 @@ class GamePage extends React.Component {
     messages: [],
     inputMessage: "",
     sending: false,
-    gameIsLoading: true,
+    gameIsLoading: true
   };
 
   async componentDidMount() {
@@ -61,9 +61,9 @@ class GamePage extends React.Component {
         ...(newMessage.user === this.props.user.login && this.state.sending // set this state if user was sending message for better screen transition
           ? {
               inputMessage: "",
-              sending: false,
+              sending: false
             }
-          : {}),
+          : {})
       },
       () => {
         this.scrollToChatBottom();
@@ -82,13 +82,13 @@ class GamePage extends React.Component {
     this.setState({ sending: true });
     socket.emit("sendNewGameChatMessage", {
       message: this.state.inputMessage,
-      userId: this.props.user._id,
+      userId: this.props.user._id
     });
   };
 
   handleInput = e => {
     this.setState({
-      inputMessage: e.target.value,
+      inputMessage: e.target.value
     });
   };
 
@@ -112,7 +112,7 @@ class GamePage extends React.Component {
                 background={gameSettings ? gameSettings.background : null}
               >
                 {messages.map((msg, index) => (
-                  <SingleMessage
+                  <GameChatMessage
                     key={msg._id ? msg._id : "otherType-" + index}
                     message={msg}
                     userLogin={user.login}
@@ -141,7 +141,7 @@ export default connect(
   store => {
     return {
       user: store.auth.user,
-      gameSettings: store.game.gameSettings,
+      gameSettings: store.game.gameSettings
     };
   },
   { getGameSettings }

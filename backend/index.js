@@ -64,6 +64,9 @@ connectDb().then(() => {
 
       /** Use game sockets */
       require("./sockets/gameSockets")(socket, io);
+
+      /** Use chat sockets */
+      require("./sockets/chatSockets")(socket, io);
     });
   });
 });

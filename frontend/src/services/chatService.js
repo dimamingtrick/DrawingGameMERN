@@ -8,11 +8,18 @@ class ChatService {
     });
   }
 
-  sendNewMessage(message) {
+  getSingleChatById(id) {
+    return api({
+      method: "GET",
+      url: "/chats/" + id
+    });
+  }
+
+  sendNewMessage(id, message) {
     return api({
       method: "POST",
-      url: "/game/chat",
-      body: { message }
+      url: "/chats/" + id,
+      body: message
     });
   }
 }

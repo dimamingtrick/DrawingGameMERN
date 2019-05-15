@@ -50,35 +50,38 @@ router.get("/", async (req, res) => {
  * returns single user todo by id
  */
 router.get("/:id", async (req, res) => {
-  const todo = await Chat.findOne({
+  const chat = await Chat.findOne({
     _id: objectId(req.params.id),
-    userId: req.body.userId
+    users: objectId(req.body.userId)
+  }).populate([
+    {
+      path: "users",
+      select: "-password"
+    }
+  ]);
+  const messages = await ChatMessage.find({
+    chatId: objectId(chat._id)
   });
-  return res.json(todo);
+  return res.json({ chat, messages });
 });
 
 /**
  * POST /chats
- * add new todo
+ * send new message
  */
-router.post("/", async (req, res) => {
-  const { title, description, userId } = req.body;
+router.post("/:id", async (req, res) => {
+  const { message, userId } = req.body;
+  const msg = new ChatMessage({
+    userId: objectId(userId),
+    chatId: objectId(req.params.id),
+    message
+  });
+  const newMessage = await msg.save();
 
-  if (!title || !description || description.length < 10) {
-    return res.status(400).json({
-      message: {
-        ...(!title ? { title: "Title is required" } : {}),
-        ...(!description ? { description: "Description is required" } : {}),
-        ...(description && description.length < 10
-          ? { description: "Description length must be at least 10 characters" }
-          : {})
-      }
-    });
-  }
+  const io = req.app.get("socketio");
+  io.emit(`chat-${req.params.id}-newMessage`, { newMessage });
 
-  const todo = new Todo({ title, description, createdAt: new Date(), userId });
-  const newTodo = await Chat.save();
-  return res.json(newTodo);
+  return res.json({});
 });
 
 /**

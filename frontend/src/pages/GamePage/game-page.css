@@ -149,7 +149,7 @@ div.chat-messages div.single-message.my-message > div.message-wrapper {
 
 div.chat-messages > div.single-message > div.message-wrapper {
   border-bottom-left-radius: 0;
-  display: inline-block;
+  display: flex;
   align-self: center;
 }
 
@@ -206,7 +206,8 @@ div.chat-messages > div.single-message.chat-message > div.message-wrapper {
   padding: 1px;
   overflow: hidden;
 
-  flex-direction: row;
+  /* flex-direction: row; */
+  flex-direction: column;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -214,12 +215,17 @@ div.chat-messages > div.single-message.chat-message > div.message-wrapper {
 div.chat-messages > div.single-message.chat-message.join-chat-message > div.message-wrapper {
   background: rgba(19, 132, 150, .75);
 }
-div.single-message.chat-message > div.message-wrapper > div.single-message-text, div.single-message-date {
+div.single-message.chat-message > div.message-wrapper div.single-message-text, div.single-message-date {
   text-align: center;
   margin: 0;
 }
-div.single-message.chat-message > div.message-wrapper > div.single-message-text {
+div.single-message.chat-message > div.message-wrapper div.single-message-text {
   font-size: 12px;
+}
+
+div.message-wrapper > div.message-text {
+  display: inline-block;
+  max-width: 100%;
 }
 
 
@@ -238,4 +244,35 @@ div.chatUserWinGameMessage > div.message-wrapper > div {
   color: #fff!important;
   text-align: center;
   font-weight: bold;
+}
+
+
+div.single-message > div.message-wrapper {
+  flex-direction: column;
+}
+
+div.single-message div.message-date > div.single-message-date {
+  text-align: left;
+}
+
+div.single-message.my-message div.message-date > div.single-message-date {
+  text-align: right;
+}
+
+div.single-message div.message-info {
+  max-width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+div.single-message.my-message div.message-info {
+  flex-direction: row;
+}
+
+div.single-message-text {
+  word-break: break-all;
+}
+
+div.message-date {
+  padding-top: 5px;
 }

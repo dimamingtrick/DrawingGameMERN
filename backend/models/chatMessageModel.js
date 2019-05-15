@@ -5,7 +5,7 @@ const chatMessageSchema = new mongoose.Schema({
     type: String || Number
   },
   chatId: {
-    type: String || Number
+    type: mongoose.Schema.Types.ObjectId
   },
   message: {
     type: String
@@ -15,7 +15,8 @@ const chatMessageSchema = new mongoose.Schema({
     default: new Date()
   },
   type: {
-    type: String // would be text or image
+    type: String, // would be text or image,
+    default: "text"
   }
 });
 

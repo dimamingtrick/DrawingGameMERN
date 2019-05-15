@@ -1,0 +1,33 @@
+div.single-chat-display div.single-message {
+  margin: 10px;
+}
+
+div.single-chat-display > div.chat-messages {
+  position: relative;
+}
+
+div.single-chat-display > div.chat-messages > div.spinner-border {
+  width: 4rem;
+  height: 4rem;
+  position: absolute;
+  top: calc(50% - 2rem);
+  left: calc(50% - 2rem);
+}
+
+div.single-chat-display div.message-user-avatar img {
+  width: 3rem;
+  border-radius: 50%;
+}
+
+div.single-message.my-message > div.message-wrapper {
+  flex-direction: column;
+}
+
+div.single-message > div.message-wrapper div.message-user-avatar { 
+  padding-right: 20px;
+}
+
+div.single-message.my-message > div.message-wrapper div.message-user-avatar {
+  padding-left: 20px;
+  padding-right: 0;
+}
