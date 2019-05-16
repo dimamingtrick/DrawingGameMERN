@@ -9,16 +9,19 @@ import {
 } from "../../../components/ChatComponents";
 import { ChatService } from "../../../services";
 import { socket } from "../../DashboardContainer/DashboardContainer";
+import { getGameSettings } from "../../../actions/game";
 import "./single-chat-page.css";
 
 const SingleChatRoute = ({
   user,
   match: {
     params: { id: chatId }
-  }
+  },
+  getGameSettings,
+  gameSettings
 }) => {
   const [state, setState] = mainStateHook({
-    loading: false,
+    loading: true,
     chat: {},
     messages: [],
     inputValue: "",
@@ -33,7 +36,7 @@ const SingleChatRoute = ({
   /** Fetching current chat messages if chatId changes */
   useEffect(() => {
     const fetchChatData = () => {
-      setState({ loading: true });
+      if (!state.loading) setState({ loading: true });
       ChatService.getSingleChatById(chatId).then(({ chat, messages }) => {
         setState({ loading: false, chat, messages });
       });
@@ -41,9 +44,11 @@ const SingleChatRoute = ({
     fetchChatData();
   }, [chatId]);
 
-  /**
-   * subscribing to socket events;
-   */
+  useEffect(() => {
+    if (!gameSettings) getGameSettings();
+  }, []);
+
+  /** Subscribing to socket events */
   useEffect(() => {
     socket.on(`chat-${chatId}-newMessage`, ({ newMessage }) => {
       setState({
@@ -84,9 +89,7 @@ const SingleChatRoute = ({
   return (
     <>
       <ChatMessagesContainer
-        background={
-          "https://i.pinimg.com/originals/d3/a6/6f/d3a66fad20842b1571ac9b7e65a8cb96.jpg"
-        }
+        background={gameSettings ? gameSettings.background : null}
       >
         {loading ? (
           <Spinner />
@@ -101,7 +104,9 @@ const SingleChatRoute = ({
             />
           ))
         )}
-        {messages.length === 0 && !loading && "No messages"}
+        {messages.length === 0 && !loading && (
+          <div className="no-messages-found">No messages found...</div>
+        )}
       </ChatMessagesContainer>
       <ChatInput
         inputMessage={state.inputValue}
@@ -115,7 +120,7 @@ const SingleChatRoute = ({
 
 export default connect(
   store => {
-    return {};
+    return { gameSettings: store.game.gameSettings };
   },
-  {}
+  { getGameSettings }
 )(SingleChatRoute);

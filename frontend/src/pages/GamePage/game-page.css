@@ -89,6 +89,8 @@ div.chat-messages {
   flex: 1;
   overflow-y: auto;
   background-size: cover!important;
+  display: flex;
+  flex-direction: column;
 }
 div.chat-messages::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
@@ -126,7 +128,7 @@ div.single-message:first-child {
 }
 
 div.single-message:last-child {
-  margin-bottom: 15px;
+  padding-bottom: 15px!important;
 }
 
 div.chat-messages > div.single-message.my-message {

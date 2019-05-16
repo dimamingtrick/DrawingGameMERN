@@ -4,6 +4,7 @@ div.single-chat-display div.single-message {
 
 div.single-chat-display > div.chat-messages {
   position: relative;
+  
 }
 
 div.single-chat-display > div.chat-messages > div.spinner-border {
@@ -12,6 +13,7 @@ div.single-chat-display > div.chat-messages > div.spinner-border {
   position: absolute;
   top: calc(50% - 2rem);
   left: calc(50% - 2rem);
+  color: #fff;
 }
 
 div.single-chat-display div.message-user-avatar img {
@@ -24,10 +26,19 @@ div.single-message.my-message > div.message-wrapper {
 }
 
 div.single-message > div.message-wrapper div.message-user-avatar { 
+  margin-right: auto;
   padding-right: 20px;
 }
 
 div.single-message.my-message > div.message-wrapper div.message-user-avatar {
+  margin-left: auto;
   padding-left: 20px;
   padding-right: 0;
+}
+
+div.no-messages-found {
+  width: 100%;
+  margin: auto;
+  font-size: 20px;
+  color: #fff;
 }

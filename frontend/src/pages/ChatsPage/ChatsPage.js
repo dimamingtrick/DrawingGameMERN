@@ -15,7 +15,6 @@ const ChatsPage = ({ user, chats, getAllChats, history, location }) => {
 
   const fetchData = () => {
     getAllChats().then(res => {
-      /** get id of current chat to set active class in chat sidebar */
       setState({
         load: false
       });
