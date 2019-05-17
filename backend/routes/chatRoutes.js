@@ -81,7 +81,7 @@ router.post("/:id", async (req, res) => {
   const chatId = req.params.id;
   const msg = new ChatMessage({
     userId: objectId(userId),
-    chatId: objectId(),
+    chatId: objectId(chatId),
     message
   });
   const newMessage = await msg.save();

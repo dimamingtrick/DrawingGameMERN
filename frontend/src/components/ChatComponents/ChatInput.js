@@ -4,7 +4,7 @@ import {
   InputGroup,
   Input,
   InputGroupAddon,
-  Spinner,
+  Spinner
 } from "reactstrap";
 import { IoMdSend } from "react-icons/io";
 
@@ -16,6 +16,7 @@ const ChatInput = ({ inputMessage, handleInput, sendMessage, sending }) => {
         onChange={handleInput}
         className="chat-input"
         placeholder="Message..."
+        autoFocus
         onKeyDown={e => {
           if (e.keyCode === 13) sendMessage();
         }}
