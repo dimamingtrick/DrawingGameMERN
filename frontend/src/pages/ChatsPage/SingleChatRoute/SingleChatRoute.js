@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { scrollToChatBottom } from "../../../helpers";
 import { mainStateHook } from "../../../hooks";
 import { Spinner } from "reactstrap";
 import {
@@ -30,11 +31,6 @@ const SingleChatRoute = ({
     sending: false,
     userIsTyping: false
   });
-
-  const scrollToChatBottom = () => {
-    const chatMessagesWrapper = document.querySelector(".chat-messages");
-    chatMessagesWrapper.scrollTop = chatMessagesWrapper.scrollHeight;
-  };
 
   /** Fetching current chat messages if chatId changes */
   useEffect(() => {
@@ -89,7 +85,7 @@ const SingleChatRoute = ({
     setState({ inputValue: e.target.value });
     inputHandlingTimeout = setTimeout(() => {
       socket.emit("chatUserStopTyping", chatId);
-    }, 1500);
+    }, 750);
   };
 
   /** Send message to chat */

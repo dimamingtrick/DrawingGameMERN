@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Container, Card, Row, Col } from "reactstrap";
+import { scrollToChatBottom } from "../../helpers";
 import GameCanvas from "../../components/GameCanvas/GameCanvas";
 import { socket } from "../DashboardContainer/DashboardContainer";
 import {
@@ -66,14 +67,9 @@ class GamePage extends React.Component {
           : {})
       },
       () => {
-        this.scrollToChatBottom();
+        scrollToChatBottom();
       }
     );
-  };
-
-  scrollToChatBottom = () => {
-    const chatMessagesWrapper = document.querySelector(".chat-messages");
-    chatMessagesWrapper.scrollTop = chatMessagesWrapper.scrollHeight;
   };
 
   /** I'm not saving game messages to database, so i can just emit socket events to backend */

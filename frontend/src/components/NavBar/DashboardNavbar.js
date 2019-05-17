@@ -62,8 +62,13 @@ const DashboardNavbar = ({ user, logout, location }) => {
           {navLinks.map(nav =>
             nav.permissions.find(i => i === user.role || i === "all") ? (
               <NavItem
-                className={nav.link === location.pathname ? "active" : ""}
                 key={`${nav.text}-${nav.link}`}
+                className={
+                  location.pathname === nav.link ||
+                  (location.pathname.includes(nav.link) && nav.link !== "/app")
+                    ? "active"
+                    : ""
+                }
               >
                 <Link className="nav-link" to={nav.link}>
                   {nav.text}
