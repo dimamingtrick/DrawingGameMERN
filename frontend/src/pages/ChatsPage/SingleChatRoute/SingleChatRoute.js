@@ -12,6 +12,8 @@ import { socket } from "../../DashboardContainer/DashboardContainer";
 import { getGameSettings } from "../../../actions/game";
 import "./single-chat-page.css";
 
+let inputHandlingTimeout;
+
 const SingleChatRoute = ({
   user,
   match: {
@@ -25,7 +27,8 @@ const SingleChatRoute = ({
     chat: {},
     messages: [],
     inputValue: "",
-    sending: false
+    sending: false,
+    userIsTyping: false
   });
 
   const scrollToChatBottom = () => {
@@ -55,21 +58,38 @@ const SingleChatRoute = ({
         messages: [...state.messages, newMessage],
         ...(user._id === newMessage.userId
           ? { inputValue: "", sending: false }
-          : {})
+          : {}),
+        ...(state.userIsTyping ? { userIsTyping: false } : {})
       });
     });
+
+    socket.on(`chat${chatId}UserTypes`, () => {
+      if (!state.userIsTyping) setState({ userIsTyping: true });
+    });
+
+    socket.on(`chat${chatId}UserStopTyping`, () => {
+      if (state.userIsTyping) setState({ userIsTyping: false });
+    });
+
     return () => {
       socket.off(`chat-${chatId}-newMessage`);
+      socket.off(`chat${chatId}UserTypes`);
+      socket.off(`chat${chatId}UserStopTyping`);
     };
   });
 
   /** Scroll to bottom of chat if messages length changes */
   useEffect(() => {
     scrollToChatBottom();
-  }, [state.messages]);
+  }, [state.messages, state.userIsTyping]);
 
   const handleInput = e => {
+    clearInterval(inputHandlingTimeout);
+    socket.emit("chatUserIsTyping", chatId);
     setState({ inputValue: e.target.value });
+    inputHandlingTimeout = setTimeout(() => {
+      socket.emit("chatUserStopTyping", chatId);
+    }, 1500);
   };
 
   /** Send message to chat */
@@ -90,6 +110,8 @@ const SingleChatRoute = ({
     <>
       <ChatMessagesContainer
         background={gameSettings ? gameSettings.background : null}
+        userThatTypes={chat.users && chat.users.find(u => u._id !== user._id)}
+        userIsTyping={state.userIsTyping}
       >
         {loading ? (
           <Spinner />

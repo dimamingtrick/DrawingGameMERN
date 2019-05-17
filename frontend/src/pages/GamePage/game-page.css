@@ -120,15 +120,17 @@ div.main-chat-messages-wrapper {
 }
 div.chat-messages-background {
   position: absolute;
-  width: 150%;
-  height: 150%;
-  top: -10px;
-  left: -10px;
-  -webkit-filter: blur(3px);
-  -moz-filter: blur(3px);
-  -o-filter: blur(3px);
-  -ms-filter: blur(3px);
-  filter: blur(3px);
+  width: 102%;
+  height: 102%;
+  top: -5px;
+  left: -5px;
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px);
+  -ms-filter: blur(2px);
+  filter: blur(2px);
+  background-position: center!important;
+  background-size: cover!important;
 }
 
 div.chat-messages {
@@ -149,8 +151,8 @@ div.single-message:first-child {
   padding-top: 5px;
 }
 
-div.single-message:last-child {
-  padding-bottom: 15px!important;
+div.single-message:last-of-type {
+  padding-bottom: 45px!important
 }
 
 div.chat-messages > div.single-message.my-message {
