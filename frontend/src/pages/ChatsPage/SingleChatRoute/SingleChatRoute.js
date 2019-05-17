@@ -49,7 +49,7 @@ const SingleChatRoute = ({
 
   /** Subscribing to socket events */
   useEffect(() => {
-    socket.on(`chat-${chatId}-newMessage`, ({ newMessage }) => {
+    socket.on(`chat-${chatId}-newMessage`, newMessage => {
       setState({
         messages: [...state.messages, newMessage],
         ...(user._id === newMessage.userId

@@ -61,7 +61,8 @@ router.get("/:id", async (req, res) => {
       {
         path: "users",
         select: "-password"
-      }
+      },
+      "lastMessage"
     ]),
     ChatMessage.find({
       chatId: objectId(chatId)
@@ -107,8 +108,8 @@ router.post("/:id", async (req, res) => {
       if (err || !updatedChat)
         return res.status(400).json({ message: err || "Error" });
 
-      io.emit(`chat-${chatId}-getUpdate`, { updatedChat });
-      io.emit(`chat-${chatId}-newMessage`, { newMessage });
+      io.emit(`chat-${chatId}-getUpdate`, updatedChat);
+      io.emit(`chat-${chatId}-newMessage`, newMessage);
       return res.json({});
     });
 });

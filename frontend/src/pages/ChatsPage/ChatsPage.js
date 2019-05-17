@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { Route, Link } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { Container, Spinner } from "reactstrap";
 import SingleChatRoute from "./SingleChatRoute/SingleChatRoute";
+import { ChatListItem } from "../../components/ChatComponents";
 import { mainStateHook } from "../../hooks";
 import { getAllChats, updateChat } from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
@@ -39,6 +40,7 @@ const ChatsPage = ({
 
     if (chats.length === 0) fetchData();
     else history.push(`/app/chats/${chats[0]._id}`);
+    return () => clearInterval(isStillLoading);
   }, []);
 
   /** Subscribe to socket events */
@@ -46,7 +48,7 @@ const ChatsPage = ({
     if (chats.length > 0) {
       chats.forEach(chat => {
         /** User recieve new message and chat 'last message' is changed */
-        socket.on(`chat-${chat._id}-getUpdate`, ({ updatedChat }) => {
+        socket.on(`chat-${chat._id}-getUpdate`, updatedChat => {
           updateChat(updatedChat);
         });
       });
@@ -88,20 +90,12 @@ const ChatsPage = ({
         <>
           <div className="all-chats-list">
             {chats.map(chat => (
-              <Link
+              <ChatListItem
+                {...chat}
                 key={chat._id}
-                to={`/app/chats/${chat._id}`}
-                className={`single-chat ${
-                  location.pathname.includes(chat._id) ? "active" : ""
-                }`}
-              >
-                <div className="single-chat-user-data">
-                  {chat.users.find(u => u._id !== user._id).login}
-                </div>
-                <div className="single-chat-last-message">
-                  <span>{chat.lastMessage && chat.lastMessage.message}</span>
-                </div>
-              </Link>
+                isActive={location.pathname.includes(chat._id)}
+                user={user}
+              />
             ))}
           </div>
           <div className="single-chat-display">

@@ -61,12 +61,30 @@ div.single-chat-user-data {
 
 div.all-chats-list > a.single-chat {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   color: #343a40;
-  padding: 10px 25px;
+  padding: 10px;
   border-bottom: 1px solid rgba(52, 58, 64, .1);
   transition: all .25s;
   cursor: pointer;
+}
+
+div.all-chats-list div.single-chat-textfields {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+div.all-chats-list div.single-chat-partner-avatar {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.all-chats-list div.single-chat-partner-avatar img {
+  width: 45px;
+  border-radius: 50%;
 }
 
 div.all-chats-list > a.single-chat:first-child {
@@ -78,7 +96,8 @@ div.all-chats-list > a.single-chat.active {
 }
 
 div.all-chats-list > a.single-chat:hover {
-  background: rgba(52, 58, 64, .25);
+  background: rgba(52, 58, 64, .15);
+  text-decoration: none;
 }
 
 
