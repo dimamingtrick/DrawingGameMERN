@@ -272,7 +272,10 @@ div.chatUserWinGameMessage > div.message-wrapper > div {
   text-align: center;
   font-weight: bold;
 }
-
+div.chatUserWinGameMessage div.single-message-text,
+div.chatUserWinGameMessage div.single-message-date {
+  text-align: center!important;
+}
 
 div.single-message > div.message-wrapper {
   flex-direction: column;

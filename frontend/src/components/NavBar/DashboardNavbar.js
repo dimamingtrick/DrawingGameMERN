@@ -65,7 +65,9 @@ const DashboardNavbar = ({ user, logout, location }) => {
                 key={`${nav.text}-${nav.link}`}
                 className={
                   location.pathname === nav.link ||
-                  (location.pathname.includes(nav.link) && nav.link !== "/app")
+                  (location.pathname.includes(nav.link) &&
+                    nav.link !== "/app" &&
+                    nav.link !== "/app/game")
                     ? "active"
                     : ""
                 }
