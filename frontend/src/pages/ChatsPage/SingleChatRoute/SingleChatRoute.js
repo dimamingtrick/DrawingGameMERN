@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { scrollToChatBottom } from "../../../helpers";
 import { mainStateHook } from "../../../hooks";
@@ -13,7 +13,7 @@ import { socket } from "../../DashboardContainer/DashboardContainer";
 import { getGameSettings } from "../../../actions/game";
 import "./single-chat-page.css";
 
-let inputHandlingTimeout;
+let inputHandlingTimeoutFlag;
 
 const SingleChatRoute = ({
   user,
@@ -28,24 +28,19 @@ const SingleChatRoute = ({
     chat: {},
     messages: [],
     inputValue: "",
-    sending: false,
-    userIsTyping: false
+    sending: false
   });
+
+  const [userIsTyping, setUserIsTyping] = useState(false);
 
   /** Fetching current chat messages if chatId changes */
   useEffect(() => {
-    const fetchChatData = () => {
-      if (!state.loading) setState({ loading: true });
-      ChatService.getSingleChatById(chatId).then(({ chat, messages }) => {
-        setState({ loading: false, chat, messages });
-      });
-    };
-    fetchChatData();
-  }, [chatId]);
-
-  useEffect(() => {
     if (!gameSettings) getGameSettings();
-  }, []);
+    if (!state.loading) setState({ loading: true });
+    ChatService.getSingleChatById(chatId).then(({ chat, messages }) => {
+      setState({ loading: false, chat, messages });
+    });
+  }, [chatId]);
 
   /** Subscribing to socket events */
   useEffect(() => {
@@ -54,17 +49,17 @@ const SingleChatRoute = ({
         messages: [...state.messages, newMessage],
         ...(user._id === newMessage.userId
           ? { inputValue: "", sending: false }
-          : {}),
-        ...(state.userIsTyping ? { userIsTyping: false } : {})
+          : {})
       });
+      if (userIsTyping) setUserIsTyping(false);
     });
 
     socket.on(`chat${chatId}UserTypes`, () => {
-      if (!state.userIsTyping) setState({ userIsTyping: true });
+      if (!userIsTyping) setUserIsTyping(true);
     });
 
     socket.on(`chat${chatId}UserStopTyping`, () => {
-      if (state.userIsTyping) setState({ userIsTyping: false });
+      if (userIsTyping) setUserIsTyping(false);
     });
 
     return () => {
@@ -77,13 +72,13 @@ const SingleChatRoute = ({
   /** Scroll to bottom of chat if messages length changes */
   useEffect(() => {
     scrollToChatBottom();
-  }, [state.messages, state.userIsTyping]);
+  }, [state.messages, userIsTyping]);
 
   const handleInput = e => {
-    clearInterval(inputHandlingTimeout);
+    clearInterval(inputHandlingTimeoutFlag);
     socket.emit("chatUserIsTyping", chatId);
     setState({ inputValue: e.target.value });
-    inputHandlingTimeout = setTimeout(() => {
+    inputHandlingTimeoutFlag = setTimeout(() => {
       socket.emit("chatUserStopTyping", chatId);
     }, 750);
   };
@@ -91,23 +86,20 @@ const SingleChatRoute = ({
   /** Send message to chat */
   const sendMessage = () => {
     setState({ sending: true });
-    ChatService.sendNewMessage(chatId, { message: state.inputValue }).catch(
-      err => {
-        console.log(err);
-        setState({
-          sending: false
-        });
-      }
-    );
+    ChatService.sendNewMessage(chatId, state.inputValue).catch(err => {
+      setState({
+        sending: false
+      });
+    });
   };
 
-  const { loading, messages, chat, sending } = state;
+  const { loading, messages, chat, sending, inputValue } = state;
   return (
     <>
       <ChatMessagesContainer
         background={gameSettings ? gameSettings.background : null}
         userThatTypes={chat.users && chat.users.find(u => u._id !== user._id)}
-        userIsTyping={state.userIsTyping}
+        userIsTyping={userIsTyping}
       >
         {loading ? (
           <Spinner />
@@ -127,7 +119,7 @@ const SingleChatRoute = ({
         )}
       </ChatMessagesContainer>
       <ChatInput
-        inputMessage={state.inputValue}
+        inputMessage={inputValue}
         handleInput={handleInput}
         sendMessage={sendMessage}
         sending={sending}

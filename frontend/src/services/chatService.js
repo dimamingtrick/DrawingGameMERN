@@ -19,7 +19,7 @@ class ChatService {
     return api({
       method: "POST",
       url: "/chats/" + id,
-      body: message
+      body: { message }
     });
   }
 }
