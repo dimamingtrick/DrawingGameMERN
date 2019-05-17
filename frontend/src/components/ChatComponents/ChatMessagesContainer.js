@@ -2,14 +2,16 @@ import React from "react";
 // import chatbg from "../../assets/chatbg.png";
 
 const ChatMessagesContainer = ({ children, background }) => {
+  console.log(background);
   return (
-    <div
-      className="chat-messages"
-      style={{
-        background: 'url("' + background + '")'
-      }}
-    >
-      {children}
+    <div className="main-chat-messages-wrapper">
+      <div className="chat-messages">{children}</div>
+      <div
+        className="chat-messages-background"
+        style={{
+          background: 'url("' + background + '")'
+        }}
+      />
     </div>
   );
 };

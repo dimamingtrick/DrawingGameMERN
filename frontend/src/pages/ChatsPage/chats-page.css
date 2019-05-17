@@ -1,3 +1,34 @@
+div.chats-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+div.chats-loading-container > div.chats-loading-spinners {
+  position: absolute;
+  top: 40%;
+}
+div.chats-loading-container > div.chats-loading-spinners > h1 {
+  margin-bottom: 15px;
+  display: flex;
+}
+
+div.chats-loading-container > div.chats-loading-spinners > div.spinner-border{
+  width: 3rem;
+  height: 3rem;
+}
+
+div.single-chat-display > div.select-chat-wrapper {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  color: #fff;
+  background-size: 100% 100%!important;
+  background-position: center!important;
+  background-repeat: no-repeat!important;
+}
+
 div.chats-container.container-fluid {
   padding: 0;
   margin: 0;

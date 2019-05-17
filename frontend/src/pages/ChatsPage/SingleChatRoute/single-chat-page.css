@@ -2,12 +2,12 @@ div.single-chat-display div.single-message {
   margin: 10px;
 }
 
-div.single-chat-display > div.chat-messages {
+div.single-chat-display div.chat-messages {
   position: relative;
   
 }
 
-div.single-chat-display > div.chat-messages > div.spinner-border {
+div.single-chat-display div.chat-messages > div.spinner-border {
   width: 4rem;
   height: 4rem;
   position: absolute;
@@ -33,6 +33,7 @@ div.single-message > div.message-wrapper div.message-user-avatar {
 div.single-message.my-message > div.message-wrapper div.message-user-avatar {
   margin-left: auto;
   padding-left: 20px;
+  margin-right: 0;
   padding-right: 0;
 }
 
