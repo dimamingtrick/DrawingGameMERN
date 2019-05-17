@@ -4,12 +4,20 @@ import { connect } from "react-redux";
 import { Container, Spinner } from "reactstrap";
 import SingleChatRoute from "./SingleChatRoute/SingleChatRoute";
 import { mainStateHook } from "../../hooks";
-import { getAllChats } from "../../actions/chat";
+import { getAllChats, updateChat } from "../../actions/chat";
+import { socket } from "../DashboardContainer/DashboardContainer";
 import "./chats-page.css";
 
 let isStillLoading;
 
-const ChatsPage = ({ user, chats, getAllChats, history, location }) => {
+const ChatsPage = ({
+  user,
+  chats,
+  getAllChats,
+  history,
+  location,
+  updateChat
+}) => {
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
     longLoading: false
@@ -17,7 +25,7 @@ const ChatsPage = ({ user, chats, getAllChats, history, location }) => {
 
   const loadState = useRef(state.load);
 
-  /** fetching chats or redirect to first chat page if there is already chats */
+  /** Fetching chats or redirect to first chat page if there is already chats */
   useEffect(() => {
     const fetchData = () => {
       getAllChats().then(res => {
@@ -32,6 +40,26 @@ const ChatsPage = ({ user, chats, getAllChats, history, location }) => {
     if (chats.length === 0) fetchData();
     else history.push(`/app/chats/${chats[0]._id}`);
   }, []);
+
+  /** Subscribe to socket events */
+  useEffect(() => {
+    if (chats.length > 0) {
+      chats.forEach(chat => {
+        /** User recieve new message and chat 'last message' is changed */
+        socket.on(`chat-${chat._id}-getUpdate`, ({ updatedChat }) => {
+          updateChat(updatedChat);
+        });
+      });
+    }
+
+    return () => {
+      if (chats.length > 0) {
+        chats.forEach(chat => {
+          socket.off(`chat-${chat._id}-getUpdate`);
+        });
+      }
+    };
+  });
 
   /** Shows additional spinner if fetching all chats is more than 3 seconds */
   useEffect(() => {
@@ -70,8 +98,8 @@ const ChatsPage = ({ user, chats, getAllChats, history, location }) => {
                 <div className="single-chat-user-data">
                   {chat.users.find(u => u._id !== user._id).login}
                 </div>
-                <div className="single-chat-user-data">
-                  {chat.users.find(u => u._id !== user._id).email}
+                <div className="single-chat-last-message">
+                  <span>{chat.lastMessage && chat.lastMessage.message}</span>
                 </div>
               </Link>
             ))}
@@ -109,5 +137,5 @@ export default connect(
       chats: store.chat.chats
     };
   },
-  { getAllChats }
+  { getAllChats, updateChat }
 )(ChatsPage);

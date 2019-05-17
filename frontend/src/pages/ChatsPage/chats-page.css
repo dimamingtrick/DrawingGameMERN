@@ -40,11 +40,30 @@ div.chats-container.container-fluid {
   border: 1px solid #343a40;
 }
 
+div.all-chats-list {
+  max-width: 20%;
+  width: 20%;
+}
+
+div.single-chat-last-message {
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: rgba(0,0,0,.25)
+}
+
+div.single-chat-user-data {
+  text-align: left;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
 div.all-chats-list > a.single-chat {
   display: flex;
   flex-direction: column;
   color: #343a40;
-  padding: 10px 50px;
+  padding: 10px 25px;
   border-bottom: 1px solid rgba(52, 58, 64, .1);
   transition: all .25s;
   cursor: pointer;

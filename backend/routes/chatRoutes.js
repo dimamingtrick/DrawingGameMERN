@@ -15,7 +15,8 @@ router.get("/", async (req, res) => {
     {
       path: "users",
       select: "-password"
-    }
+    },
+    "lastMessage"
   ]);
 
   if (chats.length === 0) {
@@ -37,7 +38,8 @@ router.get("/", async (req, res) => {
       {
         path: "users",
         select: "-password"
-      }
+      },
+      "lastMessage"
     ]);
     return res.json(newCreatedChats);
   }
@@ -47,21 +49,25 @@ router.get("/", async (req, res) => {
 
 /**
  * GET /chats/:id
- * returns single user todo by id
+ * returns single user chat by id
  */
 router.get("/:id", async (req, res) => {
-  const chat = await Chat.findOne({
-    _id: objectId(req.params.id),
-    users: objectId(req.body.userId)
-  }).populate([
-    {
-      path: "users",
-      select: "-password"
-    }
+  const chatId = req.params.id;
+  const [chat, messages] = await Promise.all([
+    Chat.findOne({
+      _id: objectId(chatId),
+      users: objectId(req.body.userId)
+    }).populate([
+      {
+        path: "users",
+        select: "-password"
+      }
+    ]),
+    ChatMessage.find({
+      chatId: objectId(chatId)
+    })
   ]);
-  const messages = await ChatMessage.find({
-    chatId: objectId(chat._id)
-  });
+
   return res.json({ chat, messages });
 });
 
@@ -71,64 +77,40 @@ router.get("/:id", async (req, res) => {
  */
 router.post("/:id", async (req, res) => {
   const { message, userId } = req.body;
+  const chatId = req.params.id;
   const msg = new ChatMessage({
     userId: objectId(userId),
-    chatId: objectId(req.params.id),
+    chatId: objectId(),
     message
   });
   const newMessage = await msg.save();
 
   const io = req.app.get("socketio");
-  io.emit(`chat-${req.params.id}-newMessage`, { newMessage });
 
-  return res.json({});
-});
-
-/**
- * PUT /chats/:id
- * update single todo by id
- */
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const { title, description } = req.body;
-
-  if (!title || !description || description.length < 10) {
-    return res.status(400).json({
-      message: {
-        ...(!title ? { title: "Title is required" } : {}),
-        ...(!description ? { description: "Description is required" } : {}),
-        ...(description && description.length < 10
-          ? { description: "Description length must be at least 10 characters" }
-          : {})
-      }
-    });
-  }
-
-  Chat.findByIdAndUpdate(
-    { _id: objectId(id) },
+  await Chat.findByIdAndUpdate(
+    chatId,
     {
       $set: {
-        title: req.body.title,
-        description: req.body.description
+        lastMessage: newMessage._id
       }
     },
-    { new: true }, // Pass this to return updated object (by default returns old one)
-    (err, updatedTodo) => {
-      res.json(updatedTodo);
-    }
-  );
-});
+    { new: true }
+  )
+    .populate([
+      {
+        path: "users",
+        select: "-password"
+      },
+      "lastMessage"
+    ])
+    .exec((err, updatedChat) => {
+      if (err || !updatedChat)
+        return res.status(400).json({ message: err || "Error" });
 
-/**
- * DELETE /chats/:id
- * delete single todo by id
- */
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-
-  Chat.findByIdAndDelete({ _id: objectId(id) }, (err, deletedTodo) => {
-    res.json(deletedTodo);
-  });
+      io.emit(`chat-${chatId}-getUpdate`, { updatedChat });
+      io.emit(`chat-${chatId}-newMessage`, { newMessage });
+      return res.json({});
+    });
 });
 
 module.exports = router;
