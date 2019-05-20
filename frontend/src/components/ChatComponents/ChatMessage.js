@@ -5,8 +5,8 @@ import defaultAvatar from "../../assets/defaultAvatar.png";
 const ChatMessage = ({ message, userFrom, user, type }) => {
   return (
     <div
-      className={`single-message ${
-        message.userId === user._id ? "my-message" : ""
+      className={`single-message${
+        message.userId === user._id ? " my-message" : ""
       }`}
     >
       <div className="message-wrapper">

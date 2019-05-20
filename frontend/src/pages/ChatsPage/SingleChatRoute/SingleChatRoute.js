@@ -8,6 +8,7 @@ import {
   ChatMessage,
   ChatInput
 } from "../../../components/ChatComponents";
+import ContextMenu from "../../../components/ContextMenu/ContextMenu";
 import { ChatService } from "../../../services";
 import { socket } from "../../DashboardContainer/DashboardContainer";
 import { getGameSettings } from "../../../actions/game";
@@ -124,6 +125,14 @@ const SingleChatRoute = ({
         sendMessage={sendMessage}
         sending={sending}
       />
+
+      <ContextMenu>
+        <div className="menu-option">hello</div>
+        <div className="menu-option">context</div>
+        <div className="menu-option">menu</div>
+        <div className="menu-option">is</div>
+        <div className="menu-option">working</div>
+      </ContextMenu>
     </>
   );
 };

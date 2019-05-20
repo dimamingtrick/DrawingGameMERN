@@ -1,4 +1,5 @@
 import React from "react";
+import ThreeDotsAnimated from "../ThreeDotsAnimated/ThreeDotsAnimated";
 
 const ChatMessagesContainer = ({
   children,
@@ -7,7 +8,7 @@ const ChatMessagesContainer = ({
   userIsTyping
 }) => {
   return (
-    <div className="main-chat-messages-wrapper">
+    <div id="chatMessages" className="main-chat-messages-wrapper">
       <div className="chat-messages">{children}</div>
       {userThatTypes && userIsTyping && (
         <span className="chat-user-is-typing">
@@ -23,13 +24,5 @@ const ChatMessagesContainer = ({
     </div>
   );
 };
-
-const ThreeDotsAnimated = () => (
-  <span className="threedots">
-    <span />
-    <span />
-    <span />
-  </span>
-);
 
 export default ChatMessagesContainer;
