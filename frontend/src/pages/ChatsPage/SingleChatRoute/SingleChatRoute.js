@@ -15,6 +15,7 @@ import { getGameSettings } from "../../../actions/game";
 import "./single-chat-page.css";
 
 let inputHandlingTimeoutFlag;
+let selectedElementId = null;
 
 function SingleChatRoute({
   user,
@@ -94,6 +95,19 @@ function SingleChatRoute({
     });
   };
 
+  const deleteChatMessage = () => {
+    console.log(selectedElementId);
+  };
+
+  const onContextMenuOpen = id => {
+    console.log(id);
+    selectedElementId = id;
+  };
+
+  const onContextMenuClose = () => {
+    selectedElementId = null;
+  };
+
   const { loading, messages, chat, sending, inputValue } = state;
   return (
     <>
@@ -126,8 +140,13 @@ function SingleChatRoute({
         sending={sending}
       />
 
-      <ContextMenu>
-        <div className="menu-option">hello</div>
+      <ContextMenu
+        onContextMenuOpen={onContextMenuOpen}
+        onContextMenuClose={onContextMenuClose}
+      >
+        <div className="menu-option" onClick={deleteChatMessage}>
+          Delete
+        </div>
         <div className="menu-option">context</div>
         <div className="menu-option">menu</div>
         <div className="menu-option">is</div>

@@ -9,7 +9,7 @@ const ChatMessage = ({ message, userFrom, user, type }) => {
         message.userId === user._id ? " my-message" : ""
       }`}
     >
-      <div className="message-wrapper">
+      <div className="message-wrapper" data-id={message._id}>
         <div className="message-info">
           <div className="message-text">
             <div className="single-message-text">{message.message}</div>

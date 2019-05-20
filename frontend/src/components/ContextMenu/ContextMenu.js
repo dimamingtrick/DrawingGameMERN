@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./context-menu.css";
 
-function ContextMenu({ children }) {
+function ContextMenu({ children, onContextMenuOpen, onContextMenuClose }) {
   const [visible, setVisible] = useState(false);
   const root = useRef(null);
 
@@ -13,6 +13,10 @@ function ContextMenu({ children }) {
     ) {
       event.preventDefault();
       setVisible(true);
+
+      onContextMenuOpen(
+        event.target.closest(".message-wrapper").getAttribute("data-id")
+      );
 
       const clickX = event.clientX;
       const clickY = event.clientY;
@@ -47,11 +51,17 @@ function ContextMenu({ children }) {
   const _handleClick = event => {
     const wasOutside = !(event.target.contains === root.current);
 
-    if (wasOutside && visible) setVisible(false);
+    if (wasOutside && visible) {
+      onContextMenuClose();
+      setVisible(false);
+    }
   };
 
   const _handleScroll = () => {
-    if (visible) setVisible(false);
+    if (visible) {
+      onContextMenuClose();
+      setVisible(false);
+    }
   };
 
   useEffect(() => {
