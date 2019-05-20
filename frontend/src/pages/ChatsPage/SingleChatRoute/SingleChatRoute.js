@@ -16,14 +16,14 @@ import "./single-chat-page.css";
 
 let inputHandlingTimeoutFlag;
 
-const SingleChatRoute = ({
+function SingleChatRoute({
   user,
   match: {
     params: { id: chatId }
   },
   getGameSettings,
   gameSettings
-}) => {
+}) {
   const [state, setState] = mainStateHook({
     loading: true,
     chat: {},
@@ -135,7 +135,7 @@ const SingleChatRoute = ({
       </ContextMenu>
     </>
   );
-};
+}
 
 export default connect(
   store => {
