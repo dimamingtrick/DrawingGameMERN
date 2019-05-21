@@ -15,11 +15,12 @@ class ChatService {
     });
   }
 
-  sendNewMessage(id, message) {
+  sendNewMessage(id, message, type) {
     return api({
       method: "POST",
       url: "/chats/" + id,
-      body: { message }
+      body: message,
+      contentType: type === "image" ? "file" : "text"
     });
   }
 

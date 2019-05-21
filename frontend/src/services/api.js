@@ -1,16 +1,30 @@
 const serverUrl = process.env.REACT_APP_SERVER;
 
-const api = ({ method, url, body }) => {
+const api = ({
+  method,
+  url,
+  body,
+  headers = "application/json",
+  contentType = "text"
+}) => {
   return new Promise((resolve, reject) => {
     const token = localStorage.getItem("token");
     fetch(`${serverUrl}${url}`, {
       method,
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        ...(token ? { token } : {}),
+        ...(contentType === "text"
+          ? { "Content-Type": headers }
+          : { "Content-Type": undefined }),
+        ...(headers && headers !== "empty" ? { Accept: headers } : {}),
+
+        Accept: headers,
+        ...(token ? { token } : {})
       },
-      ...(body ? { body: JSON.stringify(body) } : {}),
+      ...(body
+        ? contentType === "text"
+          ? { body: JSON.stringify(body) }
+          : { body }
+        : {})
     }).then(response => {
       response.json().then(res => {
         return response.ok ? resolve(res) : reject(res);

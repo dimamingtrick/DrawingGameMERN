@@ -73,16 +73,23 @@ router.get("/:id", async (req, res) => {
 });
 
 /**
- * POST /chats
+ * POST /chats/:id
  * send new message
  */
 router.post("/:id", async (req, res) => {
-  const { message, userId } = req.body;
+  console.log("@@@@", req.files);
+  console.log("@@@@", req.body);
+
+  const { message, type, userId } = req.body;
   const chatId = req.params.id;
+
+  // req.files.file.mv(`${__dirname}/uploads/${req.files.file.name}`);
+
   const msg = new ChatMessage({
     userId: objectId(userId),
     chatId: objectId(chatId),
-    message
+    message,
+    type
   });
   const newMessage = await msg.save();
 

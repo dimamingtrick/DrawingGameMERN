@@ -15,7 +15,7 @@ const chatMessageSchema = new mongoose.Schema({
     default: new Date()
   },
   type: {
-    type: String, // would be text or image,
+    type: String || File, // would be text or image,
     default: "text"
   }
 });

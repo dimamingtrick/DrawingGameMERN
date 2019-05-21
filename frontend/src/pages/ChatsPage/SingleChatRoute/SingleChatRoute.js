@@ -90,13 +90,26 @@ function SingleChatRoute({
   };
 
   /** Send message to chat */
-  const sendMessage = () => {
+  const sendMessage = (file = null) => {
     setState({ sending: true });
-    ChatService.sendNewMessage(chatId, state.inputValue).catch(err => {
-      setState({
-        sending: false
-      });
-    });
+
+    let message = {
+      message: state.inputValue,
+      type: "text"
+    };
+
+    if (file) {
+      file.append("type", "image");
+      message = file;
+    }
+
+    ChatService.sendNewMessage(chatId, message, file ? "image" : "text").catch(
+      err => {
+        setState({
+          sending: false
+        });
+      }
+    );
   };
 
   const onContextMenuOpen = id => {
