@@ -114,4 +114,23 @@ router.post("/:id", async (req, res) => {
     });
 });
 
+/**
+ * DELETE /chats/:id
+ * delete single chat message
+ */
+router.delete("/:id/messages", async (req, res) => {
+  ChatMessage.findOneAndDelete(
+    {
+      _id: objectId(req.body.messageId),
+      chatId: objectId(req.params.id)
+    },
+    (err, deletedMessage) => {
+      if (err || !deletedMessage)
+        return res.status(404).json({ message: err || "Message not found" });
+
+      res.json({ message: "item was successfully deleted" });
+    }
+  );
+});
+
 module.exports = router;

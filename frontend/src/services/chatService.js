@@ -22,6 +22,14 @@ class ChatService {
       body: { message }
     });
   }
+
+  deleteMessage(chatId, messageId) {
+    return api({
+      method: "DELETE",
+      url: `/chats/${chatId}/messages`,
+      body: { messageId }
+    });
+  }
 }
 
 export default new ChatService();

@@ -1,4 +1,3 @@
 import TodoItem from "./TodoItem";
-import ConfirmTodoDeleteModal from "./ConfirmTodoDeleteModal";
 
-export { TodoItem, ConfirmTodoDeleteModal };
+export { TodoItem };

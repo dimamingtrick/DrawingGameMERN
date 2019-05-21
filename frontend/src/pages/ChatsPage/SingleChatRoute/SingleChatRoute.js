@@ -8,6 +8,7 @@ import {
   ChatMessage,
   ChatInput
 } from "../../../components/ChatComponents";
+import { ConfirmDeleteModal } from "../../../components/Modals";
 import ContextMenu from "../../../components/ContextMenu/ContextMenu";
 import { ChatService } from "../../../services";
 import { socket } from "../../DashboardContainer/DashboardContainer";
@@ -30,7 +31,10 @@ function SingleChatRoute({
     chat: {},
     messages: [],
     inputValue: "",
-    sending: false
+    sending: false,
+    confirmDeleteModalIsOpen: false,
+    isDeleting: false,
+    deletingError: ""
   });
 
   const [userIsTyping, setUserIsTyping] = useState(false);
@@ -95,20 +99,42 @@ function SingleChatRoute({
     });
   };
 
-  const deleteChatMessage = () => {
-    console.log(selectedElementId);
-  };
-
   const onContextMenuOpen = id => {
-    console.log(id);
     selectedElementId = id;
   };
 
-  const onContextMenuClose = () => {
-    selectedElementId = null;
+  const toggleDeleteModal = () => {
+    setState({ confirmDeleteModalIsOpen: !state.confirmDeleteModalIsOpen });
   };
 
-  const { loading, messages, chat, sending, inputValue } = state;
+  const deleteMessageConfirmed = () => {
+    setState({ isDeleting: true, deletingError: false });
+    ChatService.deleteMessage(chatId, selectedElementId).then(
+      () => {
+        setState({
+          messages: state.messages.filter(i => i._id !== selectedElementId),
+          isDeleting: false,
+          confirmDeleteModalIsOpen: false
+        });
+        selectedElementId = null;
+      },
+      err => {
+        console.log("ERR", err);
+        setState({ isDeleting: false, deletingError: err.message });
+      }
+    );
+  };
+
+  const {
+    loading,
+    messages,
+    chat,
+    sending,
+    inputValue,
+    confirmDeleteModalIsOpen,
+    isDeleting,
+    deletingError
+  } = state;
   return (
     <>
       <ChatMessagesContainer
@@ -140,17 +166,21 @@ function SingleChatRoute({
         sending={sending}
       />
 
-      <ContextMenu
-        onContextMenuOpen={onContextMenuOpen}
-        onContextMenuClose={onContextMenuClose}
-      >
-        <div className="menu-option" onClick={deleteChatMessage}>
+      <ConfirmDeleteModal
+        isOpen={confirmDeleteModalIsOpen}
+        toggle={toggleDeleteModal}
+        isDeleting={isDeleting}
+        deletingError={deletingError}
+        deleteConfirming={deleteMessageConfirmed}
+        headerText="Delete this message?"
+        bodyText="You will not be able to return it"
+      />
+
+      <ContextMenu onContextMenuOpen={onContextMenuOpen}>
+        <div className="menu-option" onClick={toggleDeleteModal}>
           Delete
         </div>
-        <div className="menu-option">context</div>
-        <div className="menu-option">menu</div>
-        <div className="menu-option">is</div>
-        <div className="menu-option">working</div>
+        <div className="menu-option">Close</div>
       </ContextMenu>
     </>
   );

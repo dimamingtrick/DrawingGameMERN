@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./context-menu.css";
 
-function ContextMenu({ children, onContextMenuOpen, onContextMenuClose }) {
+function ContextMenu({ children, onContextMenuOpen }) {
   const [visible, setVisible] = useState(false);
   const root = useRef(null);
 
   const _handleContextMenu = event => {
     if (
+      event.target.closest(".single-message.my-message") &&
       event.target.className.includes("message") &&
       !event.target.className !== "single-message" &&
       !event.target.className.includes("my-message")
@@ -52,14 +53,12 @@ function ContextMenu({ children, onContextMenuOpen, onContextMenuClose }) {
     const wasOutside = !(event.target.contains === root.current);
 
     if (wasOutside && visible) {
-      onContextMenuClose();
       setVisible(false);
     }
   };
 
   const _handleScroll = () => {
     if (visible) {
-      onContextMenuClose();
       setVisible(false);
     }
   };
