@@ -17,7 +17,7 @@ const ChatMessage = ({ message, userFrom, user }) => {
                 <img
                   className="chat-message-image"
                   src={message.message}
-                  alt="chat-image"
+                  alt="chat-message"
                 />
               ) : (
                 message.message
