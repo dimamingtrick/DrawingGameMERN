@@ -6,21 +6,19 @@ import { jwtValidate } from "./helpers";
 const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
-const fileUpload = require("express-fileupload");
-const multipart = require("connect-multiparty");
+
+/** Make uploads directory public */
+app.use(express.static(__dirname + "/uploads/*"));
+app.use("/chatMessages", express.static(__dirname + "/uploads/chatMessages"));
 
 /** Add express body parser to convert request body params */
 app.use(express.json());
-app.use(multipart());
 
 /** Add socket.io object to every request by req.app.get("socketio") */
 app.set("socketio", io);
 
 /** Add cors to server */
 app.use(cors());
-
-/** Add fileupload functionality */
-// app.use(fileUpload());
 
 /** Add authoriation routes */
 app.use(require("./routes/authorizationRoutes"));
@@ -47,7 +45,7 @@ app.use("/game/words", jwtValidate, require("./routes/gameWordsRoutes"));
  * Add /chats routes
  * Require JWT token
  */
-app.use("/chats", fileUpload(), jwtValidate, require("./routes/chatRoutes"));
+app.use("/chats", jwtValidate, require("./routes/chatRoutes"));
 
 /**
  * GET /

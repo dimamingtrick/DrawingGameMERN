@@ -59,3 +59,8 @@ div.main-chat-messages-wrapper span.chat-user-is-typing {
 @keyframes fadeInKeyFrame {
   100% { opacity: .8 }
 }
+
+
+img.chat-message-image {
+  max-width: 250px;
+}

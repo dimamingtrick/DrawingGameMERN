@@ -6,7 +6,7 @@ import { Spinner } from "reactstrap";
 import {
   ChatMessagesContainer,
   ChatMessage,
-  ChatInput
+  ChatInput,
 } from "../../../components/ChatComponents";
 import { ConfirmDeleteModal } from "../../../components/Modals";
 import ContextMenu from "../../../components/ContextMenu/ContextMenu";
@@ -21,10 +21,10 @@ let selectedElementId = null;
 function SingleChatRoute({
   user,
   match: {
-    params: { id: chatId }
+    params: { id: chatId },
   },
   getGameSettings,
-  gameSettings
+  gameSettings,
 }) {
   const [state, setState] = mainStateHook({
     loading: true,
@@ -34,7 +34,7 @@ function SingleChatRoute({
     sending: false,
     confirmDeleteModalIsOpen: false,
     isDeleting: false,
-    deletingError: ""
+    deletingError: "",
   });
 
   const [userIsTyping, setUserIsTyping] = useState(false);
@@ -55,7 +55,7 @@ function SingleChatRoute({
         messages: [...state.messages, newMessage],
         ...(user._id === newMessage.userId
           ? { inputValue: "", sending: false }
-          : {})
+          : {}),
       });
       if (userIsTyping) setUserIsTyping(false);
     });
@@ -95,7 +95,7 @@ function SingleChatRoute({
 
     let message = {
       message: state.inputValue,
-      type: "text"
+      type: "text",
     };
 
     if (file) {
@@ -106,7 +106,7 @@ function SingleChatRoute({
     ChatService.sendNewMessage(chatId, message, file ? "image" : "text").catch(
       err => {
         setState({
-          sending: false
+          sending: false,
         });
       }
     );
@@ -127,7 +127,7 @@ function SingleChatRoute({
         setState({
           messages: state.messages.filter(i => i._id !== selectedElementId),
           isDeleting: false,
-          confirmDeleteModalIsOpen: false
+          confirmDeleteModalIsOpen: false,
         });
         selectedElementId = null;
       },
@@ -146,7 +146,7 @@ function SingleChatRoute({
     inputValue,
     confirmDeleteModalIsOpen,
     isDeleting,
-    deletingError
+    deletingError,
   } = state;
   return (
     <>
@@ -162,7 +162,6 @@ function SingleChatRoute({
             <ChatMessage
               key={msg._id ? msg._id : "otherType-" + index}
               message={msg}
-              type={msg.type}
               userFrom={chat.users.find(u => u._id === msg.userId)}
               user={user}
             />

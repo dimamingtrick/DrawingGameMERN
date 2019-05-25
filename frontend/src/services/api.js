@@ -5,26 +5,24 @@ const api = ({
   url,
   body,
   headers = "application/json",
-  contentType = "text"
+  contentType = "text",
 }) => {
   return new Promise((resolve, reject) => {
     const token = localStorage.getItem("token");
     fetch(`${serverUrl}${url}`, {
       method,
       headers: {
-        ...(contentType === "text"
-          ? { "Content-Type": headers }
-          : { "Content-Type": undefined }),
+        ...(contentType === "text" ? { "Content-Type": headers } : {}),
         ...(headers && headers !== "empty" ? { Accept: headers } : {}),
 
         Accept: headers,
-        ...(token ? { token } : {})
+        ...(token ? { token } : {}),
       },
       ...(body
         ? contentType === "text"
           ? { body: JSON.stringify(body) }
           : { body }
-        : {})
+        : {}),
     }).then(response => {
       response.json().then(res => {
         return response.ok ? resolve(res) : reject(res);

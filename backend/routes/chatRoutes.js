@@ -14,32 +14,32 @@ router.get("/", async (req, res) => {
   const chats = await Chat.find({ users: objectId(userId) }).populate([
     {
       path: "users",
-      select: "-password"
+      select: "-password",
     },
-    "lastMessage"
+    "lastMessage",
   ]);
 
   if (chats.length === 0) {
     const allUsers = await User.find({
       _id: {
-        $ne: objectId(userId)
-      }
+        $ne: objectId(userId),
+      },
     });
     allUsers.forEach(async user => {
       const chat = new Chat({
-        users: [objectId(userId), objectId(user._id)]
+        users: [objectId(userId), objectId(user._id)],
       });
       await chat.save();
     });
 
     const newCreatedChats = await Chat.find({
-      users: objectId(userId)
+      users: objectId(userId),
     }).populate([
       {
         path: "users",
-        select: "-password"
+        select: "-password",
       },
-      "lastMessage"
+      "lastMessage",
     ]);
     return res.json(newCreatedChats);
   }
@@ -56,17 +56,17 @@ router.get("/:id", async (req, res) => {
   const [chat, messages] = await Promise.all([
     Chat.findOne({
       _id: objectId(chatId),
-      users: objectId(req.body.userId)
+      users: objectId(req.body.userId),
     }).populate([
       {
         path: "users",
-        select: "-password"
+        select: "-password",
       },
-      "lastMessage"
+      "lastMessage",
     ]),
     ChatMessage.find({
-      chatId: objectId(chatId)
-    })
+      chatId: objectId(chatId),
+    }),
   ]);
 
   return res.json({ chat, messages });
@@ -76,20 +76,33 @@ router.get("/:id", async (req, res) => {
  * POST /chats/:id
  * send new message
  */
-router.post("/:id", async (req, res) => {
-  console.log("@@@@", req.files);
-  console.log("@@@@", req.body);
-
+const fileUpload = require("express-fileupload");
+router.post("/:id", fileUpload(), async (req, res) => {
   const { message, type, userId } = req.body;
   const chatId = req.params.id;
 
-  // req.files.file.mv(`${__dirname}/uploads/${req.files.file.name}`);
+  let messageField = message;
+  if (req.files) {
+    const filePath = `chatMessages/${userId}${Date.now()}${
+      req.files.file.name
+    }`;
+    const fileServerUrl = `${require("app-root-path")}/uploads/${filePath}`;
+
+    messageField = await new Promise((resolve, reject) => {
+      req.files.file.mv(fileServerUrl, err => {
+        if (err) return res.status(400).json({ message: err });
+
+        const fullImageUrl = `http://${req.get("host")}/${filePath}`;
+        resolve(fullImageUrl);
+      });
+    });
+  }
 
   const msg = new ChatMessage({
     userId: objectId(userId),
     chatId: objectId(chatId),
-    message,
-    type
+    message: messageField,
+    type,
   });
   const newMessage = await msg.save();
 
@@ -99,17 +112,17 @@ router.post("/:id", async (req, res) => {
     chatId,
     {
       $set: {
-        lastMessage: newMessage._id
-      }
+        lastMessage: newMessage._id,
+      },
     },
     { new: true }
   )
     .populate([
       {
         path: "users",
-        select: "-password"
+        select: "-password",
       },
-      "lastMessage"
+      "lastMessage",
     ])
     .exec((err, updatedChat) => {
       if (err || !updatedChat)
@@ -129,7 +142,7 @@ router.delete("/:id/messages", async (req, res) => {
   ChatMessage.findOneAndDelete(
     {
       _id: objectId(req.body.messageId),
-      chatId: objectId(req.params.id)
+      chatId: objectId(req.params.id),
     },
     (err, deletedMessage) => {
       if (err || !deletedMessage)
