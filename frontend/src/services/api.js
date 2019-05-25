@@ -13,9 +13,6 @@ const api = ({
       method,
       headers: {
         ...(contentType === "text" ? { "Content-Type": headers } : {}),
-        ...(headers && headers !== "empty" ? { Accept: headers } : {}),
-
-        Accept: headers,
         ...(token ? { token } : {}),
       },
       ...(body

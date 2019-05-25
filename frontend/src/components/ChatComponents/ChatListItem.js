@@ -16,7 +16,10 @@ const ChatListItem = ({ _id, users, lastMessage, isActive, user }) => {
           {users.find(u => u._id !== user._id).login}
         </div>
         <div className="single-chat-last-message">
-          <span>{lastMessage && lastMessage.message}</span>
+          <span>
+            {lastMessage &&
+              (lastMessage.type === "text" ? lastMessage.message : "...")}
+          </span>
         </div>
       </div>
     </Link>

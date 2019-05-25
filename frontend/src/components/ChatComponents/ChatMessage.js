@@ -14,7 +14,11 @@ const ChatMessage = ({ message, userFrom, user }) => {
           <div className="message-text">
             <div className="single-message-text">
               {message.type === "image" ? (
-                <img className="chat-message-image" src={message.message} />
+                <img
+                  className="chat-message-image"
+                  src={message.message}
+                  alt="chat-image"
+                />
               ) : (
                 message.message
               )}

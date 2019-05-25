@@ -39,7 +39,7 @@ function SingleChatRoute({
 
   const [userIsTyping, setUserIsTyping] = useState(false);
 
-  /** Fetching current chat messages if chatId changes */
+  /** Fetching current chat messages and data if chatId changes */
   useEffect(() => {
     if (!gameSettings) getGameSettings();
     if (!state.loading) setState({ loading: true });
@@ -48,7 +48,7 @@ function SingleChatRoute({
     });
   }, [chatId]);
 
-  /** Subscribing to socket events */
+  /** Subscribing/unsubscribing to socket events */
   useEffect(() => {
     socket.on(`chat-${chatId}-newMessage`, newMessage => {
       setState({
@@ -58,6 +58,17 @@ function SingleChatRoute({
           : {}),
       });
       if (userIsTyping) setUserIsTyping(false);
+    });
+
+    socket.on(`chat-${chatId}-messageDeleted`, ({ messageId, userId }) => {
+      const isMyMessage = user._id === userId;
+      setState({
+        messages: state.messages.filter(i => i._id !== messageId),
+        ...(isMyMessage ? { isDeleting: false } : {}),
+        ...(isMyMessage ? { confirmDeleteModalIsOpen: false } : {}),
+        ...(isMyMessage ? { confirmDeleteModalIsOpen: false } : {}),
+      });
+      if (isMyMessage) selectedElementId = null;
     });
 
     socket.on(`chat${chatId}UserTypes`, () => {
@@ -70,6 +81,7 @@ function SingleChatRoute({
 
     return () => {
       socket.off(`chat-${chatId}-newMessage`);
+      socket.off(`chat-${chatId}-messageDeleted`);
       socket.off(`chat${chatId}UserTypes`);
       socket.off(`chat${chatId}UserStopTyping`);
     };
@@ -93,15 +105,12 @@ function SingleChatRoute({
   const sendMessage = (file = null) => {
     setState({ sending: true });
 
-    let message = {
-      message: state.inputValue,
-      type: "text",
-    };
-
-    if (file) {
-      file.append("type", "image");
-      message = file;
-    }
+    let message = file
+      ? file
+      : {
+          message: state.inputValue,
+          type: "text",
+        };
 
     ChatService.sendNewMessage(chatId, message, file ? "image" : "text").catch(
       err => {
@@ -122,20 +131,10 @@ function SingleChatRoute({
 
   const deleteMessageConfirmed = () => {
     setState({ isDeleting: true, deletingError: false });
-    ChatService.deleteMessage(chatId, selectedElementId).then(
-      () => {
-        setState({
-          messages: state.messages.filter(i => i._id !== selectedElementId),
-          isDeleting: false,
-          confirmDeleteModalIsOpen: false,
-        });
-        selectedElementId = null;
-      },
-      err => {
-        console.log("ERR", err);
-        setState({ isDeleting: false, deletingError: err.message });
-      }
-    );
+    ChatService.deleteMessage(chatId, selectedElementId).catch(err => {
+      console.log("ERR", err);
+      setState({ isDeleting: false, deletingError: err.message });
+    });
   };
 
   const {

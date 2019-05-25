@@ -5,19 +5,20 @@ import {
   Input,
   InputGroupText,
   InputGroupAddon,
-  Spinner
+  Spinner,
 } from "reactstrap";
 import { IoMdSend, IoMdImage } from "react-icons/io";
 import "./chat-input.css";
 
 const ChatInput = ({ inputMessage, handleInput, sendMessage, sending }) => {
   const openFileInput = () => {
-    document.getElementById("chat-message-file").click();
+    if (!sending) document.getElementById("chat-message-file").click();
   };
 
   const uploadFile = e => {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
+    formData.append("type", "image");
     sendMessage(formData);
   };
 
@@ -27,7 +28,7 @@ const ChatInput = ({ inputMessage, handleInput, sendMessage, sending }) => {
         <InputGroupText onClick={openFileInput}>
           <IoMdImage />
         </InputGroupText>
-        <input
+        <Input
           onChange={uploadFile}
           name="chatMessageImage"
           type="file"

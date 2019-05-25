@@ -139,16 +139,50 @@ router.post("/:id", fileUpload(), async (req, res) => {
  * delete single chat message
  */
 router.delete("/:id/messages", async (req, res) => {
+  const chatId = req.params.id;
   ChatMessage.findOneAndDelete(
     {
       _id: objectId(req.body.messageId),
-      chatId: objectId(req.params.id),
+      chatId: objectId(chatId),
     },
-    (err, deletedMessage) => {
+    async (err, deletedMessage) => {
       if (err || !deletedMessage)
         return res.status(404).json({ message: err || "Message not found" });
 
-      res.json({ message: "item was successfully deleted" });
+      const newLastChatMessage = await ChatMessage.find({
+        chatId: objectId(chatId),
+      })
+        .limit(1)
+        .sort({ $natural: -1 });
+
+      await Chat.findByIdAndUpdate(
+        chatId,
+        {
+          $set: {
+            lastMessage: newLastChatMessage[0]._id,
+          },
+        },
+        { new: true }
+      )
+        .populate([
+          {
+            path: "users",
+            select: "-password",
+          },
+          "lastMessage",
+        ])
+        .exec((err, updatedChat) => {
+          if (err || !updatedChat)
+            return res.status(400).json({ message: err || "Error" });
+
+          const io = req.app.get("socketio");
+          io.emit(`chat-${chatId}-getUpdate`, updatedChat);
+          io.emit(`chat-${chatId}-messageDeleted`, {
+            messageId: req.body.messageId,
+            userId: req.body.userId,
+          });
+          // res.json({ message: "item was successfully deleted" });
+        });
     }
   );
 });
