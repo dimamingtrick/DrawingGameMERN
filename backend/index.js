@@ -8,8 +8,8 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server);
 
 /** Make uploads directory public */
-app.use(express.static(__dirname + "/uploads/*"));
-app.use("/chatMessages", express.static(__dirname + "/uploads/chatMessages"));
+app.use(express.static(__dirname + "/uploads"));
+// app.use("/chatMessages", express.static(__dirname + "/uploads/chatMessages"));
 
 /** Add express body parser to convert request body params */
 app.use(express.json());

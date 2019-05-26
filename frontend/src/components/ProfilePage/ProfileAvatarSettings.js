@@ -2,13 +2,11 @@ import React from "react";
 import { Row, Col, Button, Spinner } from "reactstrap";
 import defaultAvatar from "../../assets/defaultAvatar.png";
 import { FaEdit } from "react-icons/fa";
-import { mainStateHook, useProfileState } from "../../hooks";
+import { mainStateHook } from "../../hooks";
 
-const ProfileAvatarSettings = () => {
-  // const [state, handleField, toggleEditState, updateData] = useProfileState();
-
+const ProfileAvatarSettings = ({ avatar, updateProfile }) => {
   const [state, setState] = mainStateHook({
-    avatar: null,
+    avatar,
     avatarUrl: null,
     editing: false,
     loading: false,
@@ -20,21 +18,38 @@ const ProfileAvatarSettings = () => {
 
   const changeAvatar = e => {
     setState({
-      avatar: e.target.files[0],
-      avatarUrl: URL.createObjectURL(e.target.files[0]),
+      avatarFile: e.target.files[0],
+      avatar: URL.createObjectURL(e.target.files[0]),
     });
   };
 
   const updateData = () => {
-    console.log(state.avatar);
+    if (state.avatar === avatar) return setState({ editing: false });
+
+    setState({ loading: true });
+    let avatarForm = new FormData();
+    avatarForm.append("avatar", state.avatarFile);
+    updateProfile(avatarForm, "file").then(
+      res => {
+        setState({
+          loading: false,
+          editing: false,
+        });
+      },
+      err => {
+        setState({
+          loading: false,
+        });
+      }
+    );
   };
 
   const closeEditForm = () => {
-    setState({ editing: false, avatar: null, avatarUrl: null });
+    setState({ editing: false, avatar, avatarFile: null });
   };
 
   return (
-    <Row>
+    <Row className="profileGameSettingsRow">
       <Col xs={12} className="profileContent">
         <div className="profile-fields-container">
           {!state.editing ? (
@@ -64,7 +79,7 @@ const ProfileAvatarSettings = () => {
           <div
             className="userAvatar"
             style={{
-              background: 'url("' + state.avatarUrl + '")',
+              background: 'url("' + state.avatar + '")',
             }}
           />
           {state.editing && (

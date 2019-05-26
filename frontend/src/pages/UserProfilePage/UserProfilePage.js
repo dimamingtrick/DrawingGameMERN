@@ -19,7 +19,10 @@ const UserProfilePage = ({
 }) => {
   return (
     <Container fluid className="profileContainer">
-      <ProfileAvatarSettings />
+      <ProfileAvatarSettings
+        avatar={user.avatar}
+        updateProfile={updateProfile}
+      />
       <ProfileDataSection user={user} updateProfile={updateProfile} />
       <hr />
       <ProfileGameSettingsSection

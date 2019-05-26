@@ -23,7 +23,7 @@ router.get("/me", jwtValidate, async (req, res) => {
  */
 router.post("/login", async (req, res) => {
   const user = await User.findOne({
-    login: req.body.login
+    login: req.body.login,
   });
 
   if (!user) return res.status(404).json({ message: "User doesn't exist" });
@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, "ming_trick", {
-      expiresIn: "1h"
+      expiresIn: "1h",
     });
 
     const userData = user.toObject(); // Convert user into object to remove password before sending response
@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
 
     return res.json({
       user: userData,
-      token
+      token,
     });
   });
 });
@@ -62,14 +62,14 @@ router.post("/registration", async (req, res) => {
         ...(!email || (email && !validateEmail(email))
           ? { email: "Enter valid email" }
           : {}),
-        ...(!password ? { password: "Password is required" } : {})
-      }
+        ...(!password ? { password: "Password is required" } : {}),
+      },
     });
   }
 
   const [loginUniqueError, emailUniqueError] = await Promise.all([
     User.findOne({ login }),
-    User.findOne({ email })
+    User.findOne({ email }),
   ]);
 
   if (loginUniqueError)
@@ -91,77 +91,118 @@ router.post("/registration", async (req, res) => {
       email,
       password: hashedPassword,
       createdAt: new Date(),
-      role: "user"
+      role: "user",
     });
 
     const newUser = await addUser.save();
     const token = jwt.sign({ id: newUser._id }, "ming_trick", {
-      expiresIn: "1h"
+      expiresIn: "1h",
     });
 
     const user = await User.findById(newUser._id).select("-password");
 
     return res.json({
       user,
-      token
+      token,
     });
   });
 });
 
-router.put("/profile", jwtValidate, async (req, res) => {
+const fileUpload = require("express-fileupload");
+router.put("/profile", jwtValidate, fileUpload(), async (req, res) => {
   const { userId, data } = req.body;
 
-  if (
-    data.login === "" ||
-    (data.email === "" || (data.email && !validateEmail(data.email)))
-  ) {
-    return res.status(400).json({
-      message: {
-        ...(data.login === "" ? { login: "Login is required" } : {}),
-        ...(data.email === "" || (data.email && !validateEmail(data.email))
-          ? { email: "Enter valid email" }
-          : {})
-      }
-    });
-  }
-
-  const [loginUniqueError, emailUniqueError] = await Promise.all([
-    User.findOne({
-      login: data.login,
-      _id: {
-        $ne: userId
-      }
-    }),
-    User.findOne({
-      email: data.email,
-      _id: {
-        $ne: userId
-      }
-    })
-  ]);
-
-  if (loginUniqueError)
-    return res
-      .status(400)
-      .json({ message: { login: "Login is already in use" } });
-
-  if (emailUniqueError)
-    return res
-      .status(400)
-      .json({ message: { email: "Email is already in use" } });
-
-  await User.findByIdAndUpdate(
-    userId,
-    {
-      $set: {
-        ...data
-      }
-    },
-    { new: true },
-    (err, updatedUser) => {
-      return res.json({ user: updatedUser });
+  if (req.files) {
+    const { avatar: userAvatar } = await User.findById(userId);
+    if (userAvatar) {
+      // remove initial avatar if exists
+      const fs = require("fs");
+      fs.unlink(
+        `${require("app-root-path")}/uploads/avatars/${userAvatar.replace(
+          "http://localhost:3001/avatars/",
+          ""
+        )}`,
+        () => {}
+      );
     }
-  );
+
+    const filePath = `avatars/${userId}${Date.now()}${req.files.avatar.name}`;
+    const fileServerUrl = `${require("app-root-path")}/uploads/${filePath}`;
+
+    let avatar = await new Promise((resolve, reject) => {
+      req.files.avatar.mv(fileServerUrl, err => {
+        if (err) return res.status(400).json({ message: err });
+
+        const fullImageUrl = `http://${req.get("host")}/${filePath}`;
+        resolve(fullImageUrl);
+      });
+    });
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          avatar,
+        },
+      },
+      { new: true },
+      (err, updatedUser) => {
+        return res.json({ user: updatedUser });
+      }
+    );
+  } else {
+    if (
+      data.login === "" ||
+      (data.email === "" || (data.email && !validateEmail(data.email)))
+    ) {
+      return res.status(400).json({
+        message: {
+          ...(data.login === "" ? { login: "Login is required" } : {}),
+          ...(data.email === "" || (data.email && !validateEmail(data.email))
+            ? { email: "Enter valid email" }
+            : {}),
+        },
+      });
+    }
+
+    const [loginUniqueError, emailUniqueError] = await Promise.all([
+      User.findOne({
+        login: data.login,
+        _id: {
+          $ne: userId,
+        },
+      }),
+      User.findOne({
+        email: data.email,
+        _id: {
+          $ne: userId,
+        },
+      }),
+    ]);
+
+    if (loginUniqueError)
+      return res
+        .status(400)
+        .json({ message: { login: "Login is already in use" } });
+
+    if (emailUniqueError)
+      return res
+        .status(400)
+        .json({ message: { email: "Email is already in use" } });
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          ...data,
+        },
+      },
+      { new: true },
+      (err, updatedUser) => {
+        return res.json({ user: updatedUser });
+      }
+    );
+  }
 });
 
 module.exports = router;

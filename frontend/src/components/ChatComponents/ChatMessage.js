@@ -25,7 +25,10 @@ const ChatMessage = ({ message, userFrom, user }) => {
             </div>
           </div>
           <div className="message-user-avatar">
-            <img src={defaultAvatar} alt="avatar" />
+            <img
+              src={userFrom.avatar ? userFrom.avatar : defaultAvatar}
+              alt="avatar"
+            />
           </div>
         </div>
         <div className="message-date">

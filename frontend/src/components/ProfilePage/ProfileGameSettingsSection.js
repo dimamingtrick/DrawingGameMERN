@@ -6,12 +6,16 @@ import { FaEdit } from "react-icons/fa";
 const ProfileGameSettingsSection = ({
   gameSettings,
   getGameSettings,
-  updateGameSettings
+  updateGameSettings,
 }) => {
   const [settingsLoad, setSettingsLoad] = useState(!gameSettings);
-  const [state, handleField, toggleEditState, updateData] = useProfileState(
-    updateGameSettings
-  );
+  const [
+    state,
+    handleField,
+    toggleEditState,
+    updateData,
+    closeEditForm,
+  ] = useProfileState(updateGameSettings);
 
   const fetchGameSettings = async () => {
     await getGameSettings();
@@ -32,14 +36,24 @@ const ProfileGameSettingsSection = ({
                 <FaEdit onClick={toggleEditState} />
               </div>
             ) : (
-              <Button
-                outline
-                color="primary"
-                disabled={state.loading}
-                onClick={updateData}
-              >
-                {state.loading ? <Spinner /> : "Save"}
-              </Button>
+              <div className="button-container">
+                <Button
+                  outline
+                  color="primary"
+                  disabled={state.loading}
+                  onClick={updateData}
+                >
+                  {state.loading ? <Spinner /> : "Save"}
+                </Button>
+                <Button
+                  outline
+                  color="danger"
+                  disabled={state.loading}
+                  onClick={closeEditForm}
+                >
+                  Close
+                </Button>
+              </div>
             )}
 
             <h2>Game settings</h2>

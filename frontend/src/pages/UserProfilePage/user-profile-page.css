@@ -47,17 +47,20 @@ div.profile-fields-container > button {
   right: 15px;
 }
 div.profile-fields-container > .button-container {
-  min-width: 60px;
   position: absolute;
   top: 15px;
   right: 15px;
   display: flex;
 }
+div.profile-fields-container > .button-container > button {
+  min-width: 60px;
+}
+
 div.profile-fields-container > .button-container button:first-child {
   margin-right: 10px;
 }
 
-div.profile-fields-container > button > div {
+div.profile-fields-container button > div {
   width: 1rem;
   height: 1rem;
 }
@@ -77,24 +80,27 @@ div.profile-fields-container > div.edit-icon:hover {
 div.profileGameSettingsRow {
   justify-content: center;
 }
-div.profileGameSettingsRow > div.spinner-border{
+div.profileGameSettingsRow > div.spinner-border {
   width: 2.5rem;
   height: 2.5rem;
 }
 
-div.profile-fields-container > button {
+div.profile-fields-container button {
   border-radius: .75rem;
+}
+div.profile-fields-container button.btn-outline-primary {
   color: #313340;
   border-color: #313340;
 }
-div.profile-fields-container > button:hover {
+div.profile-fields-container button.btn-outline-primary:hover {
   background-color: #313340;
   border-color: #313340;
+  color: #fff;
 }
-div.profile-fields-container > button:active {
+div.profile-fields-container button.btn-outline-primary:active {
   background-color: #313340!important;
   border-color: #313340!important;
 }
-div.profile-fields-container > button:focus {
+div.profile-fields-container button.btn-outline-primary:focus {
   box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, .5)!important;
 }

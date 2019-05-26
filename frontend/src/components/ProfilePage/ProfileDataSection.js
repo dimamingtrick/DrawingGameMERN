@@ -5,12 +5,12 @@ import { FaEdit } from "react-icons/fa";
 import moment from "moment";
 
 const ProfileDataSection = ({ user, updateProfile }) => {
-  const [state, handleField, toggleEditState, updateData] = useProfileState(
+  const [state, handleField, toggleEditState, updateData, closeEditForm] = useProfileState(
     updateProfile
   );
 
   return (
-    <Row>
+    <Row className="profileGameSettingsRow">
       <Col xs={12} className="profileContent">
         <div className="profile-fields-container">
           {!state.editing ? (
@@ -18,14 +18,24 @@ const ProfileDataSection = ({ user, updateProfile }) => {
               <FaEdit onClick={toggleEditState} />
             </div>
           ) : (
-            <Button
-              outline
-              color="primary"
-              disabled={state.loading}
-              onClick={updateData}
-            >
-              {state.loading ? <Spinner /> : "Save"}
-            </Button>
+            <div className="button-container">
+              <Button
+                outline
+                color="primary"
+                disabled={state.loading}
+                onClick={updateData}
+              >
+                {state.loading ? <Spinner /> : "Save"}
+              </Button>
+              <Button
+                outline
+                color="danger"
+                disabled={state.loading}
+                onClick={closeEditForm}
+              >
+                Close
+              </Button>
+            </div>
           )}
 
           <div className="profile-field">

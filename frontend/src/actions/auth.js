@@ -37,9 +37,9 @@ export const registrate = form => async dispatch => {
   }
 };
 
-export const updateProfile = data => async dispatch => {
+export const updateProfile = (data, type = "text") => async dispatch => {
   try {
-    const { user } = await AuthService.updateProfile(data);
+    const { user } = await AuthService.updateProfile(data, type);
     dispatch({ type: PROFILE_UPDATE_SUCCESS, user });
   } catch (err) {
     throw err.message;

@@ -4,7 +4,7 @@ class AuthService {
   authenticate() {
     return api({
       method: "GET",
-      url: "/me"
+      url: "/me",
     });
   }
 
@@ -12,7 +12,7 @@ class AuthService {
     return api({
       method: "POST",
       url: "/login",
-      body
+      body,
     });
   }
 
@@ -20,15 +20,16 @@ class AuthService {
     return api({
       method: "POST",
       url: "/registration",
-      body
+      body,
     });
   }
 
-  updateProfile(body) {
+  updateProfile(body, type) {
     return api({
       method: "PUT",
       url: "/profile",
-      body
+      body,
+      contentType: type === "file" ? "file" : "text",
     });
   }
 }
