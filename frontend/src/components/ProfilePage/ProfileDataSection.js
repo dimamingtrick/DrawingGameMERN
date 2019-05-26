@@ -2,7 +2,6 @@ import React from "react";
 import { Input, Button, Spinner, Row, Col } from "reactstrap";
 import { useProfileState } from "../../hooks";
 import { FaEdit } from "react-icons/fa";
-import defaultAvatar from "../../assets/defaultAvatar.png";
 import moment from "moment";
 
 const ProfileDataSection = ({ user, updateProfile }) => {
@@ -13,12 +12,6 @@ const ProfileDataSection = ({ user, updateProfile }) => {
   return (
     <Row>
       <Col xs={12} className="profileContent">
-        <div
-          className="userAvatar"
-          style={{
-            background: 'url("' + defaultAvatar + '")'
-          }}
-        />
         <div className="profile-fields-container">
           {!state.editing ? (
             <div className="edit-icon">

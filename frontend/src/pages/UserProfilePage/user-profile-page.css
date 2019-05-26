@@ -5,6 +5,7 @@ div.profileContainer div.userAvatar {
   background-size: 100%!important;
   border-radius: 50%;
   border: 1px solid #343a40;
+  margin: 0 auto;
 }
 
 div.profileContainer div.profileContent {
@@ -45,6 +46,17 @@ div.profile-fields-container > button {
   top: 15px;
   right: 15px;
 }
+div.profile-fields-container > .button-container {
+  min-width: 60px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+}
+div.profile-fields-container > .button-container button:first-child {
+  margin-right: 10px;
+}
+
 div.profile-fields-container > button > div {
   width: 1rem;
   height: 1rem;
