@@ -11,7 +11,7 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownItem,
-  DropdownMenu
+  DropdownMenu,
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import "./navbars.css";
@@ -20,28 +20,28 @@ const navLinks = [
   {
     text: "Home",
     link: "/app",
-    permissions: ["all"]
+    permissions: ["all"],
   },
   {
     text: "Game",
     link: "/app/game",
-    permissions: ["all"]
+    permissions: ["all"],
   },
   {
     text: "Words to guess",
     link: "/app/game-words",
-    permissions: ["admin"]
+    permissions: ["admin"],
   },
   {
     text: "Chats",
     link: "/app/chats",
-    permissions: ["all"]
+    permissions: ["all"],
   },
   {
     text: "To do list",
     link: "/app/todolist",
-    permissions: ["all"]
-  }
+    permissions: ["all"],
+  },
 ];
 
 const DashboardNavbar = ({ user, logout, location }) => {
@@ -81,8 +81,14 @@ const DashboardNavbar = ({ user, logout, location }) => {
           )}
 
           <UncontrolledDropdown nav inNavbar>
-            <DropdownToggle nav caret>
-              {user.login}
+            <DropdownToggle className="user-data-dropdown" nav caret>
+              {user.login}{" "}
+              <div
+                className="navbar-avatar"
+                style={{
+                  background: `url('${user.avatar}')`,
+                }}
+              />
             </DropdownToggle>
             <DropdownMenu right>
               <DropdownItem>
@@ -103,7 +109,7 @@ const DashboardNavbar = ({ user, logout, location }) => {
 export default connect(
   store => {
     return {
-      user: store.auth.user
+      user: store.auth.user,
     };
   },
   { logout }

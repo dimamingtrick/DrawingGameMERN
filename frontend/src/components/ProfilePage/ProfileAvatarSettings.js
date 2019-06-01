@@ -1,6 +1,5 @@
 import React from "react";
 import { Row, Col, Button, Spinner } from "reactstrap";
-import defaultAvatar from "../../assets/defaultAvatar.png";
 import { FaEdit } from "react-icons/fa";
 import { mainStateHook } from "../../hooks";
 
@@ -48,6 +47,10 @@ const ProfileAvatarSettings = ({ avatar, updateProfile }) => {
     setState({ editing: false, avatar, avatarFile: null });
   };
 
+  const openFileInput = () => {
+    document.getElementById("avatar-file-input").click();
+  };
+
   return (
     <Row className="profileGameSettingsRow">
       <Col xs={12} className="profileContent">
@@ -83,7 +86,23 @@ const ProfileAvatarSettings = ({ avatar, updateProfile }) => {
             }}
           />
           {state.editing && (
-            <input type="file" name="avatar" onChange={changeAvatar} />
+            <div className="avatar-file-wrapper">
+              <input
+                id="avatar-file-input"
+                type="file"
+                name="avatar"
+                onChange={changeAvatar}
+              />
+              <Button
+                onClick={openFileInput}
+                outline
+                color="primary"
+                size="lg"
+                block
+              >
+                Upload new avatar
+              </Button>
+            </div>
           )}
         </div>
       </Col>

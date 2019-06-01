@@ -2,7 +2,7 @@ div.profileContainer div.userAvatar {
   width: 200px;
   height: 200px;
   background-position: center!important;
-  background-size: 100%!important;
+  background-size: cover!important;
   border-radius: 50%;
   border: 1px solid #343a40;
   margin: 0 auto;
@@ -103,4 +103,38 @@ div.profile-fields-container button.btn-outline-primary:active {
 }
 div.profile-fields-container button.btn-outline-primary:focus {
   box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, .5)!important;
+}
+
+div.avatar-file-wrapper {
+  margin-top: 15px;
+}
+
+div.avatar-file-wrapper > #avatar-file-input {
+  display: none;
+}
+div.avatar-file-wrapper > button.btn-outline-primary {
+  padding: 5px;
+  line-height: 1.25;
+  color: rgba(0,123,255,.75);
+  border-color: rgba(0,123,255,.75);
+  width: 50%;
+  margin: 0 auto;
+}
+div.avatar-file-wrapper > button.btn-outline-primary:hover {
+  background-color: rgba(0,123,255,.75);
+  border-color: rgba(0,123,255,.75);
+  color: #fff;
+}
+div.avatar-file-wrapper > button.btn-outline-primary:focus {
+  box-shadow: none!important;
+}
+div.avatar-file-wrapper > button.btn-outline-primary:active {
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.85)!important;
+  background-color: #007bff!important;
+  border-color: #007bff!important;
+}
+
+span.profile-field-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

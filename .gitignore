@@ -3,6 +3,7 @@
 # dependencies
 /backend/node_modules
 /backend/uploads/chatMessages/
+/backend/uploads/avatars/
 /frontend/node_modules
 /frontend/.pnp
 /frontend/.pnp.js

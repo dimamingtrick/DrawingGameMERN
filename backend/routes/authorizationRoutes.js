@@ -109,100 +109,105 @@ router.post("/registration", async (req, res) => {
 });
 
 const fileUpload = require("express-fileupload");
-router.put("/profile", jwtValidate, fileUpload(), async (req, res) => {
-  const { userId, data } = req.body;
+router.put(
+  "/profile",
+  jwtValidate,
+  fileUpload({ createParentPath: true }),
+  async (req, res) => {
+    const { userId, data } = req.body;
 
-  if (req.files) {
-    const { avatar: userAvatar } = await User.findById(userId);
-    if (userAvatar) {
-      // remove initial avatar if exists
-      const fs = require("fs");
-      fs.unlink(
-        `${require("app-root-path")}/uploads/avatars/${userAvatar.replace(
-          "http://localhost:3001/avatars/",
-          ""
-        )}`,
-        () => {}
+    if (req.files) {
+      const { avatar: userAvatar } = await User.findById(userId);
+      if (userAvatar) {
+        // remove initial avatar if exists
+        const fs = require("fs");
+        fs.unlink(
+          `${require("app-root-path")}/uploads/avatars/${userAvatar.replace(
+            "http://localhost:3001/avatars/",
+            ""
+          )}`,
+          () => {}
+        );
+      }
+
+      const filePath = `avatars/${userId}${Date.now()}${req.files.avatar.name}`;
+      const fileServerUrl = `${require("app-root-path")}/uploads/${filePath}`;
+
+      let avatar = await new Promise((resolve, reject) => {
+        req.files.avatar.mv(fileServerUrl, err => {
+          if (err) return res.status(400).json({ message: err });
+
+          const fullImageUrl = `http://${req.get("host")}/${filePath}`;
+          resolve(fullImageUrl);
+        });
+      });
+
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            avatar,
+          },
+        },
+        { new: true },
+        (err, updatedUser) => {
+          return res.json({ user: updatedUser });
+        }
+      );
+    } else {
+      if (
+        data.login === "" ||
+        (data.email === "" || (data.email && !validateEmail(data.email)))
+      ) {
+        return res.status(400).json({
+          message: {
+            ...(data.login === "" ? { login: "Login is required" } : {}),
+            ...(data.email === "" || (data.email && !validateEmail(data.email))
+              ? { email: "Enter valid email" }
+              : {}),
+          },
+        });
+      }
+
+      const [loginUniqueError, emailUniqueError] = await Promise.all([
+        User.findOne({
+          login: data.login,
+          _id: {
+            $ne: userId,
+          },
+        }),
+        User.findOne({
+          email: data.email,
+          _id: {
+            $ne: userId,
+          },
+        }),
+      ]);
+
+      if (loginUniqueError)
+        return res
+          .status(400)
+          .json({ message: { login: "Login is already in use" } });
+
+      if (emailUniqueError)
+        return res
+          .status(400)
+          .json({ message: { email: "Email is already in use" } });
+
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            ...data,
+          },
+        },
+        { new: true },
+        (err, updatedUser) => {
+          return res.json({ user: updatedUser });
+        }
       );
     }
-
-    const filePath = `avatars/${userId}${Date.now()}${req.files.avatar.name}`;
-    const fileServerUrl = `${require("app-root-path")}/uploads/${filePath}`;
-
-    let avatar = await new Promise((resolve, reject) => {
-      req.files.avatar.mv(fileServerUrl, err => {
-        if (err) return res.status(400).json({ message: err });
-
-        const fullImageUrl = `http://${req.get("host")}/${filePath}`;
-        resolve(fullImageUrl);
-      });
-    });
-
-    await User.findByIdAndUpdate(
-      userId,
-      {
-        $set: {
-          avatar,
-        },
-      },
-      { new: true },
-      (err, updatedUser) => {
-        return res.json({ user: updatedUser });
-      }
-    );
-  } else {
-    if (
-      data.login === "" ||
-      (data.email === "" || (data.email && !validateEmail(data.email)))
-    ) {
-      return res.status(400).json({
-        message: {
-          ...(data.login === "" ? { login: "Login is required" } : {}),
-          ...(data.email === "" || (data.email && !validateEmail(data.email))
-            ? { email: "Enter valid email" }
-            : {}),
-        },
-      });
-    }
-
-    const [loginUniqueError, emailUniqueError] = await Promise.all([
-      User.findOne({
-        login: data.login,
-        _id: {
-          $ne: userId,
-        },
-      }),
-      User.findOne({
-        email: data.email,
-        _id: {
-          $ne: userId,
-        },
-      }),
-    ]);
-
-    if (loginUniqueError)
-      return res
-        .status(400)
-        .json({ message: { login: "Login is already in use" } });
-
-    if (emailUniqueError)
-      return res
-        .status(400)
-        .json({ message: { email: "Email is already in use" } });
-
-    await User.findByIdAndUpdate(
-      userId,
-      {
-        $set: {
-          ...data,
-        },
-      },
-      { new: true },
-      (err, updatedUser) => {
-        return res.json({ user: updatedUser });
-      }
-    );
   }
-});
+);
 
 module.exports = router;

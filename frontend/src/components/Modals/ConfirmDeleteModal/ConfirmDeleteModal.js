@@ -5,7 +5,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter
+  ModalFooter,
 } from "reactstrap";
 import "./confirm-delete-modal.css";
 
@@ -16,7 +16,7 @@ export default function ConfirmDeleteModal({
   deletingError = "",
   deleteConfirming,
   headerText = "",
-  bodyText = ""
+  bodyText = "",
 }) {
   return (
     <Modal

@@ -45,6 +45,7 @@ function SingleChatRoute({
     if (!state.loading) setState({ loading: true });
     ChatService.getSingleChatById(chatId).then(({ chat, messages }) => {
       setState({ loading: false, chat, messages });
+      scrollToChatBottom();
     });
   }, [chatId]);
 
@@ -58,21 +59,25 @@ function SingleChatRoute({
           : {}),
       });
       if (userIsTyping) setUserIsTyping(false);
+      scrollToChatBottom();
     });
 
     socket.on(`chat-${chatId}-messageDeleted`, ({ messageId, userId }) => {
       const isMyMessage = user._id === userId;
       setState({
         messages: state.messages.filter(i => i._id !== messageId),
-        ...(isMyMessage ? { isDeleting: false } : {}),
-        ...(isMyMessage ? { confirmDeleteModalIsOpen: false } : {}),
-        ...(isMyMessage ? { confirmDeleteModalIsOpen: false } : {}),
+        ...(isMyMessage
+          ? { isDeleting: false, confirmDeleteModalIsOpen: false }
+          : {}),
       });
       if (isMyMessage) selectedElementId = null;
     });
 
     socket.on(`chat${chatId}UserTypes`, () => {
-      if (!userIsTyping) setUserIsTyping(true);
+      if (!userIsTyping) {
+        setUserIsTyping(true);
+        scrollToChatBottom();
+      }
     });
 
     socket.on(`chat${chatId}UserStopTyping`, () => {
@@ -86,11 +91,6 @@ function SingleChatRoute({
       socket.off(`chat${chatId}UserStopTyping`);
     };
   });
-
-  /** Scroll to bottom of chat if messages length changes */
-  useEffect(() => {
-    scrollToChatBottom();
-  }, [state.messages, userIsTyping]);
 
   const handleInput = e => {
     clearInterval(inputHandlingTimeoutFlag);
@@ -126,7 +126,12 @@ function SingleChatRoute({
   };
 
   const toggleDeleteModal = () => {
-    setState({ confirmDeleteModalIsOpen: !state.confirmDeleteModalIsOpen });
+    setState({
+      confirmDeleteModalIsOpen: !state.confirmDeleteModalIsOpen,
+      ...(state.confirmDeleteModalIsOpen && state.deletingError !== ""
+        ? { deletingError: "" }
+        : {}),
+    });
   };
 
   const deleteMessageConfirmed = () => {

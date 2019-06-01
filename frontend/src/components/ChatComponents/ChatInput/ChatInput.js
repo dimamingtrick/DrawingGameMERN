@@ -15,6 +15,10 @@ const ChatInput = ({ inputMessage, handleInput, sendMessage, sending }) => {
     if (!sending) document.getElementById("chat-message-file").click();
   };
 
+  const submitSendingMessage = () => {
+    if (!sending) sendMessage();
+  };
+
   const uploadFile = e => {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
@@ -42,14 +46,14 @@ const ChatInput = ({ inputMessage, handleInput, sendMessage, sending }) => {
         placeholder="Message..."
         autoFocus
         onKeyDown={e => {
-          if (e.keyCode === 13) sendMessage();
+          if (e.keyCode === 13) submitSendingMessage();
         }}
       />
       <InputGroupAddon addonType="append">
         <Button
           disabled={inputMessage === ""}
           className="input-submit-btn"
-          onClick={() => sendMessage()}
+          onClick={submitSendingMessage}
         >
           {sending ? <Spinner /> : <IoMdSend />}
         </Button>

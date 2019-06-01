@@ -77,62 +77,66 @@ router.get("/:id", async (req, res) => {
  * send new message
  */
 const fileUpload = require("express-fileupload");
-router.post("/:id", fileUpload(), async (req, res) => {
-  const { message, type, userId } = req.body;
-  const chatId = req.params.id;
+router.post(
+  "/:id",
+  fileUpload({ createParentPath: true }),
+  async (req, res) => {
+    const { message, type, userId } = req.body;
+    const chatId = req.params.id;
 
-  let messageField = message;
-  if (req.files) {
-    const filePath = `chatMessages/${userId}${Date.now()}${
-      req.files.file.name
-    }`;
-    const fileServerUrl = `${require("app-root-path")}/uploads/${filePath}`;
+    let messageField = message;
+    if (req.files) {
+      const filePath = `chatMessages/${userId}${Date.now()}${
+        req.files.file.name
+      }`;
+      const fileServerUrl = `${require("app-root-path")}/uploads/${filePath}`;
 
-    messageField = await new Promise((resolve, reject) => {
-      req.files.file.mv(fileServerUrl, err => {
-        if (err) return res.status(400).json({ message: err });
+      messageField = await new Promise((resolve, reject) => {
+        req.files.file.mv(fileServerUrl, err => {
+          if (err) return res.status(400).json({ message: err });
 
-        const fullImageUrl = `http://${req.get("host")}/${filePath}`;
-        resolve(fullImageUrl);
+          const fullImageUrl = `http://${req.get("host")}/${filePath}`;
+          resolve(fullImageUrl);
+        });
       });
+    }
+
+    const msg = new ChatMessage({
+      userId: objectId(userId),
+      chatId: objectId(chatId),
+      message: messageField,
+      type,
     });
-  }
+    const newMessage = await msg.save();
 
-  const msg = new ChatMessage({
-    userId: objectId(userId),
-    chatId: objectId(chatId),
-    message: messageField,
-    type,
-  });
-  const newMessage = await msg.save();
+    const io = req.app.get("socketio");
 
-  const io = req.app.get("socketio");
-
-  await Chat.findByIdAndUpdate(
-    chatId,
-    {
-      $set: {
-        lastMessage: newMessage._id,
-      },
-    },
-    { new: true }
-  )
-    .populate([
+    await Chat.findByIdAndUpdate(
+      chatId,
       {
-        path: "users",
-        select: "-password",
+        $set: {
+          lastMessage: newMessage._id,
+        },
       },
-      "lastMessage",
-    ])
-    .exec((err, updatedChat) => {
-      if (err || !updatedChat)
-        return res.status(400).json({ message: err || "Error" });
+      { new: true }
+    )
+      .populate([
+        {
+          path: "users",
+          select: "-password",
+        },
+        "lastMessage",
+      ])
+      .exec((err, updatedChat) => {
+        if (err || !updatedChat)
+          return res.status(400).json({ message: err || "Error" });
 
-      io.emit(`chat-${chatId}-getUpdate`, updatedChat);
-      io.emit(`chat-${chatId}-newMessage`, newMessage);
-      return res.json({});
-    });
-});
+        io.emit(`chat-${chatId}-getUpdate`, updatedChat);
+        io.emit(`chat-${chatId}-newMessage`, newMessage);
+        return res.json({});
+      });
+  }
+);
 
 /**
  * DELETE /chats/:id

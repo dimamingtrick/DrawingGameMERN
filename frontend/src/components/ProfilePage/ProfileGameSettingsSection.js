@@ -69,7 +69,9 @@ const ProfileGameSettingsSection = ({
                   <div className="todo-error">{state.errors.background}</div>
                 </div>
               ) : (
-                gameSettings.background
+                <span className="profile-field-value">
+                  {gameSettings.background}
+                </span>
               )}
             </div>
           </div>

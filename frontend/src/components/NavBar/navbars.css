@@ -31,3 +31,18 @@ nav.navbar .nav-item.active div.linkUnderline {
   width: 100%!important;
   opacity: 1;
 }
+
+a.user-data-dropdown {
+  display: flex;
+}
+a.user-data-dropdown::after {
+  align-self: center;
+}
+a.user-data-dropdown > div.navbar-avatar {
+  width: 24px;
+  height: 24px;
+  background-position: center!important;
+  background-size: cover!important;
+  border-radius: 50%;
+  margin-left: 5px;
+}
