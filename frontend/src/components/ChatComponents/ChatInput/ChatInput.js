@@ -36,7 +36,6 @@ const ChatInput = ({
 
   return (
     <div className="chat-input-container">
-      {/* {editedMessage && ( */}
       <CSSTransition
         in={editedMessage !== null}
         timeout={100}
@@ -48,7 +47,6 @@ const ChatInput = ({
           editedMessage={editedMessage}
         />
       </CSSTransition>
-      {/* )} */}
       <InputGroup className="chat-input-group">
         <InputGroupAddon addonType="prepend">
           <InputGroupText onClick={openFileInput}>
