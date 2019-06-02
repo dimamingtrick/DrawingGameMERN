@@ -206,6 +206,7 @@ router.put("/:id/messages/:messageId", async (req, res) => {
     {
       $set: {
         message: req.body.message,
+        updatedAt: new Date(),
       },
     },
     { new: true },

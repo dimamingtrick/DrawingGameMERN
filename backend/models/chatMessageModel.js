@@ -2,22 +2,26 @@ import mongoose from "mongoose";
 
 const chatMessageSchema = new mongoose.Schema({
   userId: {
-    type: String || Number
+    type: mongoose.Schema.Types.ObjectId,
   },
   chatId: {
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
   },
   message: {
-    type: String
+    type: String,
   },
   createdAt: {
     type: Date,
-    default: new Date()
+    default: new Date(),
+  },
+  updatedAt: {
+    type: Date,
+    default: null,
   },
   type: {
     type: String || File, // would be text or image,
-    default: "text"
-  }
+    default: "text",
+  },
 });
 
 const ChatMessage = mongoose.model("chatMessage", chatMessageSchema);

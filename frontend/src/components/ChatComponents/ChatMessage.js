@@ -32,7 +32,11 @@ const ChatMessage = ({ message, userFrom, user }) => (
       </div>
       <div className="message-date">
         <div className="single-message-date">
-          {moment(message.createdAt).format("HH:mm:ss DD/MM/YYYY")}
+          {message.updatedAt
+            ? `Edited ${moment(message.updatedAt).format(
+                "HH:mm:ss DD/MM/YYYY"
+              )}`
+            : moment(message.createdAt).format("HH:mm:ss DD/MM/YYYY")}
         </div>
       </div>
     </div>
