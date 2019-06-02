@@ -32,13 +32,19 @@ export default function ConfirmDeleteModal({
       <ModalFooter>
         <div className="todo-error">{deletingError}</div>
         <Button
+          outline
           className="confirm-button"
-          color="primary"
+          color="info"
           onClick={deleteConfirming}
         >
           {isDeleting ? <Spinner size="sm" color="#fff" /> : "Delete"}
         </Button>
-        <Button className="cancel-button" color="danger" onClick={toggle}>
+        <Button
+          outline
+          className="cancel-button"
+          color="danger"
+          onClick={toggle}
+        >
           Cancel
         </Button>
       </ModalFooter>
