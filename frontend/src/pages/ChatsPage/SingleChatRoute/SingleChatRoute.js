@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { scrollToChatBottom } from "../../../helpers";
 import { mainStateHook } from "../../../hooks";
 import { Spinner } from "reactstrap";
@@ -16,7 +17,7 @@ import { getGameSettings } from "../../../actions/game";
 import "./single-chat-page.css";
 
 let inputHandlingTimeoutFlag;
-let selectedElementId = null;
+let selectedElementId = null; // set id of message by contextmenu click
 
 function SingleChatRoute({
   user,
@@ -32,9 +33,12 @@ function SingleChatRoute({
     messages: [],
     inputValue: "",
     sending: false,
+
     confirmDeleteModalIsOpen: false,
     isDeleting: false,
     deletingError: "",
+
+    editedMessage: null,
   });
 
   const [userIsTyping, setUserIsTyping] = useState(false);
@@ -62,6 +66,18 @@ function SingleChatRoute({
       scrollToChatBottom();
     });
 
+    socket.on(`chat-${chatId}-messageUpdated`, updatedMessage => {
+      setState({
+        messages: state.messages.map(i => {
+          if (i._id === updatedMessage._id) return updatedMessage;
+          return i;
+        }),
+        ...(user._id === updatedMessage.userId
+          ? { inputValue: "", editedMessage: null, sending: false }
+          : {}),
+      });
+    });
+
     socket.on(`chat-${chatId}-messageDeleted`, ({ messageId, userId }) => {
       const isMyMessage = user._id === userId;
       setState({
@@ -86,6 +102,7 @@ function SingleChatRoute({
 
     return () => {
       socket.off(`chat-${chatId}-newMessage`);
+      socket.off(`chat-${chatId}-messageUpdated`);
       socket.off(`chat-${chatId}-messageDeleted`);
       socket.off(`chat${chatId}UserTypes`);
       socket.off(`chat${chatId}UserStopTyping`);
@@ -101,24 +118,38 @@ function SingleChatRoute({
     }, 750);
   };
 
-  /** Send message to chat */
+  /** Send message to chat (input text, file, updating message) */
   const sendMessage = (file = null) => {
-    setState({ sending: true });
+    const { inputValue, editedMessage } = state;
+    if (editedMessage !== null && inputValue === editedMessage.message) {
+      return closeEditingState();
+    }
 
+    setState({ sending: true });
     let message = file
       ? file
       : {
-          message: state.inputValue,
+          message: inputValue,
           type: "text",
         };
 
-    ChatService.sendNewMessage(chatId, message, file ? "image" : "text").catch(
-      err => {
+    if (editedMessage) {
+      ChatService.editMessage(chatId, message, editedMessage._id).catch(err => {
         setState({
           sending: false,
         });
-      }
-    );
+      });
+    } else {
+      ChatService.sendNewMessage(
+        chatId,
+        message,
+        file ? "image" : "text"
+      ).catch(err => {
+        setState({
+          sending: false,
+        });
+      });
+    }
   };
 
   const onContextMenuOpen = id => {
@@ -142,6 +173,22 @@ function SingleChatRoute({
     });
   };
 
+  const toggleEditState = () => {
+    const messageToEdit = state.messages.find(i => i._id === selectedElementId);
+    setState({
+      editedMessage: messageToEdit,
+      inputValue: messageToEdit.message,
+    });
+  };
+
+  const closeEditingState = () => {
+    setState({
+      editedMessage: null,
+      inputValue: "",
+    });
+    selectedElementId = null;
+  };
+
   const {
     loading,
     messages,
@@ -151,6 +198,7 @@ function SingleChatRoute({
     confirmDeleteModalIsOpen,
     isDeleting,
     deletingError,
+    editedMessage,
   } = state;
   return (
     <>
@@ -162,14 +210,25 @@ function SingleChatRoute({
         {loading ? (
           <Spinner />
         ) : (
-          messages.map((msg, index) => (
-            <ChatMessage
-              key={msg._id ? msg._id : "otherType-" + index}
-              message={msg}
-              userFrom={chat.users.find(u => u._id === msg.userId)}
-              user={user}
-            />
-          ))
+          <TransitionGroup>
+            {messages.map(msg => (
+              <CSSTransition
+                key={`${msg._id}-chatMessage`}
+                classNames="chatMessageTransition"
+                timeout={{
+                  appear: 200,
+                  enter: 200,
+                  exit: 500,
+                }}
+              >
+                <ChatMessage
+                  message={msg}
+                  userFrom={chat.users.find(u => u._id === msg.userId)}
+                  user={user}
+                />
+              </CSSTransition>
+            ))}
+          </TransitionGroup>
         )}
         {messages.length === 0 && !loading && (
           <div className="no-messages-found">No messages found...</div>
@@ -180,6 +239,8 @@ function SingleChatRoute({
         handleInput={handleInput}
         sendMessage={sendMessage}
         sending={sending}
+        editedMessage={editedMessage}
+        closeEditing={closeEditingState}
       />
 
       <ConfirmDeleteModal
@@ -195,6 +256,9 @@ function SingleChatRoute({
       <ContextMenu onContextMenuOpen={onContextMenuOpen}>
         <div className="menu-option" onClick={toggleDeleteModal}>
           Delete
+        </div>
+        <div className="menu-option" onClick={toggleEditState}>
+          Edit
         </div>
         <div className="menu-option">Close</div>
       </ContextMenu>

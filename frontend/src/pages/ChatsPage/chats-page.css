@@ -36,8 +36,8 @@ div.chats-container.container-fluid {
   flex: 1;
   height: 100%;
   max-height: 100%;
-  border-radius: 3px;
-  border: 1px solid #343a40;
+  /* border-radius: 3px;
+  border: 1px solid #343a40; */
 }
 
 div.all-chats-list {
@@ -105,7 +105,8 @@ div.single-chat-display {
   display: flex;
   flex-direction: column;
   flex: 1;
-  border-left: 1px solid #343a40;
+  border-left: 1px solid rgba(52, 58, 64, .1);
+  overflow: hidden;
 }
 div.single-chat-display > div.input-group > input {
   border-radius: 0!important;

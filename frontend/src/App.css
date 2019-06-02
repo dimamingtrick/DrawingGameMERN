@@ -294,3 +294,32 @@ button:focus {
 .todoRowAnim-exit-done {
   opacity: 0;
 }
+
+
+
+
+.single-message {
+  position: relative!important; 
+  overflow: hidden!important;
+}
+.chatMessageTransition-enter > div.message-wrapper {
+  transform: translateY(200%);
+}
+
+.chatMessageTransition-enter.chatMessageTransition-enter-active  > div.message-wrapper {
+  transform: translateY(0);
+  transition: all 200ms ease-in;
+}
+
+.chatMessageTransition-exit {
+  transform: translateX(0);
+}
+
+.chatMessageTransition-exit.chatMessageTransition-exit-active {
+  transform: translateX(100%);
+  transition: all 500ms ease-in;
+}
+
+.chatMessageTransition-exit-done {
+  transform: translateX(100%);
+}

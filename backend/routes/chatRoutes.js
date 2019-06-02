@@ -73,12 +73,12 @@ router.get("/:id", async (req, res) => {
 });
 
 /**
- * POST /chats/:id
+ * POST /chats/:id/messages
  * send new message
  */
 const fileUpload = require("express-fileupload");
 router.post(
-  "/:id",
+  "/:id/messages",
   fileUpload({ createParentPath: true }),
   async (req, res) => {
     const { message, type, userId } = req.body;
@@ -139,14 +139,14 @@ router.post(
 );
 
 /**
- * DELETE /chats/:id
+ * DELETE /chats/:id/messages
  * delete single chat message
  */
-router.delete("/:id/messages", async (req, res) => {
+router.delete("/:id/messages/:messageId", async (req, res) => {
   const chatId = req.params.id;
   ChatMessage.findOneAndDelete(
     {
-      _id: objectId(req.body.messageId),
+      _id: objectId(req.params.messageId),
       chatId: objectId(chatId),
     },
     async (err, deletedMessage) => {
@@ -182,11 +182,40 @@ router.delete("/:id/messages", async (req, res) => {
           const io = req.app.get("socketio");
           io.emit(`chat-${chatId}-getUpdate`, updatedChat);
           io.emit(`chat-${chatId}-messageDeleted`, {
-            messageId: req.body.messageId,
+            messageId: req.params.messageId,
             userId: req.body.userId,
           });
-          // res.json({ message: "item was successfully deleted" });
+          res.json({ message: "item was successfully deleted" });
         });
+    }
+  );
+});
+
+/**
+ * PUT /chats/:id/messages/:messageId
+ * updates single chat message
+ */
+router.put("/:id/messages/:messageId", async (req, res) => {
+  const chatId = req.params.id;
+
+  ChatMessage.findOneAndUpdate(
+    {
+      _id: objectId(req.params.messageId),
+      chatId: objectId(chatId),
+    },
+    {
+      $set: {
+        message: req.body.message,
+      },
+    },
+    { new: true },
+    async (err, updatedMessage) => {
+      if (err || !updatedMessage)
+        return res.status(404).json({ message: err || "Message not found" });
+
+      const io = req.app.get("socketio");
+      io.emit(`chat-${chatId}-messageUpdated`, updatedMessage);
+      res.json({ updatedMessage });
     }
   );
 });

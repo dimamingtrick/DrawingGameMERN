@@ -1,3 +1,38 @@
+.chat-input-container {
+  position: relative;
+  /* overflow: hidden; */
+  z-index: 1;
+}
+
+.chat-input-group {
+  z-index: 1!important;
+}
+
+.chat-input-container > div.editing-message-container {
+  position: absolute;
+  top: -115%;
+  width: 100%;
+  z-index: 1;
+  background: rgba(73, 141, 139, .65);
+  display: flex;
+  padding: 10px;
+  text-align: center;
+  /* transform: translateY(100%); */
+}
+.chat-input-container > div.editing-message-container > div.message-text {
+  display: inline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 15px;
+  color: #fff;
+  margin: 0 auto;
+}
+.chat-input-container > div.editing-message-container > button {
+  color: #fff;
+  opacity: .85;
+}
+
 .chat-input-group .input-group-prepend > span.input-group-text {
   border-radius: 0;
   color: #fff;
@@ -18,4 +53,36 @@
 
 #chat-message-file {
   display: none!important;
+}
+
+.single-chat-display button.input-submit-btn {
+  border-radius: 0!important;
+}
+
+.editChatMessageState-enter {
+  transform: translateY(100%);
+}
+
+.editChatMessageState-enter.editChatMessageState-enter-active {
+  transform: translateY(0);
+  transition: all 100ms ease-in;
+}
+
+.editChatMessageState-exit {
+  transform: translateY(0);
+}
+
+.editChatMessageState-exit.editChatMessageState-exit-active {
+  transform: translateY(100%);
+  transition: all 100ms ease-in;
+}
+
+.editChatMessageState-exit-done {
+  transform: translateY(100%);
+}
+
+.chat-input-group button.btn.btn.disabled {
+  background: darkgray;
+  border: none!important;
+  opacity: 1!important;
 }

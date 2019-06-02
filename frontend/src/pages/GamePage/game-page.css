@@ -82,12 +82,10 @@ div.game-card.drawing-card {
 }
 
 
-
-
-
 div.chat-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   background-size: cover!important;
   display: flex;
   flex-direction: column;
@@ -152,14 +150,15 @@ div.single-message:first-child {
 }
 
 div.single-message:last-of-type {
-  padding-bottom: 45px!important
+  padding-bottom: 55px!important;
+  margin-bottom: 0!important;
 }
 
-div.chat-messages > div.single-message.my-message {
+div.chat-messages div.single-message.my-message {
   justify-content: flex-end;
 }
 
-div.chat-messages > div.single-message > div.message-wrapper {
+div.chat-messages div.single-message > div.message-wrapper {
   padding: 10px;
   border-radius: 10px;
   background: #fff;
@@ -173,7 +172,7 @@ div.chat-messages div.single-message.my-message > div.message-wrapper {
   border-bottom-left-radius: 10px;
 }
 
-div.chat-messages > div.single-message > div.message-wrapper {
+div.chat-messages div.single-message > div.message-wrapper {
   border-bottom-left-radius: 0;
   display: flex;
   align-self: center;
@@ -213,7 +212,7 @@ button.input-submit-btn > div {
 /*
 *  Message when uesr leaves a chat
 */
-div.chat-messages > div.single-message.chat-message {
+div.chat-messages div.single-message.chat-message {
   justify-content: center;
   position: relative;
   margin: 10px 0;
@@ -224,7 +223,7 @@ div.chat-messages > div.single-message.chat-message {
   0%   { opacity: 0; }
   100% { opacity: 1; }
 }
-div.chat-messages > div.single-message.chat-message > div.message-wrapper {
+div.chat-messages div.single-message.chat-message > div.message-wrapper {
   background: rgba(52, 58, 64, .75);
   color: #fff;
   border-radius: 50px;
@@ -238,7 +237,7 @@ div.chat-messages > div.single-message.chat-message > div.message-wrapper {
   align-items: center;
   justify-content: space-around;
 }
-div.chat-messages > div.single-message.chat-message.join-chat-message > div.message-wrapper {
+div.chat-messages div.single-message.chat-message.join-chat-message > div.message-wrapper {
   background: rgba(19, 132, 150, .75);
 }
 div.single-message.chat-message > div.message-wrapper div.single-message-text, div.single-message-date {
