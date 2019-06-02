@@ -16,7 +16,7 @@ const ChatInput = ({
   handleInput,
   sendMessage,
   sending,
-  editedMessage,
+  editedMessage = null,
   closeEditing,
 }) => {
   const openFileInput = () => {
