@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { Row, Col, ListGroup, Button, Container } from "reactstrap";
-import SingleTodoPage from "../SingleTodoPage/SingleTodoPage";
+import SingleTodoPage from "./SingleTodoPage/SingleTodoPage";
 import { Fade } from "../../components/Animations/RoutingAnimationTransitions";
 import { TodoItem } from "../../components/TodoList";
 import { ConfirmDeleteModal } from "../../components/Modals";

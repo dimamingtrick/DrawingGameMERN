@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import {
   Col,
   Button,
@@ -9,11 +10,10 @@ import {
   Row,
   Spinner,
   Container,
-  FormText
+  FormText,
 } from "reactstrap";
-import { TodoService } from "../../services";
-import { addNewTodo, updateTodo } from "../../actions/todos";
-import { connect } from "react-redux";
+import { TodoService } from "../../../services";
+import { addNewTodo, updateTodo } from "../../../actions/todos";
 
 class SingleTodoPage extends Component {
   constructor(props) {
@@ -25,12 +25,12 @@ class SingleTodoPage extends Component {
       submitLoading: false,
       form: {
         title: "",
-        description: ""
+        description: "",
       },
       formError: {
         title: "",
-        description: ""
-      }
+        description: "",
+      },
     };
   }
 
@@ -38,12 +38,12 @@ class SingleTodoPage extends Component {
     this.setState({
       form: {
         ...this.state.form,
-        [name]: value
+        [name]: value,
       },
       formError: {
         ...this.state.formError,
-        [name]: ""
-      }
+        [name]: "",
+      },
     });
   };
 
@@ -55,8 +55,8 @@ class SingleTodoPage extends Component {
             load: false,
             form: {
               title,
-              description
-            }
+              description,
+            },
           });
         },
         () => {
@@ -83,7 +83,7 @@ class SingleTodoPage extends Component {
     } catch (formError) {
       this.setState({
         submitLoading: false,
-        formError
+        formError,
       });
     }
   };
@@ -155,7 +155,7 @@ class SingleTodoPage extends Component {
                             onClick={this.addNewTodo}
                             style={{
                               width: 200,
-                              height: 50
+                              height: 50,
                             }}
                           >
                             {submitLoading ? <Spinner /> : "Submit"}
