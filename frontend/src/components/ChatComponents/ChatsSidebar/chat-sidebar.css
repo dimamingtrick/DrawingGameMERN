@@ -1,0 +1,9 @@
+
+div.chat-sidebar {
+  width: 65px;
+  transition: width 400ms;
+  max-width: 20%;
+}
+div.chat-sidebar:hover {
+  width: 20%!important;
+}

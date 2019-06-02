@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { Container, Spinner } from "reactstrap";
 import SingleChatRoute from "./SingleChatRoute/SingleChatRoute";
-import { ChatListItem } from "../../components/ChatComponents";
+import { ChatsSidebar, ChatIsNotSelected } from "../../components/ChatComponents";
 import { mainStateHook } from "../../hooks";
 import { getAllChats, updateChat } from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
@@ -11,17 +11,10 @@ import "./chats-page.css";
 
 let isStillLoading;
 
-const ChatsPage = ({
-  user,
-  chats,
-  getAllChats,
-  history,
-  location,
-  updateChat
-}) => {
+const ChatsPage = ({ chats, getAllChats, history, location, updateChat }) => {
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
-    longLoading: false
+    longLoading: false,
   });
 
   const loadState = useRef(state.load);
@@ -33,7 +26,7 @@ const ChatsPage = ({
         clearTimeout(isStillLoading);
         setState({
           load: false,
-          ...(state.longLoading ? { longLoading: false } : {})
+          ...(state.longLoading ? { longLoading: false } : {}),
         });
       });
     };
@@ -88,35 +81,10 @@ const ChatsPage = ({
         </div>
       ) : (
         <>
-          <div className="all-chats-list">
-            {chats.map(chat => (
-              <ChatListItem
-                {...chat}
-                key={chat._id}
-                isActive={location.pathname.includes(chat._id)}
-                user={user}
-              />
-            ))}
-          </div>
+          <ChatsSidebar chats={chats} location={location} />
           <div className="single-chat-display">
-            <Route
-              path="/app/chats"
-              exact
-              render={() => (
-                <div
-                  style={{
-                    background: `url('https://wallpaperplay.com/walls/full/4/7/4/17343.jpg')`
-                  }}
-                  className="select-chat-wrapper"
-                >
-                  Select chat to start messaging
-                </div>
-              )}
-            />
-            <Route
-              path="/app/chats/:id"
-              render={navProps => <SingleChatRoute user={user} {...navProps} />}
-            />
+            <Route path="/app/chats" exact component={ChatIsNotSelected} />
+            <Route path="/app/chats/:id" component={SingleChatRoute} />
           </div>
         </>
       )}
@@ -127,8 +95,7 @@ const ChatsPage = ({
 export default connect(
   store => {
     return {
-      user: store.auth.user,
-      chats: store.chat.chats
+      chats: store.chat.chats,
     };
   },
   { getAllChats, updateChat }

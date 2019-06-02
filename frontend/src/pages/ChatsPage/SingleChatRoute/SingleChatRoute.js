@@ -268,7 +268,7 @@ function SingleChatRoute({
 
 export default connect(
   store => {
-    return { gameSettings: store.game.gameSettings };
+    return {  user: store.auth.user, gameSettings: store.game.gameSettings };
   },
   { getGameSettings }
 )(SingleChatRoute);
