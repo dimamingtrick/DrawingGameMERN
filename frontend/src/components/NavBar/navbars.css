@@ -46,3 +46,10 @@ a.user-data-dropdown > div.navbar-avatar {
   border-radius: 50%;
   margin-left: 5px;
 }
+
+.nav-bar-link {
+  display: flex!important;
+}
+.nav-right-icon {
+  margin-left: 5px;
+}

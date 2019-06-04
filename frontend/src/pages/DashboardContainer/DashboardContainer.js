@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
@@ -9,6 +9,8 @@ import ChatsPage from "../ChatsPage/ChatsPage";
 import ToDoListPage from "../ToDoListPage/ToDoListPage";
 import GameWordsPage from "../GameWordsPage/GameWordsPage";
 import UserProfilePage from "../UserProfilePage/UserProfilePage";
+
+import { getUnreadMessagesCount } from "../../actions/chat";
 
 import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 import "./dashboard-container.css";
@@ -23,11 +25,17 @@ const routes = [
   "/app/chats",
   "/app/todolist",
   "/app/game-words",
-  "/app/profile"
+  "/app/profile",
 ];
 let routeKey; // Define key to have transition only between 3 routes, declared below inside switch
 
-const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
+const DashboardContainer = ({
+  isLoggedIn,
+  userRole,
+  userId,
+  location,
+  getUnreadMessagesCount,
+}) => {
   if (!isLoggedIn) return <Redirect to="/auth" />;
 
   /** Connecting to socket */
@@ -35,6 +43,23 @@ const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
     socket = socketIOClient(serverUrl);
     socket.on("socketWorks", ({ horray }) => console.log(horray)); // Check if socket works
   }
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit("getChatsWithUnreadMessages", userId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(`${userId}-chatsWithUnreadMessages`, unreadMessagesCount => {
+        getUnreadMessagesCount(unreadMessagesCount);
+      });
+      return () => {
+        socket.off(`${userId}-chatsWithUnreadMessages`);
+      };
+    }
+  });
 
   /** Searching for key in routes array */
   routeKey = routes.find(
@@ -75,9 +100,13 @@ const DashboardContainer = ({ isLoggedIn, userRole, location }) => {
 };
 
 export { socket };
-export default connect(store => {
-  return {
-    isLoggedIn: store.auth.isLoggedIn,
-    userRole: store.auth.user.role
-  };
-})(DashboardContainer);
+export default connect(
+  store => {
+    return {
+      isLoggedIn: store.auth.isLoggedIn,
+      userRole: store.auth.user.role,
+      userId: store.auth.user._id,
+    };
+  },
+  { getUnreadMessagesCount }
+)(DashboardContainer);

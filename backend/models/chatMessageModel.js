@@ -22,6 +22,13 @@ const chatMessageSchema = new mongoose.Schema({
     type: String || File, // would be text or image,
     default: "text",
   },
+  readBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+  ],
 });
 
 const ChatMessage = mongoose.model("chatMessage", chatMessageSchema);

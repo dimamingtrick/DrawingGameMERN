@@ -2,6 +2,7 @@ import { ChatService } from "../services";
 
 export const GET_ALL_CHATS_SUCCESS = "GET_ALL_CHATS_SUCCESS";
 export const CHAT_UPDATE = "CHAT_UPDATE";
+export const GET_UNREAD_MESSAGES_COUNT = "GET_UNREAD_MESSAGES_COUNT";
 
 export const getAllChats = () => async dispatch => {
   try {
@@ -13,5 +14,10 @@ export const getAllChats = () => async dispatch => {
     throw err.message;
   }
 };
+
+export const getUnreadMessagesCount = unreadMessagesCount => ({
+  type: GET_UNREAD_MESSAGES_COUNT,
+  unreadMessagesCount,
+});
 
 export const updateChat = updatedChat => ({ type: CHAT_UPDATE, updatedChat });

@@ -100,12 +100,22 @@ function SingleChatRoute({
       if (userIsTyping) setUserIsTyping(false);
     });
 
+    socket.on(`chat-${chatId}-userReadMessage`, updatedMessage => {
+      setState({
+        messages: state.messages.map(i => {
+          if (i._id === updatedMessage._id) return updatedMessage;
+          return i;
+        }),
+      });
+    });
+
     return () => {
       socket.off(`chat-${chatId}-newMessage`);
       socket.off(`chat-${chatId}-messageUpdated`);
       socket.off(`chat-${chatId}-messageDeleted`);
       socket.off(`chat${chatId}UserTypes`);
       socket.off(`chat${chatId}UserStopTyping`);
+      socket.off(`chat-${chatId}-userReadMessage`);
     };
   });
 
@@ -268,7 +278,7 @@ function SingleChatRoute({
 
 export default connect(
   store => {
-    return {  user: store.auth.user, gameSettings: store.game.gameSettings };
+    return { user: store.auth.user, gameSettings: store.game.gameSettings };
   },
   { getGameSettings }
 )(SingleChatRoute);

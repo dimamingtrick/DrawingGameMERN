@@ -150,8 +150,11 @@ div.single-message:first-child {
 }
 
 div.single-message:last-of-type {
-  padding-bottom: 55px!important;
+  margin-bottom: 55px!important;
   margin-bottom: 0!important;
+}
+div.single-chat-display div.single-message:last-of-type {
+  margin-bottom: 55px!important;
 }
 
 div.chat-messages div.single-message.my-message {

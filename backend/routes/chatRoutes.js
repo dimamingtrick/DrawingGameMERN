@@ -106,6 +106,7 @@ router.post(
       chatId: objectId(chatId),
       message: messageField,
       type,
+      readBy: [objectId(userId)]
     });
     const newMessage = await msg.save();
 
