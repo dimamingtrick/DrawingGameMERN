@@ -1,12 +1,14 @@
 import { Chat, ChatMessage, User } from "../models";
+import { getUnreadChatsCount } from "../helpers";
 
 const objectId = require("mongodb").ObjectID;
 const express = require("express");
 const router = express.Router();
+const fileUpload = require("express-fileupload");
 
 /**
  * GET /chats
- * returns all user todos
+ * returns all user chats
  */
 router.get("/", async (req, res) => {
   const { userId } = req.body;
@@ -44,6 +46,22 @@ router.get("/", async (req, res) => {
     return res.json(newCreatedChats);
   }
 
+  const io = req.app.get("socketio");
+
+  chats.forEach(async chat => {
+    const unreadChatMessages = await ChatMessage.find({
+      chatId: objectId(chat._id),
+      readBy: {
+        $ne: objectId(userId),
+      },
+    });
+    console.log(unreadChatMessages)
+    io.emit(`chat-${chat._id}-${userId}-getUnreadMessagesCount`, {
+      chatId: chat._id,
+      unreadMessagesCount: unreadChatMessages.length,
+    });
+  });
+
   return res.json(chats);
 });
 
@@ -76,7 +94,6 @@ router.get("/:id", async (req, res) => {
  * POST /chats/:id/messages
  * send new message
  */
-const fileUpload = require("express-fileupload");
 router.post(
   "/:id/messages",
   fileUpload({ createParentPath: true }),
@@ -106,7 +123,7 @@ router.post(
       chatId: objectId(chatId),
       message: messageField,
       type,
-      readBy: [objectId(userId)]
+      readBy: [objectId(userId)],
     });
     const newMessage = await msg.save();
 
@@ -134,6 +151,13 @@ router.post(
 
         io.emit(`chat-${chatId}-getUpdate`, updatedChat);
         io.emit(`chat-${chatId}-newMessage`, newMessage);
+
+        // Updating unread messages count status for other users
+        const otherUsers = updatedChat.users.filter(i => i._id !== userId);
+        otherUsers.forEach(i => {
+          getUnreadChatsCount(io, i._id);
+        });
+
         return res.json({});
       });
   }

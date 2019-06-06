@@ -1,4 +1,5 @@
 import { Chat, ChatMessage } from "../models";
+import { getUnreadChatsCount } from "../helpers";
 // import { getNewRandomWord } from "../helpers";
 const objectId = require("mongodb").ObjectID;
 
@@ -28,22 +29,7 @@ module.exports = (socket, io) => {
    * Get all chats count with unread messages
    */
   socket.on("getChatsWithUnreadMessages", async userId => {
-    const chats = await Chat.find({ users: objectId(userId) });
-
-    let unreadMessagesCount = 0;
-    await Promise.all(
-      chats.map(async i => {
-        let unreadMessages = await ChatMessage.find({
-          chatId: objectId(i._id),
-          readBy: {
-            $ne: objectId(userId),
-          },
-        });
-        if (unreadMessages.length > 0) unreadMessagesCount++;
-      })
-    );
-    console.log("123123123_)_)_)_)_)_)_)", unreadMessagesCount);
-    io.emit(`${userId}-chatsWithUnreadMessages`, unreadMessagesCount);
+    getUnreadChatsCount(io, userId);
   });
 
   /**
@@ -63,8 +49,8 @@ module.exports = (socket, io) => {
       { new: true },
       (err, updatedMessage) => {
         if (!err && updatedMessage) console.log("######", err);
-        console.log("@@@@@@", updatedMessage);
         io.emit(`chat-${chatId}-userReadMessage`, updatedMessage);
+        getUnreadChatsCount(io, userId);
       }
     );
   });

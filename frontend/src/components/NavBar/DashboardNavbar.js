@@ -75,7 +75,7 @@ const DashboardNavbar = ({ user, logout, location, unreadMessagesCount }) => {
               >
                 <Link className="nav-link nav-bar-link" to={nav.link}>
                   {nav.text}
-                  {nav.rightIcon && (
+                  {nav.rightIcon && unreadMessagesCount !== 0 && (
                     <div className="nav-right-icon">{unreadMessagesCount}</div>
                   )}
                 </Link>

@@ -1,4 +1,6 @@
 import { verify } from "jsonwebtoken";
+import { Chat, ChatMessage } from "../models";
+const objectId = require("mongodb").ObjectID;
 
 /**
  * JWT validation function
@@ -33,4 +35,23 @@ const getNewRandomWord = allWords => {
   return newWord;
 };
 
-export { jwtValidate, validateEmail, getNewRandomWord };
+const getUnreadChatsCount = async (io, userId) => {
+  const chats = await Chat.find({ users: objectId(userId) });
+
+  let unreadMessagesCount = 0;
+  await Promise.all(
+    chats.map(async i => {
+      let unreadMessages = await ChatMessage.find({
+        chatId: objectId(i._id),
+        readBy: {
+          $ne: objectId(userId),
+        },
+      });
+      if (unreadMessages.length > 0) unreadMessagesCount++;
+    })
+  );
+  // console.log("@@@@@@@@@@@@@@", unreadMessagesCount);
+  io.emit(`${userId}-chatsWithUnreadMessages`, unreadMessagesCount);
+};
+
+export { jwtValidate, validateEmail, getNewRandomWord, getUnreadChatsCount };

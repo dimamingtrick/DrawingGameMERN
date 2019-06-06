@@ -3,7 +3,10 @@ import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { Container, Spinner } from "reactstrap";
 import SingleChatRoute from "./SingleChatRoute/SingleChatRoute";
-import { ChatsSidebar, ChatIsNotSelected } from "../../components/ChatComponents";
+import {
+  ChatsSidebar,
+  ChatIsNotSelected,
+} from "../../components/ChatComponents";
 import { mainStateHook } from "../../hooks";
 import { getAllChats, updateChat } from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
@@ -11,7 +14,14 @@ import "./chats-page.css";
 
 let isStillLoading;
 
-const ChatsPage = ({ chats, getAllChats, history, location, updateChat }) => {
+const ChatsPage = ({
+  user,
+  chats,
+  getAllChats,
+  history,
+  location,
+  updateChat,
+}) => {
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
     longLoading: false,
@@ -40,16 +50,24 @@ const ChatsPage = ({ chats, getAllChats, history, location, updateChat }) => {
   useEffect(() => {
     if (chats.length > 0) {
       chats.forEach(chat => {
+        /** Get unread chat messages length */
+        socket.on(
+          `chat-${chat._id}-${user._id}-getUnreadMessagesCount`,
+          count => {
+            console.log(count); 
+          }
+        );
         /** User recieve new message and chat 'last message' is changed */
         socket.on(`chat-${chat._id}-getUpdate`, updatedChat => {
           updateChat(updatedChat);
-        });
+        }); 
       });
     }
 
     return () => {
       if (chats.length > 0) {
         chats.forEach(chat => {
+          socket.off(`chat-${chat._id}-${user._id}-getUnreadMessagesCount`);
           socket.off(`chat-${chat._id}-getUpdate`);
         });
       }
@@ -96,6 +114,7 @@ export default connect(
   store => {
     return {
       chats: store.chat.chats,
+      user: store.auth.user,
     };
   },
   { getAllChats, updateChat }

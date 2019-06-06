@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
+import socketIOClient from "socket.io-client";
 
 import HomePage from "../HomePage/HomePage";
 import GamePage from "../GamePage/GamePage";
@@ -9,12 +10,11 @@ import ChatsPage from "../ChatsPage/ChatsPage";
 import ToDoListPage from "../ToDoListPage/ToDoListPage";
 import GameWordsPage from "../GameWordsPage/GameWordsPage";
 import UserProfilePage from "../UserProfilePage/UserProfilePage";
+import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 
 import { getUnreadMessagesCount } from "../../actions/chat";
 
-import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 import "./dashboard-container.css";
-import socketIOClient from "socket.io-client";
 
 let socket = null;
 const serverUrl = `${process.env.REACT_APP_SERVER}/`;
