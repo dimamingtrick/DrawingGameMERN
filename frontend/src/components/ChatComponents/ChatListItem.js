@@ -2,13 +2,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 import defaultAvatar from "../../assets/defaultAvatar.png";
 
-const ChatListItem = ({ _id, users, lastMessage, isActive, user }) => {
+const ChatListItem = ({
+  _id,
+  users,
+  lastMessage,
+  isActive,
+  user,
+  unreadMessagesCount,
+}) => {
   const userItem = users.find(u => u._id !== user._id);
   return (
     <Link
       to={`/app/chats/${_id}`}
       className={`single-chat ${isActive ? "active" : ""}`}
     >
+      {unreadMessagesCount !== 0 && (
+        <div className="unread-messages-count">{unreadMessagesCount}</div>
+      )}
       <div className="single-chat-partner-avatar">
         <img
           src={userItem.avatar ? userItem.avatar : defaultAvatar}

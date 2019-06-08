@@ -54,4 +54,20 @@ const getUnreadChatsCount = async (io, userId) => {
   io.emit(`${userId}-chatsWithUnreadMessages`, unreadMessagesCount);
 };
 
-export { jwtValidate, validateEmail, getNewRandomWord, getUnreadChatsCount };
+const getUnreadChatMessagesCount = async (chatId, userId) => {
+  const unreadChatMessages = await ChatMessage.find({
+    chatId: objectId(chatId),
+    readBy: {
+      $ne: objectId(userId),
+    },
+  });
+  return unreadChatMessages.length;
+};
+
+export {
+  jwtValidate,
+  validateEmail,
+  getNewRandomWord,
+  getUnreadChatsCount,
+  getUnreadChatMessagesCount,
+};

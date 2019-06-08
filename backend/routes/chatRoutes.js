@@ -1,5 +1,5 @@
 import { Chat, ChatMessage, User } from "../models";
-import { getUnreadChatsCount } from "../helpers";
+import { getUnreadChatsCount, getUnreadChatMessagesCount } from "../helpers";
 
 const objectId = require("mongodb").ObjectID;
 const express = require("express");
@@ -13,13 +13,15 @@ const fileUpload = require("express-fileupload");
 router.get("/", async (req, res) => {
   const { userId } = req.body;
 
-  const chats = await Chat.find({ users: objectId(userId) }).populate([
-    {
-      path: "users",
-      select: "-password",
-    },
-    "lastMessage",
-  ]);
+  const chats = await Chat.find({ users: objectId(userId) })
+    .populate([
+      {
+        path: "users",
+        select: "-password",
+      },
+      "lastMessage",
+    ])
+    .lean(); // use .lean() method to add property to chat object
 
   if (chats.length === 0) {
     const allUsers = await User.find({
@@ -46,23 +48,17 @@ router.get("/", async (req, res) => {
     return res.json(newCreatedChats);
   }
 
-  const io = req.app.get("socketio");
+  const fullChats = await Promise.all(
+    chats.map(async chat => {
+      chat.unreadMessagesCount = await getUnreadChatMessagesCount(
+        chat._id,
+        userId
+      );
+      return chat;
+    })
+  );
 
-  chats.forEach(async chat => {
-    const unreadChatMessages = await ChatMessage.find({
-      chatId: objectId(chat._id),
-      readBy: {
-        $ne: objectId(userId),
-      },
-    });
-    console.log(unreadChatMessages)
-    io.emit(`chat-${chat._id}-${userId}-getUnreadMessagesCount`, {
-      chatId: chat._id,
-      unreadMessagesCount: unreadChatMessages.length,
-    });
-  });
-
-  return res.json(chats);
+  return res.json(fullChats);
 });
 
 /**
@@ -145,7 +141,8 @@ router.post(
         },
         "lastMessage",
       ])
-      .exec((err, updatedChat) => {
+      .lean()
+      .exec(async (err, updatedChat) => {
         if (err || !updatedChat)
           return res.status(400).json({ message: err || "Error" });
 
@@ -154,8 +151,18 @@ router.post(
 
         // Updating unread messages count status for other users
         const otherUsers = updatedChat.users.filter(i => i._id !== userId);
-        otherUsers.forEach(i => {
-          getUnreadChatsCount(io, i._id);
+        otherUsers.forEach(async user => {
+          getUnreadChatsCount(io, user._id);
+
+          // Get unreadMessagesCount for other users
+          const unreadMessagesCount = await getUnreadChatMessagesCount(
+            updatedChat._id,
+            user._id
+          );
+          io.emit(
+            `chat-${updatedChat._id}-${user._id}-getUnreadMessagesCount`,
+            { unreadMessagesCount, chatId: updatedChat._id }
+          );
         });
 
         return res.json({});

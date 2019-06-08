@@ -15,7 +15,12 @@ const chatReducer = (state = initialState, action) => {
     case GET_UNREAD_MESSAGES_COUNT:
       return {
         ...state,
-        unreadMessagesCount: action.unreadMessagesCount,
+        chats: state.chats.map(chat => {
+          if (chat._id === action.newUnreadMessages.chatId)
+            chat.unreadMessagesCount =
+              action.newUnreadMessages.unreadMessagesCount;
+          return chat;
+        }),
       };
 
     case GET_ALL_CHATS_SUCCESS:

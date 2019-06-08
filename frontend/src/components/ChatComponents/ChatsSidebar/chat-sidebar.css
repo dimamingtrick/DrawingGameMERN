@@ -7,3 +7,24 @@ div.chat-sidebar {
 div.chat-sidebar:hover {
   width: 20%!important;
 }
+
+a.single-chat {
+  position: relative!important;
+}
+
+div.unread-messages-count {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  background: #30b3c1;
+  color: #fff;
+  line-height: 1;
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}

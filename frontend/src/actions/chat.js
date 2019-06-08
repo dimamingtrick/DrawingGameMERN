@@ -15,9 +15,9 @@ export const getAllChats = () => async dispatch => {
   }
 };
 
-export const getUnreadMessagesCount = unreadMessagesCount => ({
+export const getUnreadMessagesCount = newUnreadMessages => ({
   type: GET_UNREAD_MESSAGES_COUNT,
-  unreadMessagesCount,
+  newUnreadMessages,
 });
 
 export const updateChat = updatedChat => ({ type: CHAT_UPDATE, updatedChat });

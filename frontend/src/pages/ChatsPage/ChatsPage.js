@@ -8,7 +8,11 @@ import {
   ChatIsNotSelected,
 } from "../../components/ChatComponents";
 import { mainStateHook } from "../../hooks";
-import { getAllChats, updateChat } from "../../actions/chat";
+import {
+  getAllChats,
+  updateChat,
+  getUnreadMessagesCount,
+} from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
 import "./chats-page.css";
 
@@ -21,6 +25,7 @@ const ChatsPage = ({
   history,
   location,
   updateChat,
+  getUnreadMessagesCount,
 }) => {
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
@@ -53,17 +58,12 @@ const ChatsPage = ({
         /** Get unread chat messages length */
         socket.on(
           `chat-${chat._id}-${user._id}-getUnreadMessagesCount`,
-          count => {
-            console.log(count); 
-          }
+          getUnreadMessagesCount
         );
         /** User recieve new message and chat 'last message' is changed */
-        socket.on(`chat-${chat._id}-getUpdate`, updatedChat => {
-          updateChat(updatedChat);
-        }); 
+        socket.on(`chat-${chat._id}-getUpdate`, updateChat);
       });
     }
-
     return () => {
       if (chats.length > 0) {
         chats.forEach(chat => {
@@ -117,5 +117,5 @@ export default connect(
       user: store.auth.user,
     };
   },
-  { getAllChats, updateChat }
+  { getAllChats, updateChat, getUnreadMessagesCount }
 )(ChatsPage);

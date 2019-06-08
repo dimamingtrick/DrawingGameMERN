@@ -1,5 +1,5 @@
 import { Chat, ChatMessage } from "../models";
-import { getUnreadChatsCount } from "../helpers";
+import { getUnreadChatsCount, getUnreadChatMessagesCount } from "../helpers";
 // import { getNewRandomWord } from "../helpers";
 const objectId = require("mongodb").ObjectID;
 
@@ -51,6 +51,13 @@ module.exports = (socket, io) => {
         if (!err && updatedMessage) console.log("######", err);
         io.emit(`chat-${chatId}-userReadMessage`, updatedMessage);
         getUnreadChatsCount(io, userId);
+
+        getUnreadChatMessagesCount(chatId, userId).then(unreadMessagesCount => {
+          io.emit(`chat-${chatId}-${userId}-getUnreadMessagesCount`, {
+            unreadMessagesCount,
+            chatId,
+          });
+        });
       }
     );
   });
