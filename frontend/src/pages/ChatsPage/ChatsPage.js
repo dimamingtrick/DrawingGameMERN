@@ -63,15 +63,13 @@ const ChatsPage = ({
         /** User recieve new message and chat 'last message' is changed */
         socket.on(`chat-${chat._id}-${user._id}-getChatUpdate`, updateChat);
       });
-    }
-    return () => {
-      if (chats.length > 0) {
+      return () => {
         chats.forEach(chat => {
           socket.off(`chat-${chat._id}-${user._id}-getUnreadMessagesCount`);
           socket.off(`chat-${chat._id}-${user._id}-getChatUpdate`);
         });
-      }
-    };
+      };
+    }
   });
 
   /** Shows additional spinner if fetching all chats is more than 3 seconds */

@@ -3,9 +3,18 @@ div.chat-sidebar {
   width: 65px;
   transition: width 400ms;
   max-width: 20%;
+  position: relative!important;
 }
-div.chat-sidebar:hover {
+/* div.chat-sidebar:hover {
   width: 20%!important;
+} */
+
+div.chat-sidebar.chat-sidebar-isOpen {
+  width: 20%!important;
+}
+
+div.chat-sidebar.chat-sidebar-isOpen button.toggle-chat-sidebar-btn svg {
+  transform: rotate(180deg);
 }
 
 a.single-chat {
@@ -27,4 +36,23 @@ div.unread-messages-count {
   justify-content: center;
   align-items: center;
   font-weight: bold;
+}
+
+div.chat-sidebar button.toggle-chat-sidebar-btn {
+  position: absolute;
+  z-index: 2;
+  top: calc(50% - 16px);
+  right: -15px;
+  line-height: 1;
+  background-color: rgba(108,117,125,.5);
+  border: none;
+  transition: all .25s;
+  border-radius: 50%;
+  padding: 7px;
+}
+div.chat-sidebar button.toggle-chat-sidebar-btn:hover {
+  background-color: rgba(108,117,125,1);
+}
+div.chat-sidebar button.toggle-chat-sidebar-btn svg {
+  transition: transform .5s;
 }

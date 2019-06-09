@@ -1,6 +1,6 @@
-import { Chat, ChatMessage } from "../models";
+import { ChatMessage } from "../models";
 import { getUnreadChatsCount, getUnreadChatMessagesCount } from "../helpers";
-// import { getNewRandomWord } from "../helpers";
+
 const objectId = require("mongodb").ObjectID;
 
 module.exports = (socket, io) => {
