@@ -1,12 +1,12 @@
 import React from "react";
-import {connect} from 'react-redux';
-import ChatListItem from "../ChatListItem";
+import { connect } from "react-redux";
+import ChatSidebarListItem from "./ChatSidebarListItem/ChatSidebarListItem";
 import "./chat-sidebar.css";
 
 const ChatsSidebar = ({ chats, location, user }) => (
   <div className="all-chats-list chat-sidebar">
     {chats.map(chat => (
-      <ChatListItem
+      <ChatSidebarListItem
         {...chat}
         key={chat._id}
         isActive={location.pathname.includes(chat._id)}
@@ -16,8 +16,6 @@ const ChatsSidebar = ({ chats, location, user }) => (
   </div>
 );
 
-export default connect(
-  store => ({
-    user: store.auth.user
-  })
-)(ChatsSidebar);
+export default connect(store => ({
+  user: store.auth.user,
+}))(ChatsSidebar);

@@ -146,22 +146,21 @@ router.post(
         if (err || !updatedChat)
           return res.status(400).json({ message: err || "Error" });
 
-        io.emit(`chat-${chatId}-getUpdate`, updatedChat);
         io.emit(`chat-${chatId}-newMessage`, newMessage);
 
         // Updating unread messages count status for other users
         const otherUsers = updatedChat.users.filter(i => i._id !== userId);
         otherUsers.forEach(async user => {
           getUnreadChatsCount(io, user._id);
-
           // Get unreadMessagesCount for other users
           const unreadMessagesCount = await getUnreadChatMessagesCount(
             updatedChat._id,
             user._id
           );
+          updatedChat.unreadMessagesCount = unreadMessagesCount;
           io.emit(
-            `chat-${updatedChat._id}-${user._id}-getUnreadMessagesCount`,
-            { unreadMessagesCount, chatId: updatedChat._id }
+            `chat-${updatedChat._id}-${user._id}-getChatUpdate`,
+            updatedChat
           );
         });
 
@@ -207,12 +206,27 @@ router.delete("/:id/messages/:messageId", async (req, res) => {
           },
           "lastMessage",
         ])
+        .lean()
         .exec((err, updatedChat) => {
           if (err || !updatedChat)
             return res.status(400).json({ message: err || "Error" });
 
           const io = req.app.get("socketio");
-          io.emit(`chat-${chatId}-getUpdate`, updatedChat);
+
+          // Emit updated chat with unreadMessagesCount for other users
+          updatedChat.users.forEach(user => {
+            if (user._id !== req.body.userId) {
+              getUnreadChatMessagesCount(updatedChat._id, user._id).then(
+                unreadMessagesCount => {
+                  updatedChat.unreadMessagesCount = unreadMessagesCount;
+                  io.emit(
+                    `chat-${updatedChat._id}-${user._id}-getChatUpdate`,
+                    updatedChat
+                  );
+                }
+              );
+            }
+          });
           io.emit(`chat-${chatId}-messageDeleted`, {
             messageId: req.params.messageId,
             userId: req.body.userId,

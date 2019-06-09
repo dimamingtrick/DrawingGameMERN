@@ -45,7 +45,7 @@ const navLinks = [
   },
 ];
 
-const DashboardNavbar = ({ user, logout, location, unreadMessagesCount }) => {
+const DashboardNavbar = ({ user, logout, location, unreadChatsCount }) => {
   const [toggleState, setToggleState] = useState(false);
 
   const toggleNavbar = () => {
@@ -75,8 +75,8 @@ const DashboardNavbar = ({ user, logout, location, unreadMessagesCount }) => {
               >
                 <Link className="nav-link nav-bar-link" to={nav.link}>
                   {nav.text}
-                  {nav.rightIcon && unreadMessagesCount !== 0 && (
-                    <div className="nav-right-icon">{unreadMessagesCount}</div>
+                  {nav.rightIcon && unreadChatsCount !== 0 && (
+                    <div className="nav-right-icon">{unreadChatsCount}</div>
                   )}
                 </Link>
                 <div className="linkUnderline" />
@@ -114,7 +114,7 @@ export default connect(
   store => {
     return {
       user: store.auth.user,
-      unreadMessagesCount: store.chat.unreadMessagesCount,
+      unreadChatsCount: store.chat.unreadChatsCount,
     };
   },
   { logout }

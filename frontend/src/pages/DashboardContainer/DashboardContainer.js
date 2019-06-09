@@ -12,7 +12,7 @@ import GameWordsPage from "../GameWordsPage/GameWordsPage";
 import UserProfilePage from "../UserProfilePage/UserProfilePage";
 import DashboardNavbar from "../../components/NavBar/DashboardNavbar";
 
-import { getUnreadMessagesCount } from "../../actions/chat";
+import { getUnreadChatsCount } from "../../actions/chat";
 
 import "./dashboard-container.css";
 
@@ -34,7 +34,7 @@ const DashboardContainer = ({
   userRole,
   userId,
   location,
-  getUnreadMessagesCount,
+  getUnreadChatsCount,
 }) => {
   if (!isLoggedIn) return <Redirect to="/auth" />;
 
@@ -52,9 +52,7 @@ const DashboardContainer = ({
 
   useEffect(() => {
     if (socket) {
-      socket.on(`${userId}-chatsWithUnreadMessages`, unreadMessagesCount => {
-        getUnreadMessagesCount(unreadMessagesCount);
-      });
+      socket.on(`${userId}-chatsWithUnreadMessages`, getUnreadChatsCount);
       return () => {
         socket.off(`${userId}-chatsWithUnreadMessages`);
       };
@@ -108,5 +106,5 @@ export default connect(
       userId: store.auth.user._id,
     };
   },
-  { getUnreadMessagesCount }
+  { getUnreadChatsCount }
 )(DashboardContainer);

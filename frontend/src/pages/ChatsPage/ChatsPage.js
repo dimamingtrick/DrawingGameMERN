@@ -61,14 +61,14 @@ const ChatsPage = ({
           getUnreadMessagesCount
         );
         /** User recieve new message and chat 'last message' is changed */
-        socket.on(`chat-${chat._id}-getUpdate`, updateChat);
+        socket.on(`chat-${chat._id}-${user._id}-getChatUpdate`, updateChat);
       });
     }
     return () => {
       if (chats.length > 0) {
         chats.forEach(chat => {
           socket.off(`chat-${chat._id}-${user._id}-getUnreadMessagesCount`);
-          socket.off(`chat-${chat._id}-getUpdate`);
+          socket.off(`chat-${chat._id}-${user._id}-getChatUpdate`);
         });
       }
     };

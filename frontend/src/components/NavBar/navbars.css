@@ -50,7 +50,21 @@ a.user-data-dropdown > div.navbar-avatar {
 
 .nav-bar-link {
   display: flex!important;
+  position: relative!important;
 }
 .nav-right-icon {
-  margin-left: 5px;
+  border-radius: 50%;
+  right: -5px;
+  position: absolute;
+  top: -2px;
+  background: #fff;
+  color: #343a40;
+  width: 17px;
+  height: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 11 px;
+  font-weight: bold;
+  line-height: 1;
 }

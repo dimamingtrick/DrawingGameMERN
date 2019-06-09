@@ -48,10 +48,11 @@ module.exports = (socket, io) => {
       },
       { new: true },
       (err, updatedMessage) => {
-        if (!err && updatedMessage) console.log("######", err);
+        if (err || !updatedMessage)
+          console.log("User read chat message error ", err);
+
         io.emit(`chat-${chatId}-userReadMessage`, updatedMessage);
         getUnreadChatsCount(io, userId);
-
         getUnreadChatMessagesCount(chatId, userId).then(unreadMessagesCount => {
           io.emit(`chat-${chatId}-${userId}-getUnreadMessagesCount`, {
             unreadMessagesCount,

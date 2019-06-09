@@ -50,7 +50,6 @@ const getUnreadChatsCount = async (io, userId) => {
       if (unreadMessages.length > 0) unreadMessagesCount++;
     })
   );
-  // console.log("@@@@@@@@@@@@@@", unreadMessagesCount);
   io.emit(`${userId}-chatsWithUnreadMessages`, unreadMessagesCount);
 };
 
