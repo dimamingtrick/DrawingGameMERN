@@ -114,6 +114,8 @@ router.post(
       });
     }
 
+    if (!messageField) return res.status(400).json({message: "Message is required"});
+
     const msg = new ChatMessage({
       userId: objectId(userId),
       chatId: objectId(chatId),
@@ -151,7 +153,7 @@ router.post(
         // Updating unread messages count status for other users
         const otherUsers = updatedChat.users.filter(i => i._id !== userId);
         otherUsers.forEach(async user => {
-          getUnreadChatsCount(io, user._id);
+          if (user._id !== userId) getUnreadChatsCount(io, user._id);
           // Get unreadMessagesCount for other users
           const unreadMessagesCount = await getUnreadChatMessagesCount(
             updatedChat._id,
