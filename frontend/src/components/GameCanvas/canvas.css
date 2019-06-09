@@ -2,7 +2,7 @@ canvas.gameCanvas {
   border-right: 1px solid rgba(0, 0, 0, .4);
 }
 canvas.gameCanvas:hover {
-  cursor: none;
+  cursor: not-allowed;
 }
 canvas.gameCanvas.drawerCanvas:hover {
   cursor: auto;
