@@ -19,6 +19,21 @@ import "./single-chat-page.css";
 let inputHandlingTimeoutFlag;
 let selectedElementId = null; // set id of message by contextmenu click
 
+// Show context menu if user clicks his own message
+const userMessageContext = event =>
+  event.target.closest(".single-message.my-message") &&
+  event.target.className.includes("message") &&
+  !event.target.className !== "single-message" &&
+  !event.target.className.includes("my-message");
+
+// Show context menu if user clicks other users messages
+const otherUserMessageContext = event =>
+  event.target.closest(".single-message") &&
+  !event.target.closest(".my-message") &&
+  event.target.className.includes("message") &&
+  !event.target.className !== "single-message" &&
+  !event.target.className.includes("my-message");
+
 function SingleChatRoute({
   user,
   match: {
@@ -162,8 +177,11 @@ function SingleChatRoute({
     }
   };
 
-  const onContextMenuOpen = id => {
-    selectedElementId = id;
+  const onContextMenuOpen = (event = null) => {
+    if (event)
+      selectedElementId = event.target
+        .closest(".message-wrapper")
+        .getAttribute("data-id");
   };
 
   const toggleDeleteModal = () => {
@@ -181,6 +199,10 @@ function SingleChatRoute({
       console.log("ERR", err);
       setState({ isDeleting: false, deletingError: err.message });
     });
+  };
+
+  const likeMessage = () => {
+    console.log("Message like", selectedElementId);
   };
 
   const toggleEditState = () => {
@@ -263,12 +285,27 @@ function SingleChatRoute({
         bodyText="You will not be able to return it"
       />
 
-      <ContextMenu onContextMenuOpen={onContextMenuOpen}>
+      {/** Right click on users message */}
+      <ContextMenu
+        showContextMenu={userMessageContext}
+        onContextMenuOpen={onContextMenuOpen}
+      >
         <div className="menu-option" onClick={toggleDeleteModal}>
           Delete
         </div>
         <div className="menu-option" onClick={toggleEditState}>
           Edit
+        </div>
+        <div className="menu-option">Close</div>
+      </ContextMenu>
+
+      {/** Right click on other users messages */}
+      <ContextMenu
+        showContextMenu={otherUserMessageContext}
+        onContextMenuOpen={onContextMenuOpen}
+      >
+        <div className="menu-option" onClick={likeMessage}>
+          Like
         </div>
         <div className="menu-option">Close</div>
       </ContextMenu>

@@ -1,23 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./context-menu.css";
 
-function ContextMenu({ children, onContextMenuOpen }) {
+function ContextMenu({ children, onContextMenuOpen, showContextMenu }) {
   const [visible, setVisible] = useState(false);
   const root = useRef(null);
 
   const _handleContextMenu = event => {
-    if (
-      event.target.closest(".single-message.my-message") &&
-      event.target.className.includes("message") &&
-      !event.target.className !== "single-message" &&
-      !event.target.className.includes("my-message")
-    ) {
+    if (showContextMenu(event)) {
       event.preventDefault();
       setVisible(true);
 
-      onContextMenuOpen(
-        event.target.closest(".message-wrapper").getAttribute("data-id")
-      );
+      onContextMenuOpen(event || null);
 
       const clickX = event.clientX;
       const clickY = event.clientY;
