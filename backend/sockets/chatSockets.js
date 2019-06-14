@@ -62,4 +62,61 @@ module.exports = (socket, io) => {
       }
     );
   });
+
+  /**
+   * User likes message
+   */
+  socket.on("userLikesMessage", async ({ userId, messageId, chatId }) => {
+    ChatMessage.findOneAndUpdate(
+      {
+        _id: objectId(messageId),
+        chatId: objectId(chatId),
+        userId: {
+          $ne: userId, // if user don't like his own message
+        },
+      },
+      {
+        $addToSet: {
+          likedBy: [objectId(userId)],
+        },
+      },
+      { new: true },
+      (err, updatedMessage) => {
+        if (err || !updatedMessage)
+          console.log("User likes chat message error ", err);
+
+        io.emit(`chat-${chatId}-userLikesMessage`, updatedMessage);
+      }
+    );
+  });
+
+  /**
+   * User removes like from message
+   */
+  socket.on(
+    "userRemoveLikeFromMessage",
+    async ({ userId, messageId, chatId }) => {
+      ChatMessage.findOneAndUpdate(
+        {
+          _id: objectId(messageId),
+          chatId: objectId(chatId),
+          userId: {
+            $ne: userId, // if user don't like his own message
+          },
+        },
+        {
+          $pull: {
+            likedBy: objectId(userId),
+          },
+        },
+        { new: true },
+        (err, updatedMessage) => {
+          if (err || !updatedMessage)
+            console.log("User dislikes chat message error ", err);
+
+          io.emit(`chat-${chatId}-userLikesMessage`, updatedMessage);
+        }
+      );
+    }
+  );
 };

@@ -1,9 +1,13 @@
 import React, { useEffect } from "react";
+import { Tooltip } from "reactstrap";
+import { FaHeart } from "react-icons/fa";
 import moment from "moment";
-import defaultAvatar from "../../assets/defaultAvatar.png";
-import { socket } from "../../pages/DashboardContainer/DashboardContainer";
 
-const ChatMessage = ({ message, userFrom, user }) => {
+import defaultAvatar from "../../../assets/defaultAvatar.png";
+import { socket } from "../../../pages/DashboardContainer/DashboardContainer";
+import "./chat-message.css";
+
+const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
   const otherUserReadMessage =
     message.readBy.length === 1 && message.userId === user._id;
 
@@ -21,10 +25,20 @@ const ChatMessage = ({ message, userFrom, user }) => {
     }
   }, []);
 
+  const handleLikeMessage = () => {
+    if (message.userId !== user._id)
+      likeMessage(
+        message._id,
+        !message.likedBy.find(i => i === user._id)
+          ? "userLikesMessage"
+          : "userRemoveLikeFromMessage"
+      );
+  };
+
   return (
     <div
-      className={`single-message${
-        message.userId === user._id ? " my-message" : ""
+      className={`single-message ${
+        message.userId === user._id ? "my-message" : ""
       } ${otherUserReadMessage ? "message-is-not-read" : ""}`}
     >
       <div className="message-wrapper" data-id={message._id}>
@@ -58,9 +72,36 @@ const ChatMessage = ({ message, userFrom, user }) => {
               : moment(message.createdAt).format("HH:mm:ss DD/MM/YYYY")}
           </div>
         </div>
+
+        <LikeButton
+          onClick={handleLikeMessage}
+          isLiked={message.likedBy.find(i => i === user._id)}
+          likesLength={message.likedBy.length}
+        />
       </div>
     </div>
   );
 };
+
+function LikeButton({ onClick, isLiked, likesLength }) {
+  return (
+    <div className="user-like-btn">
+      <FaHeart
+        id="likeIcon"
+        className={`${isLiked ? "message-is-liked" : ""}`}
+        onClick={onClick}
+      />
+      <span>{likesLength}</span>
+      {/* <Tooltip
+        placement="right"
+        isOpen={true}
+        target="likeIcon"
+        toggle={() => {}}
+      >
+        Hello world!
+      </Tooltip> */}
+    </div>
+  );
+}
 
 export default ChatMessage;

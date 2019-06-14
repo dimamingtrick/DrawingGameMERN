@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { Spinner } from "reactstrap";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
+
 import { scrollToChatBottom } from "../../../helpers";
 import { mainStateHook } from "../../../hooks";
-import { Spinner } from "reactstrap";
 import {
   ChatMessagesContainer,
   ChatMessage,
@@ -16,8 +17,13 @@ import { socket } from "../../DashboardContainer/DashboardContainer";
 import { getGameSettings } from "../../../actions/game";
 import "./single-chat-page.css";
 
-let inputHandlingTimeoutFlag;
+let inputHandlingTimeoutFlag; // flag for 'user is typing' state
 let selectedElementId = null; // set id of message by contextmenu click
+const chatMessageTransitionTimeout = {
+  appear: 200,
+  enter: 200,
+  exit: 500,
+};
 
 // Show context menu if user clicks his own message
 const userMessageContext = event =>
@@ -27,12 +33,12 @@ const userMessageContext = event =>
   !event.target.className.includes("my-message");
 
 // Show context menu if user clicks other users messages
-const otherUserMessageContext = event =>
-  event.target.closest(".single-message") &&
-  !event.target.closest(".my-message") &&
-  event.target.className.includes("message") &&
-  !event.target.className !== "single-message" &&
-  !event.target.className.includes("my-message");
+// const otherUserMessageContext = event =>
+//   event.target.closest(".single-message") &&
+//   !event.target.closest(".my-message") &&
+//   event.target.className.includes("message") &&
+//   !event.target.className !== "single-message" &&
+//   !event.target.className.includes("my-message");
 
 function SingleChatRoute({
   user,
@@ -42,6 +48,7 @@ function SingleChatRoute({
   getGameSettings,
   gameSettings,
 }) {
+  const [userIsTyping, setUserIsTyping] = useState(false);
   const [state, setState] = mainStateHook({
     loading: true,
     chat: {},
@@ -56,7 +63,59 @@ function SingleChatRoute({
     editedMessage: null,
   });
 
-  const [userIsTyping, setUserIsTyping] = useState(false);
+  const getNewMessageInState = newMessage => {
+    setState({
+      messages: [...state.messages, newMessage],
+      ...(user._id === newMessage.userId
+        ? { inputValue: "", sending: false }
+        : {}),
+    });
+    if (userIsTyping) setUserIsTyping(false);
+    scrollToChatBottom();
+  };
+
+  const editMessageInState = updatedMessage => {
+    setState({
+      messages: state.messages.map(i => {
+        if (i._id === updatedMessage._id) return updatedMessage;
+        return i;
+      }),
+      ...(user._id === updatedMessage.userId
+        ? { inputValue: "", editedMessage: null, sending: false }
+        : {}),
+    });
+  };
+
+  const updateChatMessage = updatedMessage => {
+    setState({
+      messages: state.messages.map(i => {
+        if (i._id === updatedMessage._id) return updatedMessage;
+        return i;
+      }),
+    });
+  };
+
+  const deleteMessageInState = ({ messageId, userId }) => {
+    const isMyMessage = user._id === userId;
+    setState({
+      messages: state.messages.filter(i => i._id !== messageId),
+      ...(isMyMessage
+        ? { isDeleting: false, confirmDeleteModalIsOpen: false }
+        : {}),
+    });
+    if (isMyMessage) selectedElementId = null;
+  };
+
+  const userStartTyping = () => {
+    if (!userIsTyping) {
+      setUserIsTyping(true);
+      scrollToChatBottom();
+    }
+  };
+
+  const userStopTyping = () => {
+    if (userIsTyping) setUserIsTyping(false);
+  };
 
   /** Fetching current chat messages and data if chatId changes */
   useEffect(() => {
@@ -70,60 +129,13 @@ function SingleChatRoute({
 
   /** Subscribing/unsubscribing to socket events */
   useEffect(() => {
-    socket.on(`chat-${chatId}-newMessage`, newMessage => {
-      setState({
-        messages: [...state.messages, newMessage],
-        ...(user._id === newMessage.userId
-          ? { inputValue: "", sending: false }
-          : {}),
-      });
-      if (userIsTyping) setUserIsTyping(false);
-      scrollToChatBottom();
-    });
-
-    socket.on(`chat-${chatId}-messageUpdated`, updatedMessage => {
-      setState({
-        messages: state.messages.map(i => {
-          if (i._id === updatedMessage._id) return updatedMessage;
-          return i;
-        }),
-        ...(user._id === updatedMessage.userId
-          ? { inputValue: "", editedMessage: null, sending: false }
-          : {}),
-      });
-    });
-
-    socket.on(`chat-${chatId}-messageDeleted`, ({ messageId, userId }) => {
-      const isMyMessage = user._id === userId;
-      setState({
-        messages: state.messages.filter(i => i._id !== messageId),
-        ...(isMyMessage
-          ? { isDeleting: false, confirmDeleteModalIsOpen: false }
-          : {}),
-      });
-      if (isMyMessage) selectedElementId = null;
-    });
-
-    socket.on(`chat${chatId}UserTypes`, () => {
-      if (!userIsTyping) {
-        setUserIsTyping(true);
-        scrollToChatBottom();
-      }
-    });
-
-    socket.on(`chat${chatId}UserStopTyping`, () => {
-      if (userIsTyping) setUserIsTyping(false);
-    });
-
-    socket.on(`chat-${chatId}-userReadMessage`, updatedMessage => {
-      setState({
-        messages: state.messages.map(i => {
-          if (i._id === updatedMessage._id) return updatedMessage;
-          return i;
-        }),
-      });
-    });
-
+    socket.on(`chat-${chatId}-newMessage`, getNewMessageInState);
+    socket.on(`chat-${chatId}-messageUpdated`, editMessageInState);
+    socket.on(`chat-${chatId}-messageDeleted`, deleteMessageInState);
+    socket.on(`chat${chatId}UserTypes`, userStartTyping);
+    socket.on(`chat${chatId}UserStopTyping`, userStopTyping);
+    socket.on(`chat-${chatId}-userReadMessage`, updateChatMessage);
+    socket.on(`chat-${chatId}-userLikesMessage`, updateChatMessage);
     return () => {
       socket.off(`chat-${chatId}-newMessage`);
       socket.off(`chat-${chatId}-messageUpdated`);
@@ -131,6 +143,7 @@ function SingleChatRoute({
       socket.off(`chat${chatId}UserTypes`);
       socket.off(`chat${chatId}UserStopTyping`);
       socket.off(`chat-${chatId}-userReadMessage`);
+      socket.off(`chat-${chatId}-userLikesMessage`);
     };
   });
 
@@ -147,7 +160,7 @@ function SingleChatRoute({
   const sendMessage = (file = null) => {
     const { inputValue, editedMessage } = state;
     if (editedMessage !== null && inputValue === editedMessage.message) {
-      return closeEditingState();
+      return closeEditMessageState();
     }
 
     setState({ sending: true });
@@ -201,11 +214,11 @@ function SingleChatRoute({
     });
   };
 
-  const likeMessage = () => {
-    console.log("Message like", selectedElementId);
+  const likeMessage = (messageId, likeOrDislike) => {
+    socket.emit(likeOrDislike, { userId: user._id, messageId, chatId });
   };
 
-  const toggleEditState = () => {
+  const toggleEditMessageState = () => {
     const messageToEdit = state.messages.find(i => i._id === selectedElementId);
     setState({
       editedMessage: messageToEdit,
@@ -213,7 +226,7 @@ function SingleChatRoute({
     });
   };
 
-  const closeEditingState = () => {
+  const closeEditMessageState = () => {
     setState({
       editedMessage: null,
       inputValue: "",
@@ -247,16 +260,13 @@ function SingleChatRoute({
               <CSSTransition
                 key={`${msg._id}-chatMessage`}
                 classNames="chatMessageTransition"
-                timeout={{
-                  appear: 200,
-                  enter: 200,
-                  exit: 500,
-                }}
+                timeout={chatMessageTransitionTimeout}
               >
                 <ChatMessage
                   message={msg}
                   userFrom={chat.users.find(u => u._id === msg.userId)}
                   user={user}
+                  likeMessage={likeMessage}
                 />
               </CSSTransition>
             ))}
@@ -272,7 +282,7 @@ function SingleChatRoute({
         sendMessage={sendMessage}
         sending={sending}
         editedMessage={editedMessage}
-        closeEditing={closeEditingState}
+        closeEditing={closeEditMessageState}
       />
 
       <ConfirmDeleteModal
@@ -293,14 +303,14 @@ function SingleChatRoute({
         <div className="menu-option" onClick={toggleDeleteModal}>
           Delete
         </div>
-        <div className="menu-option" onClick={toggleEditState}>
+        <div className="menu-option" onClick={toggleEditMessageState}>
           Edit
         </div>
         <div className="menu-option">Close</div>
       </ContextMenu>
 
       {/** Right click on other users messages */}
-      <ContextMenu
+      {/* <ContextMenu
         showContextMenu={otherUserMessageContext}
         onContextMenuOpen={onContextMenuOpen}
       >
@@ -308,7 +318,7 @@ function SingleChatRoute({
           Like
         </div>
         <div className="menu-option">Close</div>
-      </ContextMenu>
+      </ContextMenu> */}
     </>
   );
 }

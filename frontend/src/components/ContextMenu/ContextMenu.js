@@ -39,6 +39,8 @@ function ContextMenu({ children, onContextMenuOpen, showContextMenu }) {
       if (bottom) {
         root.current.style.top = `${clickY - rootH - 5}px`;
       }
+    } else {
+      setVisible(false);
     }
   };
 

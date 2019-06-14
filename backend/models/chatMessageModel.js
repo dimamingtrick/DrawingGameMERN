@@ -29,6 +29,13 @@ const chatMessageSchema = new mongoose.Schema({
       default: null,
     },
   ],
+  likedBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+  ],
 });
 
 const ChatMessage = mongoose.model("chatMessage", chatMessageSchema);

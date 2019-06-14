@@ -1,0 +1,52 @@
+.message-wrapper {
+  position: relative!important;
+}
+
+.user-like-btn {
+  position: absolute;
+  top: calc(50% - 16px);
+  left: 105%;
+  line-height: 1;
+  color: #8a8a8a;
+}
+.my-message .user-like-btn {
+  right: 105%;
+  left: auto;
+}
+
+.user-like-btn svg {
+  transition: all .25s;
+  margin: 0 5px;
+  cursor: pointer;
+}
+.my-message .user-like-btn svg {
+  cursor: auto;
+}
+
+.user-like-btn svg:hover {
+  color: #cc4b37;
+}
+
+.my-message .user-like-btn svg:hover {
+  color: #8a8a8a;
+}
+
+.user-like-btn svg:active {
+  transform: scale(1.25);
+}
+
+.my-message .user-like-btn svg:active {
+  transform: scale(1);
+}
+
+.user-like-btn svg.message-is-liked {
+  color: #cc4b37;
+}
+
+.user-like-btn svg.message-is-liked:hover {
+  color: #8a8a8a;
+}
+
+.my-message .user-like-btn svg.message-is-liked:hover {
+  color: #cc4b37;
+}
