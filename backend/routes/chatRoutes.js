@@ -80,7 +80,9 @@ router.get("/:id", async (req, res) => {
     ]),
     ChatMessage.find({
       chatId: objectId(chatId),
-    }),
+    }).populate([
+      "likedBy",
+    ]),
   ]);
 
   return res.json({ chat, messages });
@@ -257,16 +259,15 @@ router.put("/:id/messages/:messageId", async (req, res) => {
         updatedAt: new Date(),
       },
     },
-    { new: true },
-    async (err, updatedMessage) => {
+    { new: true })
+    .populate(['likedBy']).exec(async (err, updatedMessage) => {
       if (err || !updatedMessage)
         return res.status(404).json({ message: err || "Message not found" });
 
       const io = req.app.get("socketio");
       io.emit(`chat-${chatId}-messageUpdated`, updatedMessage);
       res.json({ updatedMessage });
-    }
-  );
+    })
 });
 
 module.exports = router;

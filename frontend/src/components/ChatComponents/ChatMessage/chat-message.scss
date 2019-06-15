@@ -1,0 +1,96 @@
+.message-wrapper {
+  position: relative!important;
+}
+
+.user-like-btn {
+  position: absolute;
+  top: calc(50% - 16px);
+  left: calc(100% + 10px);
+  line-height: 1;
+  color: #8a8a8a;
+
+  svg {
+    transition: all .25s;
+    margin: 0 5px;
+    cursor: pointer;
+
+    &:hover {
+      color: #cc4b37;
+    }
+    &:active {
+      transform: scale(1.25);
+    }
+  }
+
+  svg.message-is-liked {
+    color: #cc4b37;
+
+    &:hover {
+      color: #8a8a8a;
+    }
+  }
+}
+
+.my-message {
+  .user-like-btn {
+    right: calc(100% + 10px);
+    left: auto;
+    svg {
+      cursor: auto;
+
+      &:hover {
+        color: #8a8a8a;
+      }
+      &:active {
+        transform: scale(1);
+      }
+    }
+    svg.message-is-liked:hover {
+      color: #cc4b37;
+    }
+  }
+}
+
+div.like-tooltip-container {
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+div.user-liked-message {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+
+  .user-like-avatar {
+    width: 30px;
+    height: 30px;
+    background-position: center!important;
+    background-size: cover!important;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  .user-liked-login {
+    font-size: 15px;
+    line-height: 1;
+  }
+}
+
+
+
+
+div.single-chat-display div.message-user-avatar {
+  min-width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-size: cover!important;
+  background-position: center!important;
+}
+
+div.single-chat-display .single-message {
+  padding-right: 45px;
+}
+div.single-chat-display .single-message.my-message {
+  padding-left: 45px;
+  padding-right: 0;
+}

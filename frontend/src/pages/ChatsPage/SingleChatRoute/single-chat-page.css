@@ -16,24 +16,16 @@ div.single-chat-display div.chat-messages > div.spinner-border {
   color: #fff;
 }
 
-div.single-chat-display div.message-user-avatar img {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-}
-
 div.single-message.my-message > div.message-wrapper {
   flex-direction: column;
 }
 
 div.single-message > div.message-wrapper div.message-user-avatar { 
-  margin-right: auto;
-  padding-right: 10px;
+  margin-right: 10px;
 }
 
 div.single-message.my-message > div.message-wrapper div.message-user-avatar {
-  margin-left: auto;
-  padding-left: 10px;
+  margin-left: 10px;
   margin-right: 0;
   padding-right: 0;
 }

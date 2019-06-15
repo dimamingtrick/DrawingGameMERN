@@ -46,8 +46,10 @@ module.exports = (socket, io) => {
           readBy: [objectId(userId)],
         },
       },
-      { new: true },
-      (err, updatedMessage) => {
+      { new: true }
+    )
+      .populate(["likedBy"])
+      .exec((err, updatedMessage) => {
         if (err || !updatedMessage)
           console.log("User read chat message error ", err);
 
@@ -59,8 +61,7 @@ module.exports = (socket, io) => {
             chatId,
           });
         });
-      }
-    );
+      });
   });
 
   /**
@@ -80,14 +81,15 @@ module.exports = (socket, io) => {
           likedBy: [objectId(userId)],
         },
       },
-      { new: true },
-      (err, updatedMessage) => {
+      { new: true }
+    )
+      .populate(["likedBy"])
+      .exec((err, updatedMessage) => {
         if (err || !updatedMessage)
           console.log("User likes chat message error ", err);
 
         io.emit(`chat-${chatId}-userLikesMessage`, updatedMessage);
-      }
-    );
+      });
   });
 
   /**
@@ -109,14 +111,15 @@ module.exports = (socket, io) => {
             likedBy: objectId(userId),
           },
         },
-        { new: true },
-        (err, updatedMessage) => {
+        { new: true }
+      )
+        .populate(["likedBy"])
+        .exec((err, updatedMessage) => {
           if (err || !updatedMessage)
             console.log("User dislikes chat message error ", err);
 
           io.emit(`chat-${chatId}-userLikesMessage`, updatedMessage);
-        }
-      );
+        });
     }
   );
 };

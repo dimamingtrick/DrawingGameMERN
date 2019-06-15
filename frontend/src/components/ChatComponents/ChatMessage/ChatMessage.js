@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Tooltip } from "reactstrap";
 import { FaHeart } from "react-icons/fa";
 import moment from "moment";
 
+import ImagePreview from "../../../components/ImagePreview/ImagePreview";
 import defaultAvatar from "../../../assets/defaultAvatar.png";
 import { socket } from "../../../pages/DashboardContainer/DashboardContainer";
-import "./chat-message.css";
+import "./chat-message.scss";
 
 const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
   const otherUserReadMessage =
@@ -29,7 +30,7 @@ const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
     if (message.userId !== user._id)
       likeMessage(
         message._id,
-        !message.likedBy.find(i => i === user._id)
+        !message.likedBy.find(i => i._id === user._id)
           ? "userLikesMessage"
           : "userRemoveLikeFromMessage"
       );
@@ -46,7 +47,7 @@ const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
           <div className="message-text">
             <div className="single-message-text">
               {message.type === "image" ? (
-                <img
+                <ImagePreview
                   className="chat-message-image"
                   src={message.message}
                   alt="chat-message"
@@ -56,12 +57,12 @@ const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
               )}
             </div>
           </div>
-          <div className="message-user-avatar">
-            <img
-              src={userFrom.avatar ? userFrom.avatar : defaultAvatar}
-              alt="avatar"
-            />
-          </div>
+          <div
+            className="message-user-avatar"
+            style={{
+              background: `url('${userFrom.avatar || defaultAvatar}')`,
+            }}
+          />
         </div>
         <div className="message-date">
           <div className="single-message-date">
@@ -75,33 +76,70 @@ const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
 
         <LikeButton
           onClick={handleLikeMessage}
-          isLiked={message.likedBy.find(i => i === user._id)}
+          isLiked={message.likedBy.find(i => i._id === user._id)}
           likesLength={message.likedBy.length}
+          messageId={message._id}
+          tooltipPlacement={message.userId === user._id ? "left" : "right"}
+          users={message.likedBy}
         />
       </div>
     </div>
   );
 };
 
-function LikeButton({ onClick, isLiked, likesLength }) {
+const tooltipDelay = {
+  show: 150,
+  hide: 250,
+};
+
+const LikeButton = ({
+  onClick,
+  isLiked,
+  likesLength,
+  messageId,
+  tooltipPlacement,
+  users,
+}) => {
+  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
+  const toggleTooltip = () => {
+    setTooltipIsOpen(!tooltipIsOpen);
+  };
+
   return (
     <div className="user-like-btn">
       <FaHeart
-        id="likeIcon"
+        id={`likeIcon-${messageId}`}
         className={`${isLiked ? "message-is-liked" : ""}`}
         onClick={onClick}
       />
       <span>{likesLength}</span>
-      {/* <Tooltip
-        placement="right"
-        isOpen={true}
-        target="likeIcon"
-        toggle={() => {}}
-      >
-        Hello world!
-      </Tooltip> */}
+
+      {users.length > 0 && (
+        <Tooltip
+          placement={tooltipPlacement}
+          isOpen={tooltipIsOpen}
+          target={`likeIcon-${messageId}`}
+          toggle={toggleTooltip}
+          autohide={false}
+          delay={tooltipDelay}
+        >
+          <div className="like-tooltip-container">
+            {users.map(user => (
+              <div className="user-liked-message" key={user._id}>
+                <div
+                  className="user-like-avatar"
+                  style={{
+                    background: `url('${user.avatar || defaultAvatar}')`,
+                  }}
+                />
+                <div className="user-liked-login">{user.login}</div>
+              </div>
+            ))}
+          </div>
+        </Tooltip>
+      )}
     </div>
   );
-}
+};
 
 export default ChatMessage;
