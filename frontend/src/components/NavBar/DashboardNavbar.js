@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { logout } from "../../actions/auth";
 import {
   Nav,
   NavItem,
@@ -14,6 +13,9 @@ import {
   DropdownMenu,
 } from "reactstrap";
 import { Link } from "react-router-dom";
+
+import { logout } from "../../actions/auth";
+import defaultAvatar from "../../assets/defaultAvatar.png";
 import "./navbars.css";
 
 const navLinks = [
@@ -90,7 +92,7 @@ const DashboardNavbar = ({ user, logout, location, unreadChatsCount }) => {
               <div
                 className="navbar-avatar"
                 style={{
-                  background: `url('${user.avatar}')`,
+                  background: `url('${user.avatar || defaultAvatar}')`,
                 }}
               />
             </DropdownToggle>

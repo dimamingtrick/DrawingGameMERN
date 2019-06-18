@@ -47,6 +47,7 @@ const getUnreadChatsCount = async (io, userId) => {
           $ne: objectId(userId),
         },
       });
+
       if (unreadMessages.length > 0) unreadMessagesCount++;
     })
   );

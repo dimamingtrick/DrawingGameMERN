@@ -30,12 +30,9 @@ const ChatSidebarListItem = ({
         <div className="unread-messages-count">{unreadMessagesCount}</div>
       </CSSTransition>
 
-      <div className="single-chat-partner-avatar">
-        <img
-          src={userItem.avatar ? userItem.avatar : defaultAvatar}
-          alt="avatar"
-        />
-      </div>
+      <div className="single-chat-partner-avatar" style={{
+        background: `url('${userItem.avatar ? userItem.avatar : defaultAvatar}')`
+      }} />
       <div className="single-chat-textfields">
         <div className="single-chat-user-data">{userItem.login}</div>
         <div className="single-chat-last-message">

@@ -13,7 +13,7 @@ const fileUpload = require("express-fileupload");
 router.get("/", async (req, res) => {
   const { userId } = req.body;
 
-  const chats = await Chat.find({ users: objectId(userId) })
+  let chats = await Chat.find({ users: objectId(userId) })
     .populate([
       {
         path: "users",
@@ -29,23 +29,27 @@ router.get("/", async (req, res) => {
         $ne: objectId(userId),
       },
     });
-    allUsers.forEach(async user => {
-      const chat = new Chat({
-        users: [objectId(userId), objectId(user._id)],
-      });
-      await chat.save();
-    });
 
-    const newCreatedChats = await Chat.find({
+    await Promise.all(
+      allUsers.map(async user => {
+        const chat = new Chat({
+          users: [objectId(userId), objectId(user._id)],
+        });
+        await chat.save();
+      })
+    );
+
+    chats = await Chat.find({
       users: objectId(userId),
-    }).populate([
-      {
-        path: "users",
-        select: "-password",
-      },
-      "lastMessage",
-    ]);
-    return res.json(newCreatedChats);
+    })
+      .populate([
+        {
+          path: "users",
+          select: "-password",
+        },
+        "lastMessage",
+      ])
+      .lean();
   }
 
   const fullChats = await Promise.all(
@@ -80,9 +84,7 @@ router.get("/:id", async (req, res) => {
     ]),
     ChatMessage.find({
       chatId: objectId(chatId),
-    }).populate([
-      "likedBy",
-    ]),
+    }).populate(["likedBy"]),
   ]);
 
   return res.json({ chat, messages });
@@ -116,7 +118,8 @@ router.post(
       });
     }
 
-    if (!messageField) return res.status(400).json({message: "Message is required"});
+    if (!messageField)
+      return res.status(400).json({ message: "Message is required" });
 
     const msg = new ChatMessage({
       userId: objectId(userId),
@@ -153,7 +156,10 @@ router.post(
         io.emit(`chat-${chatId}-newMessage`, newMessage);
 
         // Updating unread messages count status for other users
-        const otherUsers = updatedChat.users.filter(i => i._id !== userId);
+        const otherUsers = updatedChat.users.filter(
+          i => i._id + "" !== userId + ""
+        );
+
         otherUsers.forEach(async user => {
           if (user._id !== userId) getUnreadChatsCount(io, user._id);
           // Get unreadMessagesCount for other users
@@ -259,15 +265,17 @@ router.put("/:id/messages/:messageId", async (req, res) => {
         updatedAt: new Date(),
       },
     },
-    { new: true })
-    .populate(['likedBy']).exec(async (err, updatedMessage) => {
+    { new: true }
+  )
+    .populate(["likedBy"])
+    .exec(async (err, updatedMessage) => {
       if (err || !updatedMessage)
         return res.status(404).json({ message: err || "Message not found" });
 
       const io = req.app.get("socketio");
       io.emit(`chat-${chatId}-messageUpdated`, updatedMessage);
       res.json({ updatedMessage });
-    })
+    });
 });
 
 module.exports = router;

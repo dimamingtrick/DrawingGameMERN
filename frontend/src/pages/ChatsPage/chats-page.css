@@ -70,18 +70,6 @@ div.all-chats-list div.single-chat-textfields {
   overflow: hidden;
 }
 
-div.all-chats-list div.single-chat-partner-avatar {
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-div.all-chats-list div.single-chat-partner-avatar img {
-  width: 45px;
-  border-radius: 50%;
-}
-
 div.all-chats-list > a.single-chat:first-child {
   border-top: 1px solid rgba(52, 58, 64, .1);
 }
