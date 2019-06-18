@@ -53,10 +53,6 @@ div.main-chat-messages-wrapper span.chat-user-is-typing {
   100% { opacity: .8 }
 }
 
-img.chat-message-image {
-  max-width: 250px;
-}
-
 .message-is-not-read {
   border-radius: 10px!important;
   background: rgba(255,255,255,.1);

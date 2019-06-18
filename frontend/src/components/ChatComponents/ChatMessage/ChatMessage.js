@@ -3,7 +3,7 @@ import { Tooltip } from "reactstrap";
 import { FaHeart } from "react-icons/fa";
 import moment from "moment";
 
-import ImagePreview from "../../../components/ImagePreview/ImagePreview";
+import ImageWithPreview from "../../../components/ImageWithPreview/ImageWithPreview";
 import defaultAvatar from "../../../assets/defaultAvatar.png";
 import { socket } from "../../../pages/DashboardContainer/DashboardContainer";
 import "./chat-message.scss";
@@ -47,7 +47,7 @@ const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
           <div className="message-text">
             <div className="single-message-text">
               {message.type === "image" ? (
-                <ImagePreview
+                <ImageWithPreview
                   className="chat-message-image"
                   src={message.message}
                   alt="chat-message"
