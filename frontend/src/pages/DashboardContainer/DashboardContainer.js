@@ -36,10 +36,8 @@ const DashboardContainer = ({
   location,
   getUnreadChatsCount,
 }) => {
-  if (!isLoggedIn) return <Redirect to="/auth" />;
-
   /** Connecting to socket */
-  if (!socket) {
+  if (!socket && userId) {
     socket = socketIOClient(serverUrl);
     socket.on("socketWorks", ({ horray }) => console.log(horray)); // Check if socket works
   }
@@ -47,11 +45,14 @@ const DashboardContainer = ({
   useEffect(() => {
     if (socket) {
       socket.emit("getChatsWithUnreadMessages", userId);
+      return () => {
+        socket = null;
+      };
     }
   }, []);
 
   useEffect(() => {
-    if (socket) {
+    if (userId) {
       socket.on(`${userId}-chatsWithUnreadMessages`, getUnreadChatsCount);
       return () => {
         socket.off(`${userId}-chatsWithUnreadMessages`);
@@ -65,6 +66,8 @@ const DashboardContainer = ({
       i === location.pathname ||
       (location.pathname.includes(i) && i !== "/app" && i !== "/app/game")
   );
+
+  if (!isLoggedIn) return <Redirect to="/auth" />;
 
   return (
     <div>
