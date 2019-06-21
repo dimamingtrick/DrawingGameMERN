@@ -38,14 +38,19 @@ const DashboardContainer = ({
 }) => {
   /** Connecting to socket */
   if (!socket && userId) {
+    console.log(userId, 'asdjisjdoiqdjoiqjowijdoijqoij')
     socket = socketIOClient(serverUrl);
-    socket.on("socketWorks", ({ horray }) => console.log(horray)); // Check if socket works
+    socket.on("socketWorks", ({ horray }) => {
+      console.log(horray); // Check if socket works
+      socket.emit("userIsOnline", userId);
+    }); 
   }
 
   useEffect(() => {
     if (socket) {
       socket.emit("getChatsWithUnreadMessages", userId);
       return () => {
+        socket.emit("userIsOffline");
         socket = null;
       };
     }

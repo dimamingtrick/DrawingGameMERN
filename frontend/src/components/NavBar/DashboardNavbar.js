@@ -86,7 +86,13 @@ const DashboardNavbar = ({ user, logout, location, unreadChatsCount }) => {
             ) : null
           )}
 
-          <UncontrolledDropdown nav inNavbar>
+          <UncontrolledDropdown
+            className={
+              location.pathname.includes("/app/profile") ? "active" : ""
+            }
+            nav
+            inNavbar
+          >
             <DropdownToggle className="user-data-dropdown" nav caret>
               {user.login}{" "}
               <div
@@ -96,6 +102,7 @@ const DashboardNavbar = ({ user, logout, location, unreadChatsCount }) => {
                 }}
               />
             </DropdownToggle>
+            <div className="linkUnderline" />
             <DropdownMenu right>
               <DropdownItem>
                 <Link className="dropdown-link" to="/app/profile">

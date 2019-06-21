@@ -63,7 +63,9 @@ app.get("/", async (req, res) => {
 connectDb().then(() => {
   server.listen(3001, function() {
     io.on("connection", socket => {
-      socket.emit("socketWorks", { horray: "Socket works" });
+
+      /** Use user sockets (online/offline) */
+      require("./sockets/usersSockets")(socket, io);
 
       /** Use game sockets */
       require("./sockets/gameSockets")(socket, io);
