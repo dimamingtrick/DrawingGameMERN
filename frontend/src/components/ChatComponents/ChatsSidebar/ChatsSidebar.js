@@ -19,14 +19,6 @@ const ChatsSidebar = ({ chats, location, user }) => {
         isOpen ? "chat-sidebar-isOpen" : ""
       }`}
     >
-      {chats.map(chat => (
-        <ChatSidebarListItem
-          {...chat}
-          key={chat._id}
-          isActive={location.pathname.includes(chat._id)}
-          user={user}
-        />
-      ))}
       <Button
         className="toggle-chat-sidebar-btn"
         onClick={toggleChatSidebarState}
@@ -34,6 +26,17 @@ const ChatsSidebar = ({ chats, location, user }) => {
       >
         <FaAngleRight />
       </Button>
+
+      <div className="chats-list-wrapper">
+        {chats.map(chat => (
+          <ChatSidebarListItem
+            {...chat}
+            key={chat._id}
+            isActive={location.pathname.includes(chat._id)}
+            user={user}
+          />
+        ))}
+      </div>
     </div>
   );
 };

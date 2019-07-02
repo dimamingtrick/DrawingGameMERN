@@ -155,23 +155,18 @@ router.post(
 
         io.emit(`chat-${chatId}-newMessage`, newMessage);
 
-        // Updating unread messages count status for other users
-        const otherUsers = updatedChat.users.filter(
-          i => i._id + "" !== userId + ""
-        );
-
-        otherUsers.forEach(async user => {
-          if (user._id !== userId) getUnreadChatsCount(io, user._id);
+        updatedChat.users.forEach(async user => {
           // Get unreadMessagesCount for other users
-          const unreadMessagesCount = await getUnreadChatMessagesCount(
-            updatedChat._id,
-            user._id
-          );
-          updatedChat.unreadMessagesCount = unreadMessagesCount;
-          io.emit(
-            `chat-${updatedChat._id}-${user._id}-getChatUpdate`,
-            updatedChat
-          );
+          if (user._id !== userId) {
+            const unreadMessagesCount = await getUnreadChatMessagesCount(
+              updatedChat._id,
+              user._id
+            );
+            getUnreadChatsCount(io, user._id);
+            updatedChat.unreadMessagesCount = unreadMessagesCount;
+          }
+
+          io.emit(`chat-${updatedChat._id}-${user._id}-getChatUpdate`, updatedChat);
         });
 
         return res.json({});
@@ -225,17 +220,17 @@ router.delete("/:id/messages/:messageId", async (req, res) => {
 
           // Emit updated chat with unreadMessagesCount for other users
           updatedChat.users.forEach(user => {
-            if (user._id !== req.body.userId) {
-              getUnreadChatMessagesCount(updatedChat._id, user._id).then(
-                unreadMessagesCount => {
+            getUnreadChatMessagesCount(updatedChat._id, user._id).then(
+              unreadMessagesCount => {
+                if (user._id !== req.body.userId) {
                   updatedChat.unreadMessagesCount = unreadMessagesCount;
-                  io.emit(
-                    `chat-${updatedChat._id}-${user._id}-getChatUpdate`,
-                    updatedChat
-                  );
                 }
-              );
-            }
+                io.emit(
+                  `chat-${updatedChat._id}-${user._id}-getChatUpdate`,
+                  updatedChat
+                );
+              }
+            );
           });
           io.emit(`chat-${chatId}-messageDeleted`, {
             messageId: req.params.messageId,

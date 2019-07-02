@@ -55,7 +55,7 @@ div.single-chat-user-data {
   margin-bottom: 5px;
 }
 
-div.all-chats-list > a.single-chat {
+div.all-chats-list a.single-chat {
   display: flex;
   /* flex-direction: column; */
   color: #343a40;
@@ -71,15 +71,15 @@ div.all-chats-list div.single-chat-textfields {
   overflow: hidden;
 }
 
-div.all-chats-list > a.single-chat:first-child {
+div.all-chats-list a.single-chat:first-child {
   border-top: 1px solid rgba(52, 58, 64, .1);
 }
 
-div.all-chats-list > a.single-chat.active {
+div.all-chats-list a.single-chat.active {
   background: rgba(52, 58, 64, .1);
 }
 
-div.all-chats-list > a.single-chat:hover {
+div.all-chats-list a.single-chat:hover {
   background: rgba(52, 58, 64, .15);
   text-decoration: none;
 }
