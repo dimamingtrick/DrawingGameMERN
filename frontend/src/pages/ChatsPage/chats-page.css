@@ -89,7 +89,6 @@ div.single-chat-display {
   display: flex;
   flex-direction: column;
   flex: 1;
-  border-left: 1px solid rgba(52, 58, 64, .1);
   overflow: hidden;
 }
 div.single-chat-display > div.input-group > input {

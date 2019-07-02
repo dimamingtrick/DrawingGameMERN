@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Button } from "reactstrap";
 import { FaAngleRight } from "react-icons/fa";
@@ -13,11 +13,34 @@ const ChatsSidebar = ({ chats, location, user }) => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    /**
+     * code example
+     * https://plnkr.co/edit/ZiOgIXOacDwAL7g65STH?p=preview
+     */
+    const slider = document.getElementById("sidebarBorder");
+    slider.onmousedown = event => {
+      document.onmousemove = e => {
+        const sidebar = document.getElementById("sidebar");
+        // const width = e.pageX - sidebar.offsetWidth;
+        if (e.pageX >= 65) sidebar.style.width = e.pageX + "px";
+      };
+
+      document.onmouseup = () => {
+        document.onmousemove = document.onmouseup = null;
+      };
+    };
+  }, []);
+
   return (
     <div
+      id="sidebar"
       className={`all-chats-list chat-sidebar ${
         isOpen ? "chat-sidebar-isOpen" : ""
       }`}
+      style={{
+        width: 65,
+      }}
     >
       <Button
         className="toggle-chat-sidebar-btn"
@@ -37,6 +60,11 @@ const ChatsSidebar = ({ chats, location, user }) => {
           />
         ))}
       </div>
+      <div
+        id="sidebarBorder"
+        className="chat-sidebar-border"
+        onDragStart={() => false}
+      />
     </div>
   );
 };
