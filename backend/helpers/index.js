@@ -76,11 +76,6 @@ const toggleUserOnlineStatus = (userId, isOnline, io) => {
     },
     { new: true },
     (err, updatedUser) => {
-      console.log(
-        `User online status: user ${updatedUser.login} is ${
-          updatedUser.isOnline ? "ONLINE" : "OFFLINE"
-        }`
-      );
       if (!err && updatedUser) io.emit("userOnlineStatusChanged", updatedUser);
     }
   );

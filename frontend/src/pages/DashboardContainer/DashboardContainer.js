@@ -38,12 +38,11 @@ const DashboardContainer = ({
 }) => {
   /** Connecting to socket */
   if (!socket && userId) {
-    console.log(userId, 'asdjisjdoiqdjoiqjowijdoijqoij')
     socket = socketIOClient(serverUrl);
     socket.on("socketWorks", ({ horray }) => {
       console.log(horray); // Check if socket works
       socket.emit("userIsOnline", userId);
-    }); 
+    });
   }
 
   useEffect(() => {

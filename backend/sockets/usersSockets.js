@@ -8,7 +8,7 @@ module.exports = (socket, io) => {
     const userOffline = users.find(i => i.socketId === socket.id);
     users = users.filter(i => i.socketId !== socket.id);
 
-    toggleUserOnlineStatus(userOffline.userId, false, io);
+    if (userOffline) toggleUserOnlineStatus(userOffline.userId, false, io);
   };
 
   socket.emit("socketWorks", { horray: "Socket works" });
