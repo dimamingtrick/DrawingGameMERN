@@ -1,15 +1,14 @@
-import { ChatMessage } from "../models";
-import { getUnreadChatsCount, getUnreadChatMessagesCount } from "../helpers";
-
-const objectId = require("mongodb").ObjectID;
+import { toggleUserOnlineStatus } from "../helpers";
 
 /** Array of online users */
 let users = [];
 
 module.exports = (socket, io) => {
   const userDisconnect = () => {
-    console.log("DISCONNECT");
+    const userOffline = users.find(i => i.socketId === socket.id);
     users = users.filter(i => i.socketId !== socket.id);
+
+    toggleUserOnlineStatus(userOffline.userId, false, io);
   };
 
   socket.emit("socketWorks", { horray: "Socket works" });
@@ -19,6 +18,8 @@ module.exports = (socket, io) => {
       userId,
       socketId: socket.id,
     });
+
+    toggleUserOnlineStatus(userId, true, io);
   });
 
   socket.on("userIsOffline", userDisconnect);

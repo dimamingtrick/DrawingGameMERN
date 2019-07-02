@@ -4,6 +4,7 @@ export const GET_ALL_CHATS_SUCCESS = "GET_ALL_CHATS_SUCCESS";
 export const CHAT_UPDATE = "CHAT_UPDATE";
 export const GET_UNREAD_CHATS_COUNT = "GET_UNREAD_CHATS_COUNT";
 export const GET_UNREAD_MESSAGES_COUNT = "GET_UNREAD_MESSAGES_COUNT";
+export const CHAT_USER_ONLINE_STATUS = "CHAT_USER_ONLINE_STATUS";
 
 export const getAllChats = () => async dispatch => {
   try {
@@ -26,3 +27,8 @@ export const getUnreadMessagesCount = newUnreadMessages => ({
 });
 
 export const updateChat = updatedChat => ({ type: CHAT_UPDATE, updatedChat });
+
+export const userChangeOnlineStatus = updatedUser => ({
+  type: CHAT_USER_ONLINE_STATUS,
+  updatedUser,
+});

@@ -12,6 +12,7 @@ import {
   getAllChats,
   updateChat,
   getUnreadMessagesCount,
+  userChangeOnlineStatus,
 } from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
 import "./chats-page.css";
@@ -26,6 +27,7 @@ const ChatsPage = ({
   location,
   updateChat,
   getUnreadMessagesCount,
+  userChangeOnlineStatus,
 }) => {
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
@@ -63,8 +65,11 @@ const ChatsPage = ({
         /** User recieve new message and chat 'last message' is changed */
         socket.on(`chat-${chat._id}-${user._id}-getChatUpdate`, updateChat);
       });
+      socket.on("userOnlineStatusChanged", userChangeOnlineStatus);
+
       return () => {
         chats.forEach(chat => {
+          socket.off("userOnlineStatusChanged");
           socket.off(`chat-${chat._id}-${user._id}-getUnreadMessagesCount`);
           socket.off(`chat-${chat._id}-${user._id}-getChatUpdate`);
         });
@@ -115,5 +120,5 @@ export default connect(
       user: store.auth.user,
     };
   },
-  { getAllChats, updateChat, getUnreadMessagesCount }
+  { getAllChats, updateChat, getUnreadMessagesCount, userChangeOnlineStatus }
 )(ChatsPage);

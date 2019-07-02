@@ -34,3 +34,14 @@ div.all-chats-list div.single-chat-partner-avatar {
   margin-right: 10px;
   align-self: center;
 }
+
+div.user-online-circle {
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  width: 15px;
+  height: 15px;
+  background: #08f100;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}

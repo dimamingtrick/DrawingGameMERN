@@ -1,5 +1,5 @@
 import { verify } from "jsonwebtoken";
-import { Chat, ChatMessage } from "../models";
+import { Chat, ChatMessage, User } from "../models";
 const objectId = require("mongodb").ObjectID;
 
 /**
@@ -64,10 +64,33 @@ const getUnreadChatMessagesCount = async (chatId, userId) => {
   return unreadChatMessages.length;
 };
 
+const toggleUserOnlineStatus = (userId, isOnline, io) => {
+  User.findOneAndUpdate(
+    {
+      _id: objectId(userId),
+    },
+    {
+      $set: {
+        isOnline,
+      },
+    },
+    { new: true },
+    (err, updatedUser) => {
+      console.log(
+        `User online status: user ${updatedUser.login} is ${
+          updatedUser.isOnline ? "ONLINE" : "OFFLINE"
+        }`
+      );
+      if (!err && updatedUser) io.emit("userOnlineStatusChanged", updatedUser);
+    }
+  );
+};
+
 export {
   jwtValidate,
   validateEmail,
   getNewRandomWord,
   getUnreadChatsCount,
   getUnreadChatMessagesCount,
+  toggleUserOnlineStatus,
 };
