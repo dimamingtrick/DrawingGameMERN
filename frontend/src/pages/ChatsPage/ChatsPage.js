@@ -6,6 +6,7 @@ import SingleChatRoute from "./SingleChatRoute/SingleChatRoute";
 import {
   ChatsSidebar,
   ChatIsNotSelected,
+  AddNewChatModal,
 } from "../../components/ChatComponents";
 import { mainStateHook } from "../../hooks";
 import {
@@ -32,6 +33,7 @@ const ChatsPage = ({
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
     longLoading: false,
+    addChatModalIsOpen: false,
   });
 
   const loadState = useRef(state.load);
@@ -90,6 +92,10 @@ const ChatsPage = ({
     }
   });
 
+  const toggleAddChatModal = () => {
+    setState({ addChatModalIsOpen: !state.addChatModalIsOpen });
+  };
+
   return (
     <Container
       fluid
@@ -102,7 +108,15 @@ const ChatsPage = ({
         </div>
       ) : (
         <>
-          <ChatsSidebar chats={chats} location={location} />
+          <ChatsSidebar
+            addNewChat={toggleAddChatModal}
+            chats={chats}
+            location={location}
+          />
+          <AddNewChatModal
+            isOpen={state.addChatModalIsOpen}
+            toggle={toggleAddChatModal}
+          />
           <div className="single-chat-display">
             <Route path="/app/chats" exact component={ChatIsNotSelected} />
             <Route path="/app/chats/:id" component={SingleChatRoute} />

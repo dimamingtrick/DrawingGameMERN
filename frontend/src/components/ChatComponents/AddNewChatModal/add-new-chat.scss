@@ -1,0 +1,26 @@
+.add-new-chat-modal {
+
+  .user-select {
+    display: flex;
+    flex-direction: column;
+
+    .user-select-spinner {
+      margin: 0 auto;
+    }
+  }
+
+  .add-chat-modal-footer {
+    display: flex;
+    flex-direction: column;
+
+    .form-button-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      
+      button {
+        min-width: 93px;
+        margin-left: 10px;
+      }
+    }
+  }
+}

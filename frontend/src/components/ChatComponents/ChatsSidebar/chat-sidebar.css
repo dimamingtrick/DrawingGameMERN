@@ -96,3 +96,14 @@ div.chat-sidebar button.toggle-chat-sidebar-btn svg {
   cursor: pointer;
   background-color: rgba(0,0,0,.35);
 }
+
+.chat-sidebar-item {
+  width: calc(100% - 5px);
+  display: flex;
+  flex-direction: column;
+}
+
+button.add-new-chat-button {
+  width: 100%;
+  border-radius: 0;
+}

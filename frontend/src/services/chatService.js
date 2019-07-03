@@ -39,6 +39,14 @@ class ChatService {
       body: {},
     });
   }
+
+  addNewChat(newChatData) {
+    return api({
+      method: "POST",
+      url: "/chats/add-new",
+      body: newChatData,
+    });
+  }
 }
 
 export default new ChatService();

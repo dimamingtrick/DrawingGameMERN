@@ -1,24 +1,28 @@
 import mongoose from "mongoose";
 
 const chatSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    default: "",
+  },
   createdAt: {
     type: Date,
-    default: new Date()
+    default: new Date(),
   },
   users: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
+      ref: "User",
+    },
   ],
   updatedAt: {
     type: Date,
-    default: new Date()
+    default: new Date(),
   },
   lastMessage: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "chatMessage"
-  }
+    ref: "chatMessage",
+  },
 });
 
 const Chat = mongoose.model("chat", chatSchema);

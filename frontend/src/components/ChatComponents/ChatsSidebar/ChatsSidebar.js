@@ -6,7 +6,7 @@ import { FaAngleRight } from "react-icons/fa";
 import ChatSidebarListItem from "./ChatSidebarListItem/ChatSidebarListItem";
 import "./chat-sidebar.css";
 
-const ChatsSidebar = ({ chats, location, user }) => {
+const ChatsSidebar = ({ chats, location, user, addNewChat }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleChatSidebarState = () => {
@@ -22,8 +22,10 @@ const ChatsSidebar = ({ chats, location, user }) => {
     slider.onmousedown = event => {
       document.onmousemove = e => {
         const sidebar = document.getElementById("sidebar");
-        // const width = e.pageX - sidebar.offsetWidth;
-        if (e.pageX >= 65) sidebar.style.width = e.pageX + "px";
+        const sidebarWidth = (e.pageX / document.body.offsetWidth) * 100;
+
+        if (e.pageX >= 65 && sidebarWidth <= 75)
+          sidebar.style.width = sidebarWidth + "%";
       };
 
       document.onmouseup = () => {
@@ -50,15 +52,24 @@ const ChatsSidebar = ({ chats, location, user }) => {
         <FaAngleRight />
       </Button>
 
-      <div className="chats-list-wrapper">
-        {chats.map(chat => (
-          <ChatSidebarListItem
-            {...chat}
-            key={chat._id}
-            isActive={location.pathname.includes(chat._id)}
-            user={user}
-          />
-        ))}
+      <div className="chat-sidebar-item">
+        <Button
+          onClick={addNewChat}
+          color="secondary"
+          className="add-new-chat-button"
+        >
+          +
+        </Button>
+        <div className="chats-list-wrapper">
+          {chats.map(chat => (
+            <ChatSidebarListItem
+              {...chat}
+              key={chat._id}
+              isActive={location.pathname.includes(chat._id)}
+              user={user}
+            />
+          ))}
+        </div>
       </div>
       <div
         id="sidebarBorder"

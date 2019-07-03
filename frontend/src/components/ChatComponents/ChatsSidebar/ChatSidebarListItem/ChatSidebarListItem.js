@@ -12,6 +12,7 @@ const ChatSidebarListItem = ({
   isActive,
   user,
   unreadMessagesCount,
+  name,
 }) => {
   const userItem = users.find(u => u._id !== user._id);
   const showUnreadMessagesCount =
@@ -48,7 +49,9 @@ const ChatSidebarListItem = ({
         }}
       />
       <div className="single-chat-textfields">
-        <div className="single-chat-user-data">{userItem.login}</div>
+        <div className="single-chat-user-data">
+          {name ? name : userItem.login}
+        </div>
         <div className="single-chat-last-message">
           <span>
             {lastMessage &&

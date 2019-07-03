@@ -166,7 +166,10 @@ router.post(
             updatedChat.unreadMessagesCount = unreadMessagesCount;
           }
 
-          io.emit(`chat-${updatedChat._id}-${user._id}-getChatUpdate`, updatedChat);
+          io.emit(
+            `chat-${updatedChat._id}-${user._id}-getChatUpdate`,
+            updatedChat
+          );
         });
 
         return res.json({});
@@ -271,6 +274,22 @@ router.put("/:id/messages/:messageId", async (req, res) => {
       io.emit(`chat-${chatId}-messageUpdated`, updatedMessage);
       res.json({ updatedMessage });
     });
+});
+
+/**
+ * POST /chats/add-new
+ * Add new chat (confiration between at least 3 users)
+ */
+router.post("/add-new", async (req, res) => {
+  const { userId, name, users } = req.body;
+  console.log(name, users);
+  const chat = new Chat({
+    name,
+    users: users.map(i => objectId(i)),
+  });
+  const newChat = await chat.save();
+
+  return res.json({ newChat });
 });
 
 module.exports = router;
