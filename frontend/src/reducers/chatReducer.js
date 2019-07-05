@@ -4,6 +4,7 @@ import {
   GET_UNREAD_MESSAGES_COUNT,
   GET_UNREAD_CHATS_COUNT,
   CHAT_USER_ONLINE_STATUS,
+  ADD_NEW_CHAT_SUCCESS,
 } from "../actions/chat";
 import { LOGOUT } from "../actions/auth";
 
@@ -61,6 +62,12 @@ const chatReducer = (state = initialState, action) => {
           }
           return chat;
         }),
+      };
+
+    case ADD_NEW_CHAT_SUCCESS:
+      return {
+        ...state,
+        chats: [...state.chats, action.newChat],
       };
 
     default:

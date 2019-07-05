@@ -76,7 +76,7 @@ div.all-chats-list a.single-chat:first-child {
 }
 
 div.all-chats-list a.single-chat.active {
-  background: rgba(52, 58, 64, .1);
+  background: rgba(52, 58, 64, .25);
 }
 
 div.all-chats-list a.single-chat:hover {

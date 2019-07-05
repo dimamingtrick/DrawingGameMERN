@@ -33,6 +33,11 @@ div.all-chats-list div.single-chat-partner-avatar {
   background-position: center!important;
   margin-right: 10px;
   align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  pointer-events: none;
 }
 
 div.user-online-circle {

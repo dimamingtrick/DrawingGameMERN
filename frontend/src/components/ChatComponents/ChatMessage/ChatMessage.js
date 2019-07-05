@@ -8,7 +8,7 @@ import defaultAvatar from "../../../assets/defaultAvatar.png";
 import { socket } from "../../../pages/DashboardContainer/DashboardContainer";
 import "./chat-message.scss";
 
-const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
+const ChatMessage = ({ message, userFrom, user, likeMessage, isGroupChat = false }) => {
   const otherUserReadMessage =
     message.readBy.length === 1 && message.userId === user._id;
 
@@ -66,6 +66,9 @@ const ChatMessage = ({ message, userFrom, user, likeMessage }) => {
         </div>
         <div className="message-date">
           <div className="single-message-date">
+            {isGroupChat && (
+              <div className="group-chat-message-username">{userFrom.login}</div>
+            )}
             {message.updatedAt
               ? `Edited ${moment(message.updatedAt).format(
                   "HH:mm:ss DD/MM/YYYY"

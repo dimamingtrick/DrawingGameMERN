@@ -31,31 +31,46 @@ const ChatSidebarListItem = ({
         <div className="unread-messages-count">{unreadMessagesCount}</div>
       </CSSTransition>
 
-      <CSSTransition
-        in={userItem.isOnline}
-        timeout={200}
-        classNames="unreadChatMessages"
-        unmountOnExit
-      >
-        <div className="user-online-circle" />
-      </CSSTransition>
+      {!name && (
+        <CSSTransition
+          in={userItem.isOnline}
+          timeout={200}
+          classNames="unreadChatMessages"
+          unmountOnExit
+        >
+          <div className="user-online-circle" />
+        </CSSTransition>
+      )}
 
-      <div
-        className="single-chat-partner-avatar"
-        style={{
-          background: `url('${
-            userItem.avatar ? userItem.avatar : defaultAvatar
-          }')`,
-        }}
-      />
+      {name ? (
+        <div
+          className="single-chat-partner-avatar"
+          style={{
+            background: `#000`,
+          }}
+        >
+          {(name[0] + name[1]).toUpperCase()}
+        </div>
+      ) : (
+        <div
+          className="single-chat-partner-avatar"
+          style={{
+            background: `url('${
+              userItem.avatar ? userItem.avatar : defaultAvatar
+            }')`,
+          }}
+        />
+      )}
+
       <div className="single-chat-textfields">
         <div className="single-chat-user-data">
           {name ? name : userItem.login}
         </div>
         <div className="single-chat-last-message">
           <span>
-            {lastMessage &&
-              (lastMessage.type === "text" ? lastMessage.message : "...")}
+            {lastMessage && lastMessage.type === "text"
+              ? lastMessage.message
+              : "..."}
           </span>
         </div>
       </div>

@@ -14,6 +14,7 @@ import {
   updateChat,
   getUnreadMessagesCount,
   userChangeOnlineStatus,
+  chatAddSuccess,
 } from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
 import "./chats-page.css";
@@ -29,6 +30,7 @@ const ChatsPage = ({
   updateChat,
   getUnreadMessagesCount,
   userChangeOnlineStatus,
+  chatAddSuccess,
 }) => {
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
@@ -96,6 +98,13 @@ const ChatsPage = ({
     setState({ addChatModalIsOpen: !state.addChatModalIsOpen });
   };
 
+  const addNewChatCallback = newChat => {
+    chatAddSuccess(newChat);
+    history.push(`/app/chats/${newChat._id}`);
+    const chatsList = document.querySelector(".chats-list-wrapper");
+    chatsList.scrollTop = chatsList.scrollHeight;
+  };
+
   return (
     <Container
       fluid
@@ -114,8 +123,10 @@ const ChatsPage = ({
             location={location}
           />
           <AddNewChatModal
+            user={user}
             isOpen={state.addChatModalIsOpen}
             toggle={toggleAddChatModal}
+            chatAddSuccess={addNewChatCallback}
           />
           <div className="single-chat-display">
             <Route path="/app/chats" exact component={ChatIsNotSelected} />
@@ -134,5 +145,11 @@ export default connect(
       user: store.auth.user,
     };
   },
-  { getAllChats, updateChat, getUnreadMessagesCount, userChangeOnlineStatus }
+  {
+    getAllChats,
+    updateChat,
+    getUnreadMessagesCount,
+    userChangeOnlineStatus,
+    chatAddSuccess,
+  }
 )(ChatsPage);

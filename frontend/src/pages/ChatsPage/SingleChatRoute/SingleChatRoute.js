@@ -32,14 +32,6 @@ const userMessageContext = event =>
   !event.target.className !== "single-message" &&
   !event.target.className.includes("my-message");
 
-// Show context menu if user clicks other users messages
-// const otherUserMessageContext = event =>
-//   event.target.closest(".single-message") &&
-//   !event.target.closest(".my-message") &&
-//   event.target.className.includes("message") &&
-//   !event.target.className !== "single-message" &&
-//   !event.target.className.includes("my-message");
-
 function SingleChatRoute({
   user,
   match: {
@@ -49,6 +41,9 @@ function SingleChatRoute({
   gameSettings,
 }) {
   const [userIsTyping, setUserIsTyping] = useState(false);
+  const [selectedContextMenuMessage, setSelectedContextMenuMessage] = useState(
+    null
+  );
   const [state, setState] = mainStateHook({
     loading: true,
     chat: {},
@@ -61,6 +56,8 @@ function SingleChatRoute({
     deletingError: "",
 
     editedMessage: null,
+
+    selectedContextMenuMessage: null,
   });
 
   const getNewMessageInState = newMessage => {
@@ -182,7 +179,7 @@ function SingleChatRoute({
         chatId,
         message,
         file ? "image" : "text"
-      ).catch(err => {
+      ).catch(() => {
         setState({
           sending: false,
         });
@@ -191,10 +188,15 @@ function SingleChatRoute({
   };
 
   const onContextMenuOpen = (event = null) => {
-    if (event)
+    if (event) {
       selectedElementId = event.target
         .closest(".message-wrapper")
         .getAttribute("data-id");
+
+      setSelectedContextMenuMessage(
+        state.messages.find(i => i._id === selectedElementId)
+      );
+    }
   };
 
   const toggleDeleteModal = () => {
@@ -209,7 +211,6 @@ function SingleChatRoute({
   const deleteMessageConfirmed = () => {
     setState({ isDeleting: true, deletingError: false });
     ChatService.deleteMessage(chatId, selectedElementId).catch(err => {
-      console.log("ERR", err);
       setState({ isDeleting: false, deletingError: err.message });
     });
   };
@@ -231,6 +232,7 @@ function SingleChatRoute({
       editedMessage: null,
       inputValue: "",
     });
+    setSelectedContextMenuMessage(null);
     selectedElementId = null;
   };
 
@@ -267,6 +269,7 @@ function SingleChatRoute({
                   userFrom={chat.users.find(u => u._id === msg.userId)}
                   user={user}
                   likeMessage={likeMessage}
+                  isGroupChat={chat.name !== ""}
                 />
               </CSSTransition>
             ))}
@@ -297,28 +300,21 @@ function SingleChatRoute({
 
       {/** Right click on users message */}
       <ContextMenu
+        key={messages} // use this to rerender contextmenu when messages are loaded
         showContextMenu={userMessageContext}
         onContextMenuOpen={onContextMenuOpen}
       >
         <div className="menu-option" onClick={toggleDeleteModal}>
           Delete
         </div>
-        <div className="menu-option" onClick={toggleEditMessageState}>
-          Edit
-        </div>
+        {selectedContextMenuMessage &&
+          selectedContextMenuMessage.type === "text" && (
+            <div className="menu-option" onClick={toggleEditMessageState}>
+              Edit
+            </div>
+          )}
         <div className="menu-option">Close</div>
       </ContextMenu>
-
-      {/** Right click on other users messages */}
-      {/* <ContextMenu
-        showContextMenu={otherUserMessageContext}
-        onContextMenuOpen={onContextMenuOpen}
-      >
-        <div className="menu-option" onClick={likeMessage}>
-          Like
-        </div>
-        <div className="menu-option">Close</div>
-      </ContextMenu> */}
     </>
   );
 }

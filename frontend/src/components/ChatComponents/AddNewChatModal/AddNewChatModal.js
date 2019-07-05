@@ -22,9 +22,10 @@ const initialState = {
   selectUsers: [],
   isSubmitting: false,
   submittingError: "",
+  errors: [],
 };
 
-const AddNewChatModal = ({ isOpen, toggle }) => {
+const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
   const [state, setState] = mainStateHook(initialState);
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const AddNewChatModal = ({ isOpen, toggle }) => {
       UserService.getAllUsers()
         .then(res => {
           setState({
-            users: res.users,
+            users: res.users.filter(i => i._id !== user._id),
             usersLoading: false,
           });
         })
@@ -48,6 +49,9 @@ const AddNewChatModal = ({ isOpen, toggle }) => {
   const changeInputValue = e => {
     setState({
       inputValue: e.target.value,
+      ...(state.errors.find(i => i.field === "name")
+        ? { errors: state.errors.filter(i => i.field !== "name") }
+        : {}),
     });
   };
 
@@ -56,7 +60,12 @@ const AddNewChatModal = ({ isOpen, toggle }) => {
       .filter(i => i.selected)
       .map(i => i.value);
 
-    setState({ selectedUsers });
+    setState({
+      selectedUsers,
+      ...(state.errors.find(i => i.field === "users")
+        ? { errors: state.errors.filter(i => i.field !== "users") }
+        : {}),
+    });
   };
 
   const addNewChat = () => {
@@ -64,10 +73,14 @@ const AddNewChatModal = ({ isOpen, toggle }) => {
     ChatService.addNewChat({
       name: state.inputValue,
       users: state.selectedUsers,
-    }).then(res => {
-      console.log(res);
-      closeModal();
-    });
+    })
+      .then(res => {
+        chatAddSuccess(res);
+        closeModal();
+      })
+      .catch(errors => {
+        setState({ isSubmitting: false, errors });
+      });
   };
 
   return (
@@ -116,13 +129,22 @@ const AddNewChatModal = ({ isOpen, toggle }) => {
           </FormGroup>
 
           <FormGroup className="add-chat-modal-footer">
-            <div className="todo-error">{state.submittingError}</div>
+            {state.errors.length > 0 && (
+              <div className="add-chat-errors-wrapper">
+                {state.errors.map(error => (
+                  <div key={error.field} className="todo-error add-chat-error">
+                    {error.message}
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="form-button-wrapper">
               <Button
                 outline
                 className="confirm-button"
                 color="info"
                 onClick={addNewChat}
+                disabled={state.errors.length > 0}
               >
                 {state.isSubmitting ? (
                   <Spinner size="sm" color="#fff" />

@@ -282,14 +282,24 @@ router.put("/:id/messages/:messageId", async (req, res) => {
  */
 router.post("/add-new", async (req, res) => {
   const { userId, name, users } = req.body;
-  console.log(name, users);
+
+  const errors = [];
+  if (!name) errors.push({field: 'name', message: 'Name is required'});
+  if (!users) errors.push({field:'users', message: 'You must add users to group chat'});
+  if (users && users.length < 2) errors.push({field: 'users', message: 'You must invite at least 2 users to group chat'});
+
+  if(errors.length > 0) return res.status(400).json(errors);
+
   const chat = new Chat({
     name,
-    users: users.map(i => objectId(i)),
+    users: [
+      ...users.map(i => objectId(i)),
+      objectId(userId)
+    ],
   });
   const newChat = await chat.save();
 
-  return res.json({ newChat });
+  return res.json(newChat);
 });
 
 module.exports = router;

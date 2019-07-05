@@ -149,9 +149,12 @@ div.single-message:first-child {
   padding-top: 5px;
 }
 
+
 div.single-message:last-of-type {
-  margin-bottom: 55px!important;
   margin-bottom: 0!important;
+}
+.game-card div.single-message:last-of-type {
+  margin-bottom: 55px!important;
 }
 div.single-chat-display div.single-message:last-of-type {
   margin-bottom: 55px!important;

@@ -13,8 +13,12 @@ div.chat-sidebar-border {
   width: 5px;
   height: 100%;
   background: rgba(52, 58, 64, .75);
-  cursor: pointer;
+  cursor: ew-resize;
   margin-left: auto;
+  transition: all .25s;
+}
+div.chat-sidebar-border:hover {
+  background: rgba(52, 58, 64, 1);
 }
 
 div.chats-list-wrapper {
