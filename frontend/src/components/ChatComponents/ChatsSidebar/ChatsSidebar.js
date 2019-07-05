@@ -1,18 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Button } from "reactstrap";
-import { FaAngleRight } from "react-icons/fa";
 
 import ChatSidebarListItem from "./ChatSidebarListItem/ChatSidebarListItem";
 import "./chat-sidebar.css";
 
 const ChatsSidebar = ({ chats, location, user, addNewChat }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleChatSidebarState = () => {
-    setIsOpen(!isOpen);
-  };
-
   useEffect(() => {
     /**
      * code example
@@ -41,21 +34,11 @@ const ChatsSidebar = ({ chats, location, user, addNewChat }) => {
   return (
     <div
       id="sidebar"
-      className={`all-chats-list chat-sidebar ${
-        isOpen ? "chat-sidebar-isOpen" : ""
-      }`}
+      className="all-chats-list chat-sidebar"
       style={{
         width: chatSidebarWidth ? chatSidebarWidth : 65,
       }}
     >
-      <Button
-        className="toggle-chat-sidebar-btn"
-        onClick={toggleChatSidebarState}
-        color="secondary"
-      >
-        <FaAngleRight />
-      </Button>
-
       <div className="chat-sidebar-item">
         <Button
           onClick={addNewChat}
