@@ -67,7 +67,7 @@ const chatReducer = (state = initialState, action) => {
     case ADD_NEW_CHAT_SUCCESS:
       return {
         ...state,
-        chats: [...state.chats, action.newChat],
+        chats: [action.newChat, ...state.chats],
       };
 
     default:

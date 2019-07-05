@@ -2,15 +2,16 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Button } from "reactstrap";
 
+import { scrollInChatList } from "../../../helpers";
 import ChatSidebarListItem from "./ChatSidebarListItem/ChatSidebarListItem";
 import "./chat-sidebar.css";
 
 const ChatsSidebar = ({ chats, location, user, addNewChat }) => {
   useEffect(() => {
-    /**
-     * code example
-     * https://plnkr.co/edit/ZiOgIXOacDwAL7g65STH?p=preview
-     */
+    const selectedChatId = location.pathname.replace("/app/chats/", "");
+    if (selectedChatId && location.pathname !== "/app/chats")
+      scrollInChatList(`chatSidebarItem-${selectedChatId}`);
+
     const slider = document.getElementById("sidebarBorder");
     slider.onmousedown = () => {
       document.onmousemove = e => {

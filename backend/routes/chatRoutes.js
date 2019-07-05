@@ -61,8 +61,8 @@ router.get("/", async (req, res) => {
       return chat;
     })
   );
-
-  return res.json(fullChats);
+    
+  return res.json(fullChats.sort((a, b) => new Date(b.date) - new Date(a.date)));
 });
 
 /**

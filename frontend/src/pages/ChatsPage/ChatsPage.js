@@ -18,6 +18,7 @@ import {
 } from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
 import "./chats-page.css";
+import { scrollInChatList } from "../../helpers";
 
 let isStillLoading;
 
@@ -54,6 +55,7 @@ const ChatsPage = ({
 
     if (chats.length === 0) fetchData();
     else history.push(`/app/chats/${chats[0]._id}`);
+
     return () => clearInterval(isStillLoading);
   }, []);
 
@@ -101,8 +103,7 @@ const ChatsPage = ({
   const addNewChatCallback = newChat => {
     chatAddSuccess(newChat);
     history.push(`/app/chats/${newChat._id}`);
-    const chatsList = document.querySelector(".chats-list-wrapper");
-    chatsList.scrollTop = chatsList.scrollHeight;
+    scrollInChatList(`chatSidebarItem-${newChat._id}`);
   };
 
   return (

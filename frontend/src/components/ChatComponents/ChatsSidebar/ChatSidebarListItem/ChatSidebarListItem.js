@@ -19,6 +19,7 @@ const ChatSidebarListItem = ({
     unreadMessagesCount !== undefined && unreadMessagesCount !== 0;
   return (
     <Link
+      id={`chatSidebarItem-${_id}`}
       to={`/app/chats/${_id}`}
       className={`single-chat ${isActive ? "active" : ""}`}
     >
@@ -49,7 +50,7 @@ const ChatSidebarListItem = ({
             background: `#000`,
           }}
         >
-          {(name[0] + name[1]).toUpperCase()}
+          {`${name[0]}${name[1] ? name[1] : ""}`.toUpperCase()}
         </div>
       ) : (
         <div

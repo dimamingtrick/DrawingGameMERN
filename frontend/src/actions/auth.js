@@ -47,6 +47,6 @@ export const updateProfile = (data, type = "text") => async dispatch => {
 };
 
 export const logout = () => {
-  localStorage.removeItem("token");
+  localStorage.clear();
   return { type: LOGOUT };
 };
