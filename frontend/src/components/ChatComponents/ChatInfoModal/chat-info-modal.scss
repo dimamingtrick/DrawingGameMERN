@@ -1,0 +1,41 @@
+.chat-info-modal {
+  
+  .created-at {
+    text-align: right;
+
+    span {
+      font-weight: bold;
+      padding-left: 5px;
+    }
+  }
+
+  .users-in-chat {
+    padding: 0 25px;
+    margin: 10px 0 15px 0;
+
+    .single-user-in-chat {
+      display: flex;
+      align-items: center;
+      padding: 5px 0;
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        background-size: cover !important;
+        background-position: center !important;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+      }
+
+      .login {
+        font-size: 17px;
+        padding: 0 15px;
+        font-weight: bold;
+      }
+    }
+  }
+  
+  .close-info-button {
+    width: 100%!important;
+  }
+}

@@ -13,18 +13,16 @@ import {
 
 import { UserService, ChatService } from "../../../services";
 import { mainStateHook } from "../../../hooks";
-import "./add-new-chat.scss";
 
 const initialState = {
-  inputValue: "",
   usersLoading: true,
   users: [],
   selectedUsers: [],
   isSubmitting: false,
-  errors: [],
+  error: "",
 };
 
-const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
+const InviteToChatModal = ({ chat, user, isOpen, toggle, inviteSuccess }) => {
   const [state, setState] = mainStateHook(initialState);
 
   useEffect(() => {
@@ -45,15 +43,6 @@ const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
     toggle();
   };
 
-  const changeInputValue = e => {
-    setState({
-      inputValue: e.target.value,
-      ...(state.errors.find(i => i.field === "name")
-        ? { errors: state.errors.filter(i => i.field !== "name") }
-        : {}),
-    });
-  };
-
   const selectUsers = e => {
     const selectedUsers = Array.from(e.target.options)
       .filter(i => i.selected)
@@ -61,24 +50,21 @@ const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
 
     setState({
       selectedUsers,
-      ...(state.errors.find(i => i.field === "users")
-        ? { errors: state.errors.filter(i => i.field !== "users") }
-        : {}),
+      error: "",
     });
   };
 
-  const addNewChat = () => {
+  const inviteToChat = () => {
     setState({ isSubmitting: true });
-    ChatService.addNewChat({
-      name: state.inputValue,
+    ChatService.inviteToChat(chat._id, {
       users: state.selectedUsers,
     })
       .then(res => {
-        chatAddSuccess(res);
+        inviteSuccess(res);
         closeModal();
       })
-      .catch(errors => {
-        setState({ isSubmitting: false, errors });
+      .catch(error => {
+        setState({ isSubmitting: false, error: error.message });
       });
   };
 
@@ -91,21 +77,9 @@ const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
       modalTransition={{ timeout: 25 }}
       backdropTransition={{ timeout: 25 }}
     >
-      <ModalHeader>Add New Chat</ModalHeader>
+      <ModalHeader>Invite users to chat</ModalHeader>
       <ModalBody>
         <Form>
-          <FormGroup>
-            <Label for="chatName">Chat Name</Label>
-            <Input
-              type="text"
-              name="chatName"
-              id="chatName"
-              placeholder="Enter chat name..."
-              value={state.inputValue}
-              onChange={changeInputValue}
-            />
-          </FormGroup>
-
           <FormGroup className="user-select">
             <Label for="users">Select users</Label>
             {state.usersLoading ? (
@@ -128,13 +102,9 @@ const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
           </FormGroup>
 
           <FormGroup className="add-chat-modal-footer">
-            {state.errors.length > 0 && (
+            {state.error && (
               <div className="add-chat-errors-wrapper">
-                {state.errors.map(error => (
-                  <div key={error.field} className="todo-error add-chat-error">
-                    {error.message}
-                  </div>
-                ))}
+                <div className="todo-error add-chat-error">{state.error}</div>
               </div>
             )}
             <div className="form-button-wrapper">
@@ -142,13 +112,13 @@ const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
                 outline
                 className="confirm-button"
                 color="info"
-                onClick={addNewChat}
-                disabled={state.errors.length > 0}
+                onClick={inviteToChat}
+                disabled={state.error !== ""}
               >
                 {state.isSubmitting ? (
                   <Spinner size="sm" color="#fff" />
                 ) : (
-                  "Add Chat"
+                  "Invite"
                 )}
               </Button>
               <Button
@@ -168,4 +138,4 @@ const AddNewChatModal = ({ user, isOpen, toggle, chatAddSuccess }) => {
   );
 };
 
-export default AddNewChatModal;
+export default InviteToChatModal;

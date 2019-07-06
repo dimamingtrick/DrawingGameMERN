@@ -20,8 +20,11 @@ const ChatsSidebar = ({
   addNewChat,
   deleteChat,
   leaveChat,
+  selectedChat,
+  setSelectedChat,
+  inviteUserToChat,
+  checkChatInfo
 }) => {
-  const [selectedChat, setSelectedChat] = useState(null);
   const [confirmType, setConfirmType] = useState("");
 
   const confirmCallback = () => {
@@ -82,7 +85,6 @@ const ChatsSidebar = ({
   };
 
   const chatSidebarWidth = localStorage.getItem("chatSidebarWidth");
-
   return (
     <div
       id="sidebar"
@@ -136,6 +138,12 @@ const ChatsSidebar = ({
             Leave Chat
           </div>
         )}
+        <div className="menu-option" onClick={inviteUserToChat}>
+          Invite to chat
+        </div>
+        <div className="menu-option" onClick={checkChatInfo}>
+          Info
+        </div>
       </ContextMenu>
 
       {/** Different modals if user want to delete/leave chat */}

@@ -306,10 +306,20 @@ router.post("/", async (req, res) => {
     createdBy: objectId(userId),
   });
   const newChat = await chat.save();
+  const fullChatData = await Chat.findOne({
+    _id: objectId(newChat._id),
+  }).populate([
+    {
+      path: "users",
+      select: "-password",
+    },
+    "lastMessage",
+  ]);
+  1;
 
   const socket = req.app.get("socket");
-  users.forEach(u => socket.emit(`add-new-chat-${u}`, newChat));
-  return res.json(newChat);
+  users.forEach(u => socket.emit(`add-new-chat-${u}`, fullChatData));
+  return res.json(fullChatData);
 });
 
 /**
@@ -369,6 +379,46 @@ router.get("/:id/leave", async (req, res) => {
           .status(404)
           .json({ message: "You can't leave chat that you are not in" });
       if (!err && chat) return res.json("Chat was leaved");
+    });
+});
+
+/**
+ * PUT /chats/:id/invite
+ */
+router.put("/:id/invite", async (req, res) => {
+  const { userId, users } = req.body;
+  const { id: chatId } = req.params;
+
+  if (!users || users.length === 0)
+    return res
+      .status(400)
+      .json({ message: "You must select at least one user" });
+
+  Chat.findOneAndUpdate(
+    {
+      _id: objectId(chatId),
+      users: objectId(userId),
+    },
+    {
+      $addToSet: {
+        users: [...users.map(i => objectId(i))],
+      },
+    },
+    { new: true }
+  )
+    .populate([
+      {
+        path: "users",
+        select: "-password",
+      },
+      "lastMessage",
+    ])
+    .lean()
+    .exec(async (err, chat) => {
+      if (err) return res.status(400).json({ message: "Error, try again" });
+      if (!chat)
+        return res.status(404).json({ message: "Chat doesn't exists" });
+      if (!err && chat) return res.json(chat);
     });
 });
 

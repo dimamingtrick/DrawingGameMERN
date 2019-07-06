@@ -5,6 +5,8 @@ import ChatMessage from "./ChatMessage/ChatMessage";
 import ChatsSidebar from "./ChatsSidebar/ChatsSidebar";
 import ChatIsNotSelected from "./ChatIsNotSelected";
 import AddNewChatModal from "./AddNewChatModal/AddNewChatModal";
+import InviteToChatModal from "./InviteToChatModal/InviteToChatModal";
+import ChatInfoModal from "./ChatInfoModal/ChatInfoModal";
 
 export {
   ChatMessagesContainer,
@@ -14,4 +16,6 @@ export {
   ChatsSidebar,
   ChatIsNotSelected,
   AddNewChatModal,
+  InviteToChatModal,
+  ChatInfoModal,
 };

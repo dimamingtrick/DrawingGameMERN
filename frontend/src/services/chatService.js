@@ -62,6 +62,14 @@ class ChatService {
       url: `/chats/${chatId}/leave`,
     });
   }
+
+  inviteToChat(chatId, users) {
+    return api({
+      method: "PUT",
+      url: `/chats/${chatId}/invite`,
+      body: users,
+    });
+  }
 }
 
 export default new ChatService();

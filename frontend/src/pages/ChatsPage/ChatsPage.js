@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { Container, Spinner } from "reactstrap";
@@ -7,6 +7,8 @@ import {
   ChatsSidebar,
   ChatIsNotSelected,
   AddNewChatModal,
+  InviteToChatModal,
+  ChatInfoModal,
 } from "../../components/ChatComponents";
 import { mainStateHook } from "../../hooks";
 import {
@@ -15,6 +17,7 @@ import {
   getUnreadMessagesCount,
   userChangeOnlineStatus,
   chatAddSuccess,
+  inviteToChatSuccess,
 } from "../../actions/chat";
 import { socket } from "../DashboardContainer/DashboardContainer";
 import "./chats-page.css";
@@ -32,11 +35,15 @@ const ChatsPage = ({
   getUnreadMessagesCount,
   userChangeOnlineStatus,
   chatAddSuccess,
+  inviteToChatSuccess,
 }) => {
+  const [selectedChat, setSelectedChat] = useState(null);
   const [state, setState] = mainStateHook({
     load: chats.length === 0,
     longLoading: false,
     addChatModalIsOpen: false,
+    inviteModalIsOpen: false,
+    infoModalIsOpen: false,
   });
 
   const loadState = useRef(state.load);
@@ -108,6 +115,14 @@ const ChatsPage = ({
     scrollInChatList(`chatSidebarItem-${newChat._id}`);
   };
 
+  const toggleInviteModal = () => {
+    setState({ inviteModalIsOpen: !state.inviteModalIsOpen });
+  };
+
+  const toggleChatInfoModal = () => {
+    setState({ infoModalIsOpen: !state.infoModalIsOpen });
+  };
+
   return (
     <Container
       fluid
@@ -125,12 +140,28 @@ const ChatsPage = ({
             chats={chats}
             location={location}
             history={history}
+            selectedChat={selectedChat}
+            setSelectedChat={setSelectedChat}
+            inviteUserToChat={toggleInviteModal}
+            checkChatInfo={toggleChatInfoModal}
           />
           <AddNewChatModal
             user={user}
             isOpen={state.addChatModalIsOpen}
             toggle={toggleAddChatModal}
             chatAddSuccess={addNewChatCallback}
+          />
+          <InviteToChatModal
+            chat={selectedChat}
+            user={user}
+            isOpen={state.inviteModalIsOpen}
+            toggle={toggleInviteModal}
+            inviteSuccess={inviteToChatSuccess}
+          />
+          <ChatInfoModal
+            chat={selectedChat}
+            isOpen={state.infoModalIsOpen}
+            toggle={toggleChatInfoModal}
           />
           <div className="single-chat-display">
             <Route path="/app/chats" exact component={ChatIsNotSelected} />
@@ -155,5 +186,6 @@ export default connect(
     getUnreadMessagesCount,
     userChangeOnlineStatus,
     chatAddSuccess,
+    inviteToChatSuccess,
   }
 )(ChatsPage);

@@ -7,6 +7,7 @@ import {
   ADD_NEW_CHAT_SUCCESS,
   CHAT_DELETE_SUCCESS,
   CHAT_LEAVE_SUCCESS,
+  INVITE_TO_CHAT_SUCCESS,
 } from "../actions/chat";
 import { LOGOUT } from "../actions/auth";
 
@@ -41,6 +42,7 @@ const chatReducer = (state = initialState, action) => {
       };
 
     case CHAT_UPDATE:
+    case INVITE_TO_CHAT_SUCCESS:
       return {
         ...state,
         chats: state.chats.map(i => {

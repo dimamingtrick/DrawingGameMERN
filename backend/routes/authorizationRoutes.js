@@ -86,12 +86,14 @@ router.post("/registration", async (req, res) => {
     if (err)
       return res.status(400).json({ message: { mainError: "Password error" } });
 
+    const usersCount = await User.find({}).count();
+
     const addUser = new User({
       login,
       email,
       password: hashedPassword,
       createdAt: new Date(),
-      role: "user",
+      role: usersCount === 0 ? "admin" : "user",
     });
 
     const newUser = await addUser.save();

@@ -8,6 +8,7 @@ export const CHAT_USER_ONLINE_STATUS = "CHAT_USER_ONLINE_STATUS";
 export const ADD_NEW_CHAT_SUCCESS = "ADD_NEW_CHAT_SUCCESS";
 export const CHAT_DELETE_SUCCESS = "CHAT_DELETE_SUCCESS";
 export const CHAT_LEAVE_SUCCESS = "CHAT_LEAVE_SUCCESS";
+export const INVITE_TO_CHAT_SUCCESS = "INVITE_TO_CHAT_SUCCESS";
 
 export const getAllChats = () => async dispatch => {
   try {
@@ -59,4 +60,9 @@ export const leaveChat = chatId => async dispatch => {
   } catch (err) {
     throw err.message;
   }
-}
+};
+
+export const inviteToChatSuccess = updatedChat => ({
+  type: INVITE_TO_CHAT_SUCCESS,
+  updatedChat,
+});
