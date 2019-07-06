@@ -43,8 +43,23 @@ class ChatService {
   addNewChat(newChatData) {
     return api({
       method: "POST",
-      url: "/chats/add-new",
+      url: "/chats",
       body: newChatData,
+    });
+  }
+
+  deleteChat(chatId) {
+    return api({
+      method: "DELETE",
+      url: `/chats/${chatId}`,
+      body: {},
+    });
+  }
+
+  leaveChat(chatId) {
+    return api({
+      method: "GET",
+      url: `/chats/${chatId}/leave`,
     });
   }
 }

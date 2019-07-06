@@ -22,6 +22,7 @@ const ChatSidebarListItem = ({
       id={`chatSidebarItem-${_id}`}
       to={`/app/chats/${_id}`}
       className={`single-chat ${isActive ? "active" : ""}`}
+      chat-id={_id}
     >
       <CSSTransition
         in={showUnreadMessagesCount}

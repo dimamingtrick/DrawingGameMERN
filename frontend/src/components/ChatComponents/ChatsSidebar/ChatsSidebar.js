@@ -1,12 +1,46 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Button } from "reactstrap";
 
+import { useConfirmModal } from "../../../hooks";
+import { deleteChat, leaveChat } from "../../../actions/chat";
 import { scrollInChatList } from "../../../helpers";
+import ContextMenu from "../../ContextMenu/ContextMenu";
+import { ConfirmModal } from "../../Modals";
 import ChatSidebarListItem from "./ChatSidebarListItem/ChatSidebarListItem";
 import "./chat-sidebar.css";
 
-const ChatsSidebar = ({ chats, location, user, addNewChat }) => {
+const showContextMenu = event => event.target.closest(".single-chat");
+
+const ChatsSidebar = ({
+  chats,
+  history,
+  location,
+  user,
+  addNewChat,
+  deleteChat,
+  leaveChat,
+}) => {
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [confirmType, setConfirmType] = useState("");
+
+  const confirmCallback = () => {
+    history.push("/app/chats");
+  };
+
+  const deleteChatConfirmed = chatId => {
+    return confirmType === "delete" ? deleteChat(chatId) : leaveChat(chatId);
+  };
+
+  const [
+    setChatId,
+    isOpen,
+    isDeleting,
+    deletingError,
+    toggleDeleteModal,
+    onConfirm,
+  ] = useConfirmModal(deleteChatConfirmed, confirmCallback);
+
   useEffect(() => {
     const selectedChatId = location.pathname.replace("/app/chats/", "");
     if (selectedChatId && location.pathname !== "/app/chats")
@@ -31,7 +65,24 @@ const ChatsSidebar = ({ chats, location, user, addNewChat }) => {
     };
   }, []);
 
+  const onContextMenuOpen = (event = null) => {
+    if (event) {
+      const selectedChatId = event.target
+        .closest(".single-chat")
+        .getAttribute("chat-id");
+
+      setSelectedChat(chats.find(i => i._id === selectedChatId));
+      setChatId(selectedChatId);
+    }
+  };
+
+  const toggleConfirmModal = type => {
+    setConfirmType(type);
+    toggleDeleteModal();
+  };
+
   const chatSidebarWidth = localStorage.getItem("chatSidebarWidth");
+
   return (
     <div
       id="sidebar"
@@ -64,10 +115,55 @@ const ChatsSidebar = ({ chats, location, user, addNewChat }) => {
         className="chat-sidebar-border"
         onDragStart={() => false}
       />
+
+      <ContextMenu
+        key={chats}
+        showContextMenu={showContextMenu}
+        onContextMenuOpen={onContextMenuOpen}
+      >
+        {selectedChat && selectedChat.createdBy === user._id ? (
+          <div
+            className="menu-option"
+            onClick={() => toggleConfirmModal("delete")}
+          >
+            Delete Chat
+          </div>
+        ) : (
+          <div
+            className="menu-option"
+            onClick={() => toggleConfirmModal("leave")}
+          >
+            Leave Chat
+          </div>
+        )}
+      </ContextMenu>
+
+      {/** Different modals if user want to delete/leave chat */}
+      <ConfirmModal
+        isOpen={isOpen}
+        toggle={toggleDeleteModal}
+        isDeleting={isDeleting}
+        deletingError={deletingError}
+        deleteConfirming={onConfirm}
+        headerText={
+          confirmType === "delete"
+            ? "Delete this chat?"
+            : "Do you realy want to leave this chat?"
+        }
+        bodyText={
+          confirmType === "delete"
+            ? "You will not be able to return it"
+            : "You will not be able to return to it"
+        }
+        submitButtonText={confirmType === "delete" ? "Delete" : "Leave"}
+      />
     </div>
   );
 };
 
-export default connect(store => ({
-  user: store.auth.user,
-}))(ChatsSidebar);
+export default connect(
+  store => ({
+    user: store.auth.user,
+  }),
+  { deleteChat, leaveChat }
+)(ChatsSidebar);

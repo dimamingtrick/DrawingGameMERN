@@ -23,6 +23,10 @@ const chatSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "chatMessage",
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 const Chat = mongoose.model("chat", chatSchema);

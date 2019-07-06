@@ -5,6 +5,8 @@ import {
   GET_UNREAD_CHATS_COUNT,
   CHAT_USER_ONLINE_STATUS,
   ADD_NEW_CHAT_SUCCESS,
+  CHAT_DELETE_SUCCESS,
+  CHAT_LEAVE_SUCCESS,
 } from "../actions/chat";
 import { LOGOUT } from "../actions/auth";
 
@@ -68,6 +70,13 @@ const chatReducer = (state = initialState, action) => {
       return {
         ...state,
         chats: [action.newChat, ...state.chats],
+      };
+
+    case CHAT_DELETE_SUCCESS:
+    case CHAT_LEAVE_SUCCESS:
+      return {
+        ...state,
+        chats: state.chats.filter(i => i._id !== action.chatId),
       };
 
     default:

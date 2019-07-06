@@ -69,6 +69,8 @@ app.get("/", async (req, res) => {
 connectDb().then(() => {
   server.listen(3001, function() {
     io.on("connection", socket => {
+      app.set("socket", socket);
+
       /** Use user sockets (online/offline) */
       require("./sockets/usersSockets")(socket, io);
 

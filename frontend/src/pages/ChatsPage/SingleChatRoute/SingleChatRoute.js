@@ -10,7 +10,7 @@ import {
   ChatMessage,
   ChatInput,
 } from "../../../components/ChatComponents";
-import { ConfirmDeleteModal } from "../../../components/Modals";
+import { ConfirmModal } from "../../../components/Modals";
 import ContextMenu from "../../../components/ContextMenu/ContextMenu";
 import { ChatService } from "../../../services";
 import { socket } from "../../DashboardContainer/DashboardContainer";
@@ -288,7 +288,7 @@ function SingleChatRoute({
         closeEditing={closeEditMessageState}
       />
 
-      <ConfirmDeleteModal
+      <ConfirmModal
         isOpen={confirmDeleteModalIsOpen}
         toggle={toggleDeleteModal}
         isDeleting={isDeleting}

@@ -9,7 +9,7 @@ import {
 } from "reactstrap";
 import "./confirm-delete-modal.css";
 
-export default function ConfirmDeleteModal({
+export default function ConfirmModal({
   isOpen,
   toggle,
   isDeleting,
@@ -17,6 +17,7 @@ export default function ConfirmDeleteModal({
   deleteConfirming,
   headerText = "",
   bodyText = "",
+  submitButtonText  = "Confirm"
 }) {
   return (
     <Modal
@@ -37,7 +38,7 @@ export default function ConfirmDeleteModal({
           color="info"
           onClick={deleteConfirming}
         >
-          {isDeleting ? <Spinner size="sm" color="#fff" /> : "Delete"}
+          {isDeleting ? <Spinner size="sm" color="#fff" /> : submitButtonText}
         </Button>
         <Button
           outline

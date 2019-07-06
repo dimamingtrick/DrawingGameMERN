@@ -61,8 +61,10 @@ router.get("/", async (req, res) => {
       return chat;
     })
   );
-    
-  return res.json(fullChats.sort((a, b) => new Date(b.date) - new Date(a.date)));
+
+  return res.json(
+    fullChats.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  );
 });
 
 /**
@@ -277,29 +279,97 @@ router.put("/:id/messages/:messageId", async (req, res) => {
 });
 
 /**
- * POST /chats/add-new
+ * POST /chats
  * Add new chat (confiration between at least 3 users)
  */
-router.post("/add-new", async (req, res) => {
+router.post("/", async (req, res) => {
   const { userId, name, users } = req.body;
 
   const errors = [];
-  if (!name) errors.push({field: 'name', message: 'Name is required'});
-  if (!users) errors.push({field:'users', message: 'You must add users to group chat'});
-  if (users && users.length < 2) errors.push({field: 'users', message: 'You must invite at least 2 users to group chat'});
+  if (!name) errors.push({ field: "name", message: "Name is required" });
+  if (!users)
+    errors.push({
+      field: "users",
+      message: "You must add users to group chat",
+    });
+  if (users && users.length < 2)
+    errors.push({
+      field: "users",
+      message: "You must invite at least 2 users to group chat",
+    });
 
-  if(errors.length > 0) return res.status(400).json(errors);
+  if (errors.length > 0) return res.status(400).json(errors);
 
   const chat = new Chat({
     name,
-    users: [
-      ...users.map(i => objectId(i)),
-      objectId(userId)
-    ],
+    users: [...users.map(i => objectId(i)), objectId(userId)],
+    createdBy: objectId(userId),
   });
   const newChat = await chat.save();
 
+  const socket = req.app.get("socket");
+  users.forEach(u => socket.emit(`add-new-chat-${u}`, newChat));
   return res.json(newChat);
+});
+
+/**
+ * DELETE /chats/:id
+ */
+router.delete("/:id", async (req, res) => {
+  const { userId } = req.body;
+  const { id: chatId } = req.params;
+
+  Chat.findOneAndDelete(
+    {
+      _id: objectId(chatId),
+      createdBy: objectId(userId),
+    },
+    async (err, deletedChat) => {
+      if (err) return res.status(400).json({ message: "Error, try again" });
+      if (!deletedChat)
+        return res.status(404).json({
+          message: "You can't delete chat that wasn't created by you",
+        });
+      if (!err && deletedChat) return res.json("Chat was deleted");
+    }
+  );
+});
+
+/**
+ * GET /chats/:id/leave
+ */
+router.get("/:id/leave", async (req, res) => {
+  const { userId } = req.body;
+  const { id: chatId } = req.params;
+
+  Chat.findOneAndUpdate(
+    {
+      _id: objectId(chatId),
+      users: objectId(userId),
+    },
+    {
+      $pull: {
+        users: objectId(userId),
+      },
+    },
+    { new: true }
+  )
+    .populate([
+      {
+        path: "users",
+        select: "-password",
+      },
+      "lastMessage",
+    ])
+    .lean()
+    .exec(async (err, chat) => {
+      if (err) return res.status(400).json({ message: "Error, try again" });
+      if (!chat)
+        return res
+          .status(404)
+          .json({ message: "You can't leave chat that you are not in" });
+      if (!err && chat) return res.json("Chat was leaved");
+    });
 });
 
 module.exports = router;

@@ -6,7 +6,7 @@ import { Row, Col, ListGroup, Button, Container } from "reactstrap";
 import SingleTodoPage from "./SingleTodoPage/SingleTodoPage";
 import { Fade } from "../../components/Animations/RoutingAnimationTransitions";
 import { TodoItem } from "../../components/TodoList";
-import { ConfirmDeleteModal } from "../../components/Modals";
+import { ConfirmModal } from "../../components/Modals";
 import { getAllTodos, deleteTodo } from "../../actions/todos";
 import { mainStateHook } from "../../hooks";
 
@@ -15,7 +15,7 @@ const ToDoListPage = ({ getAllTodos, todoList, deleteTodo, history }) => {
     load: true,
     isDeleting: false,
     confirmModalIsOpen: false,
-    todoId: null
+    todoId: null,
   });
 
   const fetchAllTodos = () => {
@@ -35,7 +35,7 @@ const ToDoListPage = ({ getAllTodos, todoList, deleteTodo, history }) => {
   const deleteTodoRequest = id => {
     setState({
       confirmModalIsOpen: true,
-      todoId: id
+      todoId: id,
     });
   };
 
@@ -46,7 +46,7 @@ const ToDoListPage = ({ getAllTodos, todoList, deleteTodo, history }) => {
         setState({
           confirmModalIsOpen: false,
           isDeleting: false,
-          todoId: null
+          todoId: null,
         });
       },
       err => {
@@ -95,7 +95,7 @@ const ToDoListPage = ({ getAllTodos, todoList, deleteTodo, history }) => {
         </Col>
       </Row>
 
-      <ConfirmDeleteModal
+      <ConfirmModal
         isOpen={state.confirmModalIsOpen}
         toggle={toggleConfirmModal}
         deleteConfirming={deleteConfirm}
@@ -110,11 +110,11 @@ const ToDoListPage = ({ getAllTodos, todoList, deleteTodo, history }) => {
 export default connect(
   store => {
     return {
-      todoList: store.todo.todoList
+      todoList: store.todo.todoList,
     };
   },
   {
     getAllTodos,
-    deleteTodo
+    deleteTodo,
   }
 )(ToDoListPage);

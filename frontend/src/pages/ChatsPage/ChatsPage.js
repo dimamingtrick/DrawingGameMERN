@@ -61,6 +61,7 @@ const ChatsPage = ({
 
   /** Subscribe to socket events */
   useEffect(() => {
+    socket.on(`add-new-chat-${user._id}`, chatAddSuccess);
     if (chats.length > 0) {
       chats.forEach(chat => {
         /** Get unread chat messages length */
@@ -74,6 +75,7 @@ const ChatsPage = ({
       socket.on("userOnlineStatusChanged", userChangeOnlineStatus);
 
       return () => {
+        socket.off(`add-new-chat-${user._id}`);
         chats.forEach(chat => {
           socket.off("userOnlineStatusChanged");
           socket.off(`chat-${chat._id}-${user._id}-getUnreadMessagesCount`);
@@ -122,6 +124,7 @@ const ChatsPage = ({
             addNewChat={toggleAddChatModal}
             chats={chats}
             location={location}
+            history={history}
           />
           <AddNewChatModal
             user={user}
