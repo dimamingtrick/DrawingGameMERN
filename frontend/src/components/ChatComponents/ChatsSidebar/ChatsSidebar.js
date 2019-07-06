@@ -23,7 +23,7 @@ const ChatsSidebar = ({
   selectedChat,
   setSelectedChat,
   inviteUserToChat,
-  checkChatInfo
+  checkChatInfo,
 }) => {
   const [confirmType, setConfirmType] = useState("");
 

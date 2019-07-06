@@ -1,9 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./context-menu.css";
 
-function ContextMenu({ children, onContextMenuOpen, showContextMenu }) {
+function ContextMenu({
+  children,
+  onContextMenuOpen,
+  showContextMenu,
+  onContextMenuClose = () => {},
+}) {
   const [visible, setVisible] = useState(false);
   const root = useRef(null);
+
+  const closeContextMenu = () => {
+    onContextMenuClose();
+    setVisible(false);
+  };
 
   const _handleContextMenu = event => {
     if (showContextMenu(event)) {
@@ -40,35 +50,38 @@ function ContextMenu({ children, onContextMenuOpen, showContextMenu }) {
         root.current.style.top = `${clickY - rootH - 5}px`;
       }
     } else {
-      setVisible(false);
+      closeContextMenu();
     }
   };
 
   const _handleClick = event => {
     const wasOutside = !(event.target.contains === root.current);
-
     if (wasOutside && visible) {
-      setVisible(false);
+      closeContextMenu();
     }
   };
 
   const _handleScroll = () => {
     if (visible) {
-      setVisible(false);
+      closeContextMenu();
     }
   };
 
   useEffect(() => {
-    document.addEventListener("contextmenu", _handleContextMenu);
     document.addEventListener("click", _handleClick);
     document.addEventListener("scroll", _handleScroll);
-
     return () => {
-      document.removeEventListener("contextmenu", _handleContextMenu);
       document.removeEventListener("click", _handleClick);
       document.removeEventListener("scroll", _handleScroll);
     };
   }, [visible]);
+
+  useEffect(() => {
+    document.addEventListener("contextmenu", _handleContextMenu);
+    return () => {
+      document.removeEventListener("contextmenu", _handleContextMenu);
+    };
+  });
 
   return (
     (visible || null) && (
