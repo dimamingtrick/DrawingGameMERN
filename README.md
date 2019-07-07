@@ -4,6 +4,8 @@ React.js + Express.js + MongoDb game
 
 Application created with MERN (React + Express + Mongo + Node + Socket.io) stack.
 
+The whole application (not including 1 component) is fully created with React Hooks.
+
 First pages you see are the simple authorization pages (login and registration).
 After registration first ever user will be 'admin' role.
 
