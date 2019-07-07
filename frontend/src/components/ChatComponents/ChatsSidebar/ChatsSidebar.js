@@ -138,9 +138,11 @@ const ChatsSidebar = ({
             Leave Chat
           </div>
         )}
-        <div className="menu-option" onClick={inviteUserToChat}>
-          Invite to chat
-        </div>
+        {selectedChat && selectedChat.name ? (
+          <div className="menu-option" onClick={inviteUserToChat}>
+            Invite to chat
+          </div>
+        ): null}
         <div className="menu-option" onClick={checkChatInfo}>
           Info
         </div>
