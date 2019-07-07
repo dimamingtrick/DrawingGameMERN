@@ -29,8 +29,11 @@ const InviteToChatModal = ({ chat, user, isOpen, toggle, inviteSuccess }) => {
     if (isOpen) {
       UserService.getAllUsers()
         .then(res => {
+          let users = res.users.filter(i => i._id !== user._id);
+          chat.users.forEach(i => (users = users.filter(u => u._id !== i._id)));
+
           setState({
-            users: res.users.filter(i => i._id !== user._id),
+            users,
             usersLoading: false,
           });
         })

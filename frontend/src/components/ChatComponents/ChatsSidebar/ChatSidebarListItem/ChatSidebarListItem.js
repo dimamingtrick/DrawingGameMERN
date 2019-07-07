@@ -48,7 +48,7 @@ const ChatSidebarListItem = ({
         <div
           className="single-chat-partner-avatar"
           style={{
-            background: `#000`,
+            background: `rgba(0, 0, 0, .35)`,
           }}
         >
           {`${name[0]}${name[1] ? name[1] : ""}`.toUpperCase()}

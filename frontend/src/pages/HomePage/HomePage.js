@@ -11,6 +11,7 @@ const HomePage = () => {
   return (
     <Container>
       <h1>Home page</h1>
+      <h2>Add description later</h2>
       <h5>{`Load state is - ${load}`}</h5>
       <Button onClick={toggleLoadState}>Toggle count</Button>
     </Container>

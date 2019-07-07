@@ -12,6 +12,8 @@
   .users-in-chat {
     padding: 0 25px;
     margin: 10px 0 15px 0;
+    max-height: 200px;
+    overflow-y: auto;
 
     .single-user-in-chat {
       display: flex;

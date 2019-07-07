@@ -38,9 +38,9 @@ const Root = ({ isLoggedIn, authenticate }) => {
 };
 
 export default connect(
-  store => {
+  ({ auth }) => {
     return {
-      isLoggedIn: store.auth.isLoggedIn,
+      isLoggedIn: auth.isLoggedIn,
     };
   },
   { authenticate }
