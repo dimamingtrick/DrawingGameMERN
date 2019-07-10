@@ -4,6 +4,14 @@ React.js + Express.js + MongoDb game
 
 Application created with MERN (React + Express + Mongo + Node + Socket.io) stack.
 
+You need node.js, npm and Mongo to be installed on your computer. 
+To start the project run:
+- cd frontend
+- npm i && npm start
+- open another terminal
+- cd backend
+- npm i && start
+
 The whole application (not including 1 component) is fully created with React Hooks.
 
 First pages you see are the simple authorization pages (login and registration).
